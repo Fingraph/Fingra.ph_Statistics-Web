@@ -24,8 +24,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title><sitemesh:write property="title"/></title>
 
-<link href="<c:url value="/resources/img/favicon.ico" />" rel="shortcut icon" />
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<link href="<c:url value="/resources/img/favicon.ico"/>" rel="shortcut icon" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="<c:url value="/resources/js/highcharts/highcharts.js"/>"></script>
+<script src="<c:url value="/resources/js/highcharts/modules/exporting.js"/>"></script>
 <script type="text/javascript">
 </script>
 
