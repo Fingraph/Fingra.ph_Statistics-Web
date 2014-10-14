@@ -26,13 +26,13 @@
     <logger name="java.sql.ResultSet" level="DEBUG" />
     <!-- <logger name="org.springframework.security" level="DEBUG" /> -->
 
-    <logger name="dashboard" level="TRACE"/>
+    <logger name="manage" level="TRACE"/>
     <logger name="app" level="TRACE"/>
-    <logger name="member" level="TRACE"/>
-    <logger name="today" level="TRACE"/>
+    <logger name="dashboard" level="TRACE"/>
     <logger name="distribution" level="TRACE"/>
     <logger name="performance" level="TRACE"/>
     <logger name="compontent" level="TRACE"/>
+    <logger name="today" level="TRACE"/>
 
     <!-- Application Loggers -->
     <logger name="ph.fingra.statisticsweb" level="DEBUG" />

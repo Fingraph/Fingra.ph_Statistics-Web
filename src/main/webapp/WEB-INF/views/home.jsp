@@ -20,6 +20,10 @@
 <html>
 <head>
 	<title><spring:message code="test.title"/></title>
+    <script type="text/javascript">
+    $(function() {
+    });
+    </script>
 </head>
 <body>
 <h1>
@@ -36,6 +40,7 @@
         <td>name</td>
         <td>department</td>
         <td>created</td>
+        <td>role</td>
     </tr>
 	<c:forEach items="${memberlist}" var="list">
     <tr>
@@ -43,8 +48,32 @@
         <td>${list.name}</td>
         <td>${list.department}</td>
         <td>${list.created}</td>
+        <td>${list.role}</td>
     </tr>
 	</c:forEach>
 </table>
+
+<hr/>
+
+<h1>
+    admin.properties  
+</h1>
+
+name : ${admin.name}<br/>
+email : ${admin.email}<br/>
+password : ${admin.password}<br/>
+role : ${admin.role}<br/>
+
+<hr/>
+
+<h1>
+    login  
+</h1>
+
+<a class="btn btn-svc" href="<c:url value="/login/form"/>"> login </a>
+&nbsp;&nbsp;&nbsp;
+<!-- <button class="btn btn-svc" id="signOutBtn" name="signOutBtn"> logout </button> -->
+<a class="btn btn-svc" href="<c:url value="/logout"/>"> logout </a>
+
 </body>
 </html>

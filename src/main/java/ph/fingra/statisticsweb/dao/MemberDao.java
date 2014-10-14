@@ -24,4 +24,8 @@ public interface MemberDao {
     
     public List<Member> getList();
     
+    public Member findByEmail(String email);
+    
+    public void updateMemberLastLoginTime(Member member);
+    
 }

@@ -35,13 +35,11 @@ public class MemberServiceImpl implements MemberService {
     private PasswordEncoder passwordEncoder;
     
     public Member get(String email) {
-        // TODO Auto-generated method stub
-        return null;
+        return memberDao.findByEmail(email);
     }
     
     public void updateMemberLastLoginTime(Member member) {
-        // TODO Auto-generated method stub
-        
+        memberDao.updateMemberLastLoginTime(member);
     }
     
     @Override

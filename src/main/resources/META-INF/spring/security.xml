@@ -30,6 +30,18 @@
     <http auto-config="true" use-expressions="true">
         <intercept-url pattern="/favicon.ico" access="permitAll" />
         <intercept-url pattern="/" access="permitAll" />
+        <intercept-url pattern="/home" access="permitAll" />
+        <intercept-url pattern="/login" access="permitAll"/>
+        <intercept-url pattern="/login/form" access="permitAll"/>
+        <intercept-url pattern="/error/*" access="permitAll"/>
+        <intercept-url pattern="/manage/*" access="hasRole('ROLE_ADMIN')" />
+        <intercept-url pattern="/app/*" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/dashboard/*" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/performance/*" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/distribution/*" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/component/*" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/today/*" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/include/*" access="hasRole('ROLE_USER')" />
         <form-login login-page="/login/form" login-processing-url="/login"
             username-parameter="email" password-parameter="password"
             authentication-failure-url="/login/form?error"
@@ -43,7 +55,7 @@
     </authentication-manager>
 
     <beans:bean id="loginSuccessHandler" class="ph.fingra.statisticsweb.security.FingraphAuthenticationSuccessHandler">
-        <beans:property name="adminTargetUrl" value="/app/list"/>
+        <beans:property name="adminTargetUrl" value="/manage/member"/>
         <beans:property name="userTargetUrl" value="/app/list"/>
     </beans:bean>
 

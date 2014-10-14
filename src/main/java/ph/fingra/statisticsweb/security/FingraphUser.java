@@ -20,6 +20,7 @@ import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import ph.fingra.statisticsweb.common.MemberJoinstatus;
 import ph.fingra.statisticsweb.common.MemberStatus;
@@ -46,6 +47,29 @@ public class FingraphUser extends Member implements UserDetails {
         setStatus(member.getStatus());
         setJoinstatus(member.getJoinstatus());
         setLastlogin(member.getLastlogin());
+        setRole(member.getRole());
+        if (MemberStatus.valueOf(member.getStatus()) != MemberStatus.ACTIVE) {
+            this.accountNonLocked = false;
+            this.enabled = false;
+        }
+        if (MemberJoinstatus.valueOf(member.getJoinstatus()) != MemberJoinstatus.APPROVAL) {
+            this.accountNonLocked = false;
+            this.enabled = false;
+        }
+    }
+    public FingraphUser(Member member, PasswordEncoder passwordEncoder) {
+        setMemberid(member.getMemberid());
+        setEmail(member.getEmail());
+        setName(member.getName());
+        // encode password
+        member.setPassword(passwordEncoder.encode(member.getPassword()));
+        setPassword(member.getPassword());
+        setDepartment(member.getDepartment());
+        setPhone(member.getPhone());
+        setStatus(member.getStatus());
+        setJoinstatus(member.getJoinstatus());
+        setLastlogin(member.getLastlogin());
+        setRole(member.getRole());
         if (MemberStatus.valueOf(member.getStatus()) != MemberStatus.ACTIVE) {
             this.accountNonLocked = false;
             this.enabled = false;

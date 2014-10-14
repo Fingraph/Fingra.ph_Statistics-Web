@@ -21,7 +21,17 @@
 <mapper namespace="member">
 
   <select id="getList" resultType="Member">
-    SELECT * FROM member
+    SELECT *, 0 AS role FROM member
   </select>
+
+  <select id="findByEmail" resultType="Member">
+    SELECT *, 0 AS role FROM member WHERE email = #{email}
+  </select>
+
+  <update id="updateMemberLastLoginTime">
+    UPDATE member
+    SET lastlogin = now()
+    WHERE memberid = #{memberid}
+  </update>
 
 </mapper>

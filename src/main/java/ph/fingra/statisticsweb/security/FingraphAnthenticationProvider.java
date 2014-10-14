@@ -19,6 +19,7 @@ package ph.fingra.statisticsweb.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,6 +33,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.Assert;
 
 import ph.fingra.statisticsweb.common.MemberJoinstatus;
+import ph.fingra.statisticsweb.common.MemberRole;
 import ph.fingra.statisticsweb.common.MemberStatus;
 import ph.fingra.statisticsweb.domain.Member;
 import ph.fingra.statisticsweb.service.MemberService;
@@ -45,12 +47,22 @@ public class FingraphAnthenticationProvider
     private static final String USER_NOT_FOUND_PASSWORD = "userNotFoundPassword";
     
     private PasswordEncoder passwordEncoder;
+    // password encoder for admin.properties
+    private org.springframework.security.crypto.password.PasswordEncoder adminPasswordEncoder;
     
     private String userNotFoundEncodedPassword;
     
     private SaltSource saltSource;
     
     private MemberService memberService;
+    
+    // admin.properties values
+    @Value("#{fingraphAdminAuth.email}")
+    private String adminEmail;
+    @Value("#{fingraphAdminAuth.name}")
+    private String adminName;
+    @Value("#{fingraphAdminAuth.password}")
+    private String adminPassword;
     
     public FingraphAnthenticationProvider() {
         setPasswordEncoder(new PlaintextPasswordEncoder());
@@ -92,7 +104,7 @@ public class FingraphAnthenticationProvider
             throw new UnverifiedUserException("AbstractUserDetailsAuthenticationProvider.disabled", userDetails);
         }
     }
-
+    
     protected void doAfterPropertiesSet() throws Exception {
         Assert.notNull(this.memberService, "A MemberService must be set");
         Assert.notNull(this.passwordEncoder, "A PasswordEncoder must be set");
@@ -104,20 +116,45 @@ public class FingraphAnthenticationProvider
             UsernamePasswordAuthenticationToken authentication)
             throws AuthenticationException {
         
+        // admin.properties values
+        logger.debug("[adminEmail] {}", adminEmail);
+        logger.debug("[adminName] {}", adminName);
+        logger.debug("[adminPassword] {}", adminPassword);
+        
         UserDetails loadedUser=null;
         try {
-            
             logger.debug("retrieveUser {}", username);
-            Member member = memberService.get(username);
+            
+            Member member = null;
+            if (username.equals(adminEmail)) {
+                member = new Member();
+                member.setEmail(adminEmail);
+                member.setName(adminName);
+                member.setPassword(adminPassword);
+                member.setStatus(MemberStatus.ACTIVE.getValue());
+                member.setJoinstatus(MemberJoinstatus.APPROVAL.getValue());
+                member.setRole(MemberRole.ROLE_ADMIN.getValue());
+            }
+            else {
+                member = memberService.get(username);
+            }
             if (member == null) {
                 throw new UsernameNotFoundException("Not found user email");
             }
             
             // lastlogin update
-            memberService.updateMemberLastLoginTime(member);
+            if (member.getRole() == MemberRole.ROLE_USER.getValue()) {
+                memberService.updateMemberLastLoginTime(member);
+            }
             
-            loadedUser = new FingraphUser(member);
-            logger.debug("userDetail is {}", loadedUser);
+            if (member.getRole() == MemberRole.ROLE_ADMIN.getValue()) {
+                //logger.debug("passwordEncoder {}", adminPasswordEncoder);
+                loadedUser = new FingraphUser(member, adminPasswordEncoder);
+            }
+            else {
+                loadedUser = new FingraphUser(member);
+            }
+            logger.debug("userDetail is {}", loadedUser.toString());
         } catch (UsernameNotFoundException notFound) {
             if (authentication.getCredentials() != null) {
                 String presentedPassword = authentication.getCredentials().toString();
@@ -147,6 +184,10 @@ public class FingraphAnthenticationProvider
         if (passwordEncoder instanceof org.springframework.security.crypto.password.PasswordEncoder) {
             final org.springframework.security.crypto.password.PasswordEncoder delegate
                 = (org.springframework.security.crypto.password.PasswordEncoder) passwordEncoder;
+            
+            // password encoder for admin.properties
+            adminPasswordEncoder = delegate;
+            
             setPasswordEncoder(new PasswordEncoder() {
                 public String encodePassword(String rawPass, Object salt) {
                     checkSalt(salt);

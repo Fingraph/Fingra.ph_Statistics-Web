@@ -19,6 +19,9 @@
         <tag-rule-bundle class="org.sitemesh.content.tagrules.html.DivExtractingTagRuleBundle" />
     </content-processor>
     <mapping path="/" decorator="/WEB-INF/decorator/decorator.jsp" />
+    <mapping path="/login*" decorator="/WEB-INF/decorator/decorator.jsp" />
+    <mapping path="/app/*" decorator="/WEB-INF/decorator/decorator.jsp" />
+    <mapping path="/manage/*" decorator="/WEB-INF/decorator/decorator.jsp" />
     <mapping path="/referer*" exclue="true" />
     <mapping path="*Ajax*" exclue="true" />
     <mapping path="*.json" exclue="true" />

@@ -34,4 +34,11 @@ public class MemberDaoImpl implements MemberDao {
         return sqlSessionTemplate.selectList("member.getList");
     }
     
+    public Member findByEmail(String email) {
+        return sqlSessionTemplate.selectOne("member.findByEmail", email);
+    }
+    
+    public void updateMemberLastLoginTime(Member member) {
+        sqlSessionTemplate.update("member.updateMemberLastLoginTime", member);
+    }
 }
