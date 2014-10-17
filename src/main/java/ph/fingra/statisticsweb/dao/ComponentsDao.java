@@ -21,12 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import ph.fingra.statisticsweb.domain.ActualData;
+import ph.fingra.statisticsweb.domain.Component;
 import ph.fingra.statisticsweb.domain.Components;
 import ph.fingra.statisticsweb.domain.ComponentsGroup;
-import ph.fingra.statisticsweb.domain.ComponentsLimit;
 //import ph.fingra.statisticsweb.domain.ComponentsManage;
 //import ph.fingra.statisticsweb.domain.DashBoardSearchParam;
-import ph.fingra.statisticsweb.domain.Event;
 import ph.fingra.statisticsweb.domain.FingraphSearchParam;
 import ph.fingra.statisticsweb.domain.TimeOfDayData;
 
@@ -78,11 +77,11 @@ public interface ComponentsDao {
 
 	String makeComponentKey();
 
-	void addComponent(Event event);
+	void addComponent(Component component);
 
-	void editComponent(Event event);
+	void editComponent(Component component);
 
-	void removeComponent(Event event);
+	void removeComponent(Component component);
 
 	List<HashMap> getNewUsersInterGroupDailyTimeSeriesList(FingraphSearchParam searchParam);
 
@@ -120,14 +119,12 @@ public interface ComponentsDao {
 
 	void updateComponentsIsdel(ComponentsGroup componentsGroup);
 
-	void addComponentWithGroup(Event event);
+	void addComponentWithGroup(Component component);
 
 	void removeArrayComponent(HashMap map);
 
 	List<ComponentsGroup> getComponentsGroupList(String appkey);
 
 	void moveArrayComponent(HashMap map);
-
-	ComponentsLimit getComponentsLimit(Integer memberId);
 
 }

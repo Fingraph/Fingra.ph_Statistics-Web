@@ -18,13 +18,37 @@ package ph.fingra.statisticsweb.domain;
 
 import java.io.Serializable;
 
-public class AppInfo implements Serializable{
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 2945946960612023124L;
-	private String appKey;
-    private String smallIcon;
-    private String mediumIcon;
-    private String largeIcon;
+public class AppInfo extends BaseDomain implements Serializable {
+    
+    private static final long serialVersionUID = 2945946960612023124L;
+    
+    private String appkey;
+    private String smallicon;
+    private String mediumicon;
+    private String largeicon;
+    
+    public String getAppkey() {
+        return appkey;
+    }
+    public void setAppkey(String appkey) {
+        this.appkey = appkey;
+    }
+    public String getSmallicon() {
+        return smallicon;
+    }
+    public void setSmallicon(String smallicon) {
+        this.smallicon = smallicon;
+    }
+    public String getMediumicon() {
+        return mediumicon;
+    }
+    public void setMediumicon(String mediumicon) {
+        this.mediumicon = mediumicon;
+    }
+    public String getLargeicon() {
+        return largeicon;
+    }
+    public void setLargeicon(String largeicon) {
+        this.largeicon = largeicon;
+    }
 }

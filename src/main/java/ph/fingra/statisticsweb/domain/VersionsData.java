@@ -18,11 +18,23 @@ package ph.fingra.statisticsweb.domain;
 
 import java.io.Serializable;
 
-public class VersionsData implements Serializable{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 686237985937372670L;
-	private String type;	//osversion or appversion
-	private int user;			//사용자수
+public class VersionsData extends BaseDomain implements Serializable {
+    
+    private static final long serialVersionUID = 686237985937372670L;
+    
+    private String type;   //osversion or appversion
+    private int user;
+    
+    public String getType() {
+        return type;
+    }
+    public void setType(String type) {
+        this.type = type;
+    }
+    public int getUser() {
+        return user;
+    }
+    public void setUser(int user) {
+        this.user = user;
+    }
 }

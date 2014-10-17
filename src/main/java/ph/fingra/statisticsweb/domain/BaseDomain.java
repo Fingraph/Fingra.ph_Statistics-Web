@@ -16,14 +16,15 @@
 
 package ph.fingra.statisticsweb.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.springframework.format.annotation.DateTimeFormat;
 
-public abstract class BaseDomain implements Serializable {
-    
-    private static final long serialVersionUID = -3371787344193950962L;
+public abstract class BaseDomain {
     
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date created;
@@ -41,5 +42,18 @@ public abstract class BaseDomain implements Serializable {
     }
     public void setModified(Date modified) {
         this.modified = modified;
+    }
+    
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this,
+                ToStringStyle.SIMPLE_STYLE);
+    }
+    
+    public boolean equals(Object o) {
+        return EqualsBuilder.reflectionEquals(this, o);
+    }
+    
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
     }
 }

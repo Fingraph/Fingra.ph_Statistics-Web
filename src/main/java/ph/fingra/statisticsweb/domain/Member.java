@@ -16,11 +16,12 @@
 
 package ph.fingra.statisticsweb.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-public class Member extends BaseDomain {
+public class Member extends BaseDomain implements Serializable {
     
     private static final long serialVersionUID = -7576987369322031199L;
     

@@ -18,12 +18,30 @@ package ph.fingra.statisticsweb.domain;
 
 import java.io.Serializable;
 
-public class DayOfWeekData implements Serializable{
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -139025926184250483L;
-	private String week;
-	private int user;
-	private int session;
+public class DayOfWeekData extends BaseDomain implements Serializable {
+    
+    private static final long serialVersionUID = -139025926184250483L;
+    
+    private String week;
+    private int user;
+    private int session;
+    
+    public String getWeek() {
+        return week;
+    }
+    public void setWeek(String week) {
+        this.week = week;
+    }
+    public int getUser() {
+        return user;
+    }
+    public void setUser(int user) {
+        this.user = user;
+    }
+    public int getSession() {
+        return session;
+    }
+    public void setSession(int session) {
+        this.session = session;
+    }
 }

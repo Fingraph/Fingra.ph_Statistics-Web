@@ -17,16 +17,24 @@
 package ph.fingra.statisticsweb.domain;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
-import ph.fingra.statisticsweb.common.util.NumberFormatUtil;
-
-public class CurrPrevTextValue implements Serializable{
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -856487969962582470L;
-	private String current;
+public class CurrPrevTextValue extends BaseDomain implements Serializable {
+    
+    private static final long serialVersionUID = -856487969962582470L;
+    
+    private String current;
     private String previous;
-
+    
+    public String getCurrent() {
+        return current;
+    }
+    public void setCurrent(String current) {
+        this.current = current;
+    }
+    public String getPrevious() {
+        return previous;
+    }
+    public void setPrevious(String previous) {
+        this.previous = previous;
+    }
 }

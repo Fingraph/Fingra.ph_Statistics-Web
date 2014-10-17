@@ -19,28 +19,76 @@ package ph.fingra.statisticsweb.domain;
 import java.io.Serializable;
 import java.util.Date;
 
-public class ComponentsGroup implements Serializable{
-
-
-	private static final long serialVersionUID = 2556277603499407638L;
-	private String appkey;
-	private int groupkey;
-	private String groupName;
-	private String shortName;
-	private String description;
-	private int isdel;
-	private Date regDate;
-	private Date modDate;
-
-	public ComponentsGroup(){};
-
-	public ComponentsGroup(String appkey, int groupkey, String groupName, String description, int isdel) {
-		super();
-		this.appkey = appkey;
-		this.groupkey = groupkey;
-		this.groupName = groupName;
-		this.description = description;
-		this.isdel = isdel;
-	}
-
+public class ComponentsGroup extends BaseDomain implements Serializable {
+    
+    private static final long serialVersionUID = 2556277603499407638L;
+    
+    private String appkey;
+    private int groupkey;
+    private String groupname;
+    private String shortname;
+    private String description;
+    private int isdel;
+    private Date regdate;
+    private Date moddate;
+    
+    public ComponentsGroup(){};
+    
+    public ComponentsGroup(String appkey, int groupkey, String groupname, String description, int isdel) {
+        super();
+        this.appkey = appkey;
+        this.groupkey = groupkey;
+        this.groupname = groupname;
+        this.description = description;
+        this.isdel = isdel;
+    }
+    
+    public String getAppkey() {
+        return appkey;
+    }
+    public void setAppkey(String appkey) {
+        this.appkey = appkey;
+    }
+    public int getGroupkey() {
+        return groupkey;
+    }
+    public void setGroupkey(int groupkey) {
+        this.groupkey = groupkey;
+    }
+    public String getGroupname() {
+        return groupname;
+    }
+    public void setGroupname(String groupname) {
+        this.groupname = groupname;
+    }
+    public String getShortname() {
+        return shortname;
+    }
+    public void setShortname(String shortname) {
+        this.shortname = shortname;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    public int getIsdel() {
+        return isdel;
+    }
+    public void setIsdel(int isdel) {
+        this.isdel = isdel;
+    }
+    public Date getRegdate() {
+        return regdate;
+    }
+    public void setRegdate(Date regdate) {
+        this.regdate = regdate;
+    }
+    public Date getModdate() {
+        return moddate;
+    }
+    public void setModdate(Date moddate) {
+        this.moddate = moddate;
+    }
 }

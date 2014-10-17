@@ -19,14 +19,45 @@ package ph.fingra.statisticsweb.domain;
 import java.io.Serializable;
 import java.util.List;
 
-public class ComponentsInfo implements Serializable{
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3345345356772402958L;
-	private List<Components> newUsersList;
-	private List<Components> activeUsersList;
-	private List<Components> pageViewsList;
-	private List<Components> timeOfDayList;
-	private List<Components> topCountriesList;
+public class ComponentsInfo extends BaseDomain implements Serializable {
+    
+    private static final long serialVersionUID = -3345345356772402958L;
+    
+    private List<Components> newUsersList;
+    private List<Components> activeUsersList;
+    private List<Components> pageViewsList;
+    private List<Components> timeOfDayList;
+    private List<Components> topCountriesList;
+    
+    public List<Components> getNewUsersList() {
+        return newUsersList;
+    }
+    public void setNewUsersList(List<Components> newUsersList) {
+        this.newUsersList = newUsersList;
+    }
+    public List<Components> getActiveUsersList() {
+        return activeUsersList;
+    }
+    public void setActiveUsersList(List<Components> activeUsersList) {
+        this.activeUsersList = activeUsersList;
+    }
+    public List<Components> getPageViewsList() {
+        return pageViewsList;
+    }
+    public void setPageViewsList(List<Components> pageViewsList) {
+        this.pageViewsList = pageViewsList;
+    }
+    public List<Components> getTimeOfDayList() {
+        return timeOfDayList;
+    }
+    public void setTimeOfDayList(List<Components> timeOfDayList) {
+        this.timeOfDayList = timeOfDayList;
+    }
+    public List<Components> getTopCountriesList() {
+        return topCountriesList;
+    }
+    public void setTopCountriesList(List<Components> topCountriesList) {
+        this.topCountriesList = topCountriesList;
+    }
+	
 }

@@ -25,12 +25,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import ph.fingra.statisticsweb.domain.ActualData;
+import ph.fingra.statisticsweb.domain.Component;
 import ph.fingra.statisticsweb.domain.Components;
 import ph.fingra.statisticsweb.domain.ComponentsGroup;
-import ph.fingra.statisticsweb.domain.ComponentsLimit;
 //import ph.fingra.statisticsweb.domain.ComponentsManage;
 //import ph.fingra.statisticsweb.domain.DashBoardSearchParam;
-import ph.fingra.statisticsweb.domain.Event;
 import ph.fingra.statisticsweb.domain.FingraphSearchParam;
 import ph.fingra.statisticsweb.domain.TimeOfDayData;
 
@@ -157,19 +156,19 @@ public class ComponentsDaoImpl implements ComponentsDao {
 	}
 
 	@Override
-	public void addComponent(Event event) {
-		sqlSessionTemplate.insert("components.addComponent", event);
+	public void addComponent(Component component) {
+		sqlSessionTemplate.insert("components.addComponent", component);
 	}
 
 	@Override
-	public void editComponent(Event event) {
-		sqlSessionTemplate.update("components.editComponent", event);
+	public void editComponent(Component component) {
+		sqlSessionTemplate.update("components.editComponent", component);
 
 	}
 
 	@Override
-	public void removeComponent(Event event) {
-		sqlSessionTemplate.update("components.removeComponent", event);
+	public void removeComponent(Component component) {
+		sqlSessionTemplate.update("components.removeComponent", component);
 
 	}
 
@@ -265,8 +264,8 @@ public class ComponentsDaoImpl implements ComponentsDao {
 	}
 
 	@Override
-	public void addComponentWithGroup(Event event) {
-		sqlSessionTemplate.insert("components.addComponentWithGroup", event);
+	public void addComponentWithGroup(Component component) {
+		sqlSessionTemplate.insert("components.addComponentWithGroup", component);
 
 	}
 
@@ -284,10 +283,5 @@ public class ComponentsDaoImpl implements ComponentsDao {
 	public void moveArrayComponent(HashMap map) {
 		sqlSessionTemplate.update("components.moveArrayComponent", map);
 	}
-
-	@Override
-	public ComponentsLimit getComponentsLimit(Integer memberId) {
-		return sqlSessionTemplate.selectOne("components.getComponentsLimit", memberId);
-	}
-
+	
 }

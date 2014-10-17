@@ -18,14 +18,44 @@ package ph.fingra.statisticsweb.domain;
 
 import java.io.Serializable;
 
-public class AbstractSearchParam implements Serializable{
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -7898917655439769428L;
-	private String appkey;
-    private String appId;
+public class AbstractSearchParam extends BaseDomain implements Serializable {
+    
+    private static final long serialVersionUID = -7898917655439769428L;
+    
+    private String appkey;
+    private String appid;
     private String from;
     private String to;
     private String country;
+    
+    public String getAppkey() {
+        return appkey;
+    }
+    public void setAppkey(String appkey) {
+        this.appkey = appkey;
+    }
+    public String getAppid() {
+        return appid;
+    }
+    public void setAppid(String appid) {
+        this.appid = appid;
+    }
+    public String getFrom() {
+        return from;
+    }
+    public void setFrom(String from) {
+        this.from = from;
+    }
+    public String getTo() {
+        return to;
+    }
+    public void setTo(String to) {
+        this.to = to;
+    }
+    public String getCountry() {
+        return country;
+    }
+    public void setCountry(String country) {
+        this.country = country;
+    }
 }

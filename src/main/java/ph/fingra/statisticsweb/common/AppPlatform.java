@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package ph.fingra.statisticsweb.domain;
+package ph.fingra.statisticsweb.common;
 
 public enum AppPlatform {
-
+    
     IPHONE(1), ANDROID(2);
-
+    
     private final int value;
-
+    
     AppPlatform(int value) {
-	this.value = value;
+        this.value = value;
     }
-
+    
     public int getValue() {
-	return value;
+        return value;
     }
-
+    
     public static AppPlatform valueOf(int value) {
-	switch (value) {
-	case 1:
-	    return IPHONE;
-	case 2:
-	    return ANDROID;
-	default:
-	    throw new AssertionError("Unknown AppPlatform : " + value);
-	}
+    	switch (value) {
+    	case 1:
+    	    return IPHONE;
+    	case 2:
+    	    return ANDROID;
+    	default:
+    	    throw new AssertionError("Unknown AppPlatform : " + value);
+    	}
     }
 }

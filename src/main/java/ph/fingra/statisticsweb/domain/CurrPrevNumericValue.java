@@ -22,37 +22,36 @@ import java.math.MathContext;
 
 import ph.fingra.statisticsweb.common.util.NumberFormatUtil;
 
-public class CurrPrevNumericValue implements Serializable{
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 8862634182822303772L;
-	static final BigDecimal cent = new BigDecimal(100);
-	static final BigDecimal step1 = new BigDecimal(20);
-	static final BigDecimal step2 = new BigDecimal(40);
-	static final BigDecimal step3 = new BigDecimal(60);
-	static final BigDecimal step4 = new BigDecimal(80);
-	static final BigDecimal step5 = new BigDecimal(101);
-	//주평균을구하기위해 나누어줄수 7일
-	static final BigDecimal weekday = new BigDecimal(7);
-
-	private BigDecimal current;
+public class CurrPrevNumericValue extends BaseDomain implements Serializable {
+    
+    private static final long serialVersionUID = 8862634182822303772L;
+    
+    static final BigDecimal cent = new BigDecimal(100);
+    static final BigDecimal step1 = new BigDecimal(20);
+    static final BigDecimal step2 = new BigDecimal(40);
+    static final BigDecimal step3 = new BigDecimal(60);
+    static final BigDecimal step4 = new BigDecimal(80);
+    static final BigDecimal step5 = new BigDecimal(101);
+    // for week average days count
+    static final BigDecimal weekday = new BigDecimal(7);
+    
+    private BigDecimal current;
     private BigDecimal previous;
     private BigDecimal aux;
     private BigDecimal today;
-
+    
     public boolean isRising(){
     	return current.subtract(previous).compareTo(BigDecimal.ZERO) > 0;
     }
-
-    //이번주평균
+    
+    // thiw week average
     public String getStrWeekAvg(){
     	return NumberFormatUtil.shortScaleConvertWithBigDecimal(current.divide(weekday,MathContext.DECIMAL32));
 	}
-
+    
     public String getSign(){
     	int result = current.subtract(previous).setScale(1, BigDecimal.ROUND_HALF_UP).compareTo(BigDecimal.ZERO);
-
+    	
     	String sign = "";
     	if(result>0){
     		sign="+";
@@ -62,22 +61,22 @@ public class CurrPrevNumericValue implements Serializable{
     		sign="-";
     	}
     	return sign;
-        }
-
+    }
+    
     public boolean isHasPrevious(){
-	return (previous.intValue() != 0);
+        return (previous.intValue() != 0);
     }
-
+    
     public BigDecimal getIncrement() {
-	return current.subtract(previous).abs();
+        return current.subtract(previous).abs();
     }
-
+    
     public BigDecimal getGrowthRate() {
-	if(previous.doubleValue() == 0.00)
-	    return BigDecimal.ZERO;
-	return current.subtract(previous).divide(previous,MathContext.DECIMAL32).multiply(cent).abs();
+    	if(previous.doubleValue() == 0.00)
+    	    return BigDecimal.ZERO;
+    	return current.subtract(previous).divide(previous,MathContext.DECIMAL32).multiply(cent).abs();
     }
-
+    
     public String getBgClass(){
     	String rising="up";
     	String step="";
@@ -86,7 +85,7 @@ public class CurrPrevNumericValue implements Serializable{
     	}else{
     		rising="down";
     	}
-
+    	
     	if(getGrowthRate().compareTo(BigDecimal.ZERO) >=0 && getGrowthRate().compareTo(step1) == -1){
     		step="1";
     	}else if(getGrowthRate().compareTo(step1) >=0 && getGrowthRate().compareTo(step2) == -1){
@@ -104,19 +103,41 @@ public class CurrPrevNumericValue implements Serializable{
     }
     
     public String getStrToday() {
-    	return NumberFormatUtil.shortScaleConvertWithBigDecimal(today);
-	}
-    public String getStrCurrent() {
-    	return NumberFormatUtil.shortScaleConvertWithBigDecimal(current);
-	}
-
-
-
-    public static void main(String [] args){
-	BigDecimal a = new BigDecimal(2413.7143); // current
-	BigDecimal b = new BigDecimal(0.4286); // previous
-	System.out.println(a.subtract(b));
-	System.out.println(a.subtract(b).divide(b,MathContext.DECIMAL32).multiply(cent).abs());
+        return NumberFormatUtil.shortScaleConvertWithBigDecimal(today);
     }
-
+    public String getStrCurrent() {
+        return NumberFormatUtil.shortScaleConvertWithBigDecimal(current);
+    }
+    
+    public BigDecimal getCurrent() {
+        return current;
+    }
+    public void setCurrent(BigDecimal current) {
+        this.current = current;
+    }
+    public BigDecimal getPrevious() {
+        return previous;
+    }
+    public void setPrevious(BigDecimal previous) {
+        this.previous = previous;
+    }
+    public BigDecimal getAux() {
+        return aux;
+    }
+    public void setAux(BigDecimal aux) {
+        this.aux = aux;
+    }
+    public BigDecimal getToday() {
+        return today;
+    }
+    public void setToday(BigDecimal today) {
+        this.today = today;
+    }
+    
+    public static void main(String [] args){
+    	BigDecimal a = new BigDecimal(2413.7143); // current
+    	BigDecimal b = new BigDecimal(0.4286); // previous
+    	System.out.println(a.subtract(b));
+    	System.out.println(a.subtract(b).divide(b,MathContext.DECIMAL32).multiply(cent).abs());
+    }
 }

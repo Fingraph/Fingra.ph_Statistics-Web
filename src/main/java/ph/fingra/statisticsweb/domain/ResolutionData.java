@@ -18,11 +18,23 @@ package ph.fingra.statisticsweb.domain;
 
 import java.io.Serializable;
 
-public class ResolutionData implements Serializable{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3098500638379528253L;
-	private String resolution;	//resolution
-	private int user;			//사용자수
+public class ResolutionData extends BaseDomain implements Serializable {
+    
+    private static final long serialVersionUID = 3098500638379528253L;
+    
+    private String resolution;
+    private int user;
+    
+    public String getResolution() {
+        return resolution;
+    }
+    public void setResolution(String resolution) {
+        this.resolution = resolution;
+    }
+    public int getUser() {
+        return user;
+    }
+    public void setUser(int user) {
+        this.user = user;
+    }
 }
