@@ -41,4 +41,32 @@ public class MemberDaoImpl implements MemberDao {
     public void updateMemberLastLoginTime(Member member) {
         sqlSessionTemplate.update("member.updateMemberLastLoginTime", member);
     }
+    
+    public void insert(Member member) {
+        sqlSessionTemplate.insert("member.insert", member);
+    }
+    
+    public int countByEmail(String email) {
+        return sqlSessionTemplate.selectOne("member.countByEmail", email);
+    }
+    
+    public void delete(String email) {
+        sqlSessionTemplate.delete("member.delete", email);
+    }
+    
+    public void updateStatus(Member member) {
+        sqlSessionTemplate.update("member.updateStatus", member);
+    }
+    
+    public Member findById(Integer memberid) {
+        return sqlSessionTemplate.selectOne("member.findById", memberid);
+    }
+    
+    public void update(Member member) {
+        sqlSessionTemplate.update("member.update", member);
+    }
+    
+    public void updatePassword(Member member) {
+        sqlSessionTemplate.update("member.updatePassword", member);
+    }
 }

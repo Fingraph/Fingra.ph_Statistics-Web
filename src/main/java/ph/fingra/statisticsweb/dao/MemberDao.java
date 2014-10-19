@@ -28,4 +28,17 @@ public interface MemberDao {
     
     public void updateMemberLastLoginTime(Member member);
     
+    void insert(Member member);
+    
+    int countByEmail(String email);
+    
+    void delete(String email);
+    
+    void updateStatus(Member member);
+    
+    Member findById(Integer memberid);
+    
+    void update(Member member);
+    
+    void updatePassword(Member member);
 }

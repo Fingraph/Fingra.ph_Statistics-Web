@@ -24,6 +24,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import org.joda.time.DateTime;
+
 public class DateTimeUtil {
     
     /**
@@ -444,4 +446,37 @@ public class DateTimeUtil {
         return result;
     }
     
+    public static String[] getDashboardFromToWithPrev(String numType) {
+        
+        int num = Integer.parseInt(numType.substring(0, numType.length() - 1));
+        String type = numType.substring(numType.length() - 1).toLowerCase();
+        final DateTime now = DateTime.now();
+        final DateTime to = now.minusDays(1);
+        
+        final DateTime from = type.equals("w") ? to.minusDays(num * 7 - 1) : (type.equals("m") ? to.minusMonths(num) : to.withMonthOfYear(1).withDayOfMonth(1));
+        final DateTime prevTo = type.equals("y") ? to.minusYears(1) : from.minusDays(1);
+        final DateTime prevFrom = type.equals("w") ? prevTo.minusDays(num * 7 - 1) : (type.equals("m") ? prevTo.minusMonths(num) : prevTo.withMonthOfYear(1).withDayOfMonth(1));
+        
+        final DateTime yesterday = now.minusDays(1);
+        final DateTime beforeYesterday = now.minusDays(2);
+        String nowTime = "";
+        String prevTime = "";
+        
+        // before or after 10 minutes
+        if( now.getMinuteOfHour() < 10){ // before 10 minutes 
+            String nowTemp = now.equals("0") ? "23" : String.valueOf(now.getHourOfDay()-1);
+            nowTime = (nowTemp.length() < 2) ? nowTemp = "0"+nowTemp : nowTemp;
+            String prevTemp = nowTime.equals("00") ? "23" : String.valueOf(Integer.parseInt(nowTime) - 1);
+            prevTime = (prevTemp.length() < 2) ? prevTemp = "0"+prevTemp : prevTemp;
+            System.out.println("10분 전   "+now.getMinuteOfHour()+"분");
+        }else{ // after 10 minutes
+            nowTime = (String.valueOf(now.getHourOfDay()).length() < 2) ? "0"+String.valueOf(now.getHourOfDay()) : String.valueOf(now.getHourOfDay());
+            String prevTemp = now.equals("0") ? "23" : String.valueOf(now.getHourOfDay()-1);
+            prevTime = (prevTemp.length() < 2) ? prevTemp = "0"+prevTemp : prevTemp;
+            System.out.println("10분 후   "+now.getMinuteOfHour()+"분");
+        }
+        
+        return new String[] { from.toString("yyyy-MM-dd"), to.toString("yyyy-MM-dd"), prevFrom.toString("yyyy-MM-dd"), prevTo.toString("yyyy-MM-dd"),
+            yesterday.toString("yyyy-MM-dd"), beforeYesterday.toString("yyyy-MM-dd"), now.toString("yyyy-MM-dd"), nowTime, prevTime };
+    }
 }
