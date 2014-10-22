@@ -26,7 +26,38 @@
 
   <typeAliases>
     <!-- base -->
+    <typeAlias type="ph.fingra.statisticsweb.domain.DashBoardSearchParam" alias="DashBoardSearchParam"/>
+    <typeAlias type="ph.fingra.statisticsweb.domain.FingraphSearchParam" alias="FingraphSearchParam"/>
+    <!-- member -->
     <typeAlias type="ph.fingra.statisticsweb.domain.Member" alias="Member"/>
+    <!-- app -->
+    <typeAlias type="ph.fingra.statisticsweb.domain.App" alias="App"/>
+    <typeAlias type="ph.fingra.statisticsweb.domain.AppInfo" alias="AppInfo"/>
+    <typeAlias type="ph.fingra.statisticsweb.domain.AppCategory" alias="AppCategory"/>
+    <!-- dashboard -->
+    <typeAlias type="ph.fingra.statisticsweb.domain.CurrPrevNumericValue" alias="CurrPrevNumericValue"/>
+    <typeAlias type="ph.fingra.statisticsweb.domain.CurrPrevTextValue" alias="CurrPrevTextValue"/>
+    <!-- performance -->
+    <typeAlias type="ph.fingra.statisticsweb.domain.TimeSeriesData" alias="TimeSeriesData"/>
+    <typeAlias type="ph.fingra.statisticsweb.domain.Figures" alias="Figures"/>
+    <typeAlias type="ph.fingra.statisticsweb.domain.FrequencyData" alias="FrequencyData"/>
+    <typeAlias type="ph.fingra.statisticsweb.domain.SessionLengthData" alias="SessionLengthData"/>
+    <!-- distribution -->
+    <typeAlias type="ph.fingra.statisticsweb.domain.DayOfWeekData" alias="DayOfWeekData"/>
+    <typeAlias type="ph.fingra.statisticsweb.domain.TimeOfDayData" alias="TimeOfDayData"/>
+    <typeAlias type="ph.fingra.statisticsweb.domain.ResolutionData" alias="ResolutionData"/>
+    <typeAlias type="ph.fingra.statisticsweb.domain.ResolutionTimeSeriesData" alias="ResolutionTimeSeriesData"/>
+    <typeAlias type="ph.fingra.statisticsweb.domain.VersionsData" alias="VersionsData"/>
+    <typeAlias type="ph.fingra.statisticsweb.domain.VersionsTimeSeriesData" alias="VersionsTimeSeriesData"/>
+    <typeAlias type="ph.fingra.statisticsweb.domain.CountryData" alias="CountryData"/>
+    <typeAlias type="ph.fingra.statisticsweb.domain.CountryTimeSeriesData" alias="CountryTimeSeriesData"/>
+    <!-- component -->
+    <typeAlias type="ph.fingra.statisticsweb.domain.ComponentsManage" alias="ComponentsManage"/>
+    <typeAlias type="ph.fingra.statisticsweb.domain.Component" alias="Component"/>
+    <typeAlias type="ph.fingra.statisticsweb.domain.ComponentsGroup" alias="ComponentsGroup"/>
+    <typeAlias type="ph.fingra.statisticsweb.domain.Components" alias="Components"/>
+    <typeAlias type="ph.fingra.statisticsweb.domain.ActualData" alias="ActualData"/>
+    <!-- today -->
   </typeAliases>
 
   <typeHandlers>
@@ -35,7 +66,20 @@
 
   <mappers>
     <!-- base -->
+    <!-- member -->
     <mapper resource="META-INF/mybatis/member-mapper.xml" />
+    <!-- app -->
+    <mapper resource="META-INF/mybatis/app-mapper.xml" />
+    <!-- dashboard -->
+    <mapper resource="META-INF/mybatis/dashboard-mapper.xml" />
+    <!-- performance -->
+    <mapper resource="META-INF/mybatis/performance-mapper.xml" />
+    <!-- distribution -->
+    <mapper resource="META-INF/mybatis/distribution-mapper.xml" />
+    <mapper resource="META-INF/mybatis/country-mapper.xml" />
+    <!-- component -->
+    <mapper resource="META-INF/mybatis/components-mapper.xml" />
+    <!-- today -->
   </mappers>
 
 </configuration>

@@ -16,10 +16,7 @@
 
 package ph.fingra.statisticsweb.dao;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,33 +34,13 @@ public class AppDaoImpl implements AppDao {
     private SqlSessionTemplate sqlSessionTemplate;
     
     @Override
-    public List<AppCategory> findAllCategories() {
-        return sqlSessionTemplate.selectList("app.findAllCategories");
-    }
-    
-    @Override
     public void insert(App app) {
         sqlSessionTemplate.insert("app.insert", app);
     }
     
     @Override
-    public List<App> findPairedAppsByMemberid(Integer memberid) {
-        return sqlSessionTemplate.selectList("app.findPairedAppsByMemberid", memberid);
-    }
-    
-    @Override
-    public List<App> findNotPairedAppsByMemberid(Integer memberid) {
-        return sqlSessionTemplate.selectList("app.findNotPairedAppsByMemberid", memberid);
-    }
-    
-    @Override
-    public List<App> getAppList(DashBoardSearchParam param) {
-        return sqlSessionTemplate.selectList("app.getAppList", param);
-    }
-    
-    @Override
-    public void updateAppInfo(AppInfo appInfo) {
-        sqlSessionTemplate.update("app.updateAppInfo", appInfo);
+    public void update(App app) {
+        sqlSessionTemplate.update("app.update", app);
     }
     
     @Override
@@ -77,30 +54,22 @@ public class AppDaoImpl implements AppDao {
     }
     
     @Override
-    public Map<String, BigDecimal> countAppTypeByMemberid(Integer memberid) {
-        return sqlSessionTemplate.selectOne("app.countAppTypeByMemberid", memberid);
+    public void updateAppInfo(AppInfo appInfo) {
+        sqlSessionTemplate.update("app.updateAppInfo", appInfo);
+    }
+    
+    @Override
+    public List<AppCategory> findAllCategories() {
+        return sqlSessionTemplate.selectList("app.findAllCategories");
+    }
+    
+    @Override
+    public List<App> getAppList(DashBoardSearchParam param) {
+        return sqlSessionTemplate.selectList("app.getAppList", param);
     }
     
     @Override
     public App findById(String appkey) {
         return sqlSessionTemplate.selectOne("app.findById", appkey);
-    }
-    
-    @Override
-    public void update(App app) {
-        sqlSessionTemplate.update("app.update", app);
-    }
-    
-    @Override
-    public List<App> getAppListByReSeller(DashBoardSearchParam param) {
-        return sqlSessionTemplate.selectList("app.getAppListByReSeller", param);
-    }
-    
-    @Override
-    public int hasAccessPermission(String email, String appkey){
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("email",email);
-        map.put("appkey",appkey);
-        return sqlSessionTemplate.selectOne("app.hasAccessPermission",map);
     }
 }

@@ -1,0 +1,1038 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright 2014 tgrape Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ -->
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="distribution">
+
+  <!-- =============== Day Of Week =============== -->
+
+  <!-- Daily : graph -->
+  <select id="getDayOfWeekList" parameterType="FingraphSearchParam" resultType="DayOfWeekData">
+    SELECT
+      UPPER(dd.day) week, IFNULL(bb.user,0) user, IFNULL(bb.session,0) session
+    FROM
+      (
+        SELECT day, week_day
+        FROM dates_dimension
+        WHERE date BETWEEN '2014-10-06' AND '2014-10-12'   /*Any one week for Monday~Sunday*/
+      ) dd
+      LEFT OUTER JOIN
+      (
+        SELECT a.day, a.week_day, a.user, b.session
+        FROM
+          (
+            SELECT d.day, d.week_day, IFNULL(SUM(b.user),0) user
+            FROM
+              (SELECT date, day, week_day FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+              LEFT OUTER JOIN
+              (
+                SELECT date, user
+                FROM st_user_day
+                WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+              ) b
+              ON d.date=b.date
+            GROUP BY week_day
+          ) a,
+          (
+            SELECT d.day, d.week_day, IFNULL(SUM(b.session),0) session
+            FROM
+              (SELECT date, day, week_day FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+              LEFT OUTER JOIN
+              (
+                SELECT date, session
+                FROM st_session_day
+                WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+              ) b
+              ON d.date=b.date
+            GROUP BY week_day
+          ) b
+        WHERE a.week_day=b.week_day
+      ) bb
+      ON dd.week_day=bb.week_day
+  </select>
+
+  <!-- Daily : figure -->
+  <select id="getDayOfWeekFigures" parameterType="FingraphSearchParam" resultType="Figures">
+    SELECT
+      (
+        SELECT UPPER(DAYNAME(date))
+        FROM st_session_day
+        WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+        GROUP BY DAYNAME(date)
+        ORDER BY SUM(session) DESC, DAYNAME(date)
+        LIMIT 0,1
+      ) most,
+      (
+        SELECT UPPER(DAYNAME(date))
+        FROM st_session_day
+        WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+        GROUP BY DAYNAME(date)
+        ORDER BY SUM(session), DAYNAME(date)
+        LIMIT 0,1
+      ) least
+  </select>
+
+  <!-- =============== Time Of Day =============== -->
+
+  <!-- Daily : graph -->
+  <select id="getTimeOfDayList" parameterType="FingraphSearchParam" resultType="TimeOfDayData">
+    SELECT
+      IFNULL(SUM(zero_session),0) zero_session,
+      IFNULL(SUM(one_session),0) one_session,
+      IFNULL(SUM(two_session),0) two_session,
+      IFNULL(SUM(three_session),0) three_session,
+      IFNULL(SUM(four_session),0) four_session,
+      IFNULL(SUM(five_session),0) five_session,
+      IFNULL(SUM(six_session),0) six_session,
+      IFNULL(SUM(seven_session),0) seven_session,
+      IFNULL(SUM(eight_session),0) eight_session,
+      IFNULL(SUM(nine_session),0) nine_session,
+      IFNULL(SUM(ten_session),0) ten_session,
+      IFNULL(SUM(eleven_session),0) eleven_session,
+      IFNULL(SUM(twelve_session),0) twelve_session,
+      IFNULL(SUM(thirteen_session),0) thirteen_session,
+      IFNULL(SUM(fourteen_session),0) fourteen_session,
+      IFNULL(SUM(fifteen_session),0) fifteen_session,
+      IFNULL(SUM(sixteen_session),0) sixteen_session,
+      IFNULL(SUM(seventeen_session),0) seventeen_session,
+      IFNULL(SUM(eighteen_session),0) eighteen_session,
+      IFNULL(SUM(nineteen_session),0) nineteen_session,
+      IFNULL(SUM(twenty_session),0) twenty_session,
+      IFNULL(SUM(twentyone_session),0) twentyone_session,
+      IFNULL(SUM(twentytwo_session),0) twentytwo_session,
+      IFNULL(SUM(twentythree_session),0) twentythree_session
+    FROM st_time_day
+    WHERE appkey=#{appkey}
+      AND date BETWEEN #{from} AND #{to}
+  </select>
+
+  <!-- Daily : figure -->
+  <select id="getTimeOfDayFigures" parameterType="FingraphSearchParam" resultType="Figures">
+    <![CDATA[
+    SELECT IFNULL(CASE GREATEST(1AM,2AM,3AM,4AM,5AM,6AM,7AM,8AM,9AM,10AM,11AM,12AM,1PM,2PM,3PM,4PM,5PM,6PM,7PM,8PM,9PM,10PM,11PM,12PM)
+      WHEN 1AM THEN '0AM-1AM'
+      WHEN 2AM THEN '1AM-2AM'
+      WHEN 3AM THEN '2AM-3AM'
+      WHEN 4AM THEN '3AM-4AM'
+      WHEN 5AM THEN '4AM-5AM'
+      WHEN 6AM THEN '5AM-6AM'
+      WHEN 7AM THEN '6AM-7AM'
+      WHEN 8AM THEN '7AM-8AM'
+      WHEN 9AM THEN '8AM-9AM'
+      WHEN 10AM THEN '9AM-10AM'
+      WHEN 11AM THEN '10AM-11AM'
+      WHEN 12AM THEN '11AM-12AM'
+      WHEN 1PM THEN '0PM-1PM'
+      WHEN 2PM THEN '1PM-2PM'
+      WHEN 3PM THEN '2PM-3PM'
+      WHEN 4PM THEN '3PM-4PM'
+      WHEN 5PM THEN '4PM-5PM'
+      WHEN 6PM THEN '5PM-6PM'
+      WHEN 7PM THEN '6PM-7PM'
+      WHEN 8PM THEN '7PM-8PM'
+      WHEN 9PM THEN '8PM-9PM'
+      WHEN 10PM THEN '9PM-10PM'
+      WHEN 11PM THEN '10PM-11PM'
+      WHEN 12PM THEN '11PM-12PM'
+      END,'N/A') most,
+      IFNULL(CASE LEAST(1AM,2AM,3AM,4AM,5AM,6AM,7AM,8AM,9AM,10AM,11AM,12AM,1PM,2PM,3PM,4PM,5PM,6PM,7PM,8PM,9PM,10PM,11PM,12PM)
+      WHEN 1AM THEN '0AM-1AM'
+      WHEN 2AM THEN '1AM-2AM'
+      WHEN 3AM THEN '2AM-3AM'
+      WHEN 4AM THEN '3AM-4AM'
+      WHEN 5AM THEN '4AM-5AM'
+      WHEN 6AM THEN '5AM-6AM'
+      WHEN 7AM THEN '6AM-7AM'
+      WHEN 8AM THEN '7AM-8AM'
+      WHEN 9AM THEN '8AM-9AM'
+      WHEN 10AM THEN '9AM-10AM'
+      WHEN 11AM THEN '10AM-11AM'
+      WHEN 12AM THEN '11AM-12AM'
+      WHEN 1PM THEN '0PM-1PM'
+      WHEN 2PM THEN '1PM-2PM'
+      WHEN 3PM THEN '2PM-3PM'
+      WHEN 4PM THEN '3PM-4PM'
+      WHEN 5PM THEN '4PM-5PM'
+      WHEN 6PM THEN '5PM-6PM'
+      WHEN 7PM THEN '6PM-7PM'
+      WHEN 8PM THEN '7PM-8PM'
+      WHEN 9PM THEN '8PM-9PM'
+      WHEN 10PM THEN '9PM-10PM'
+      WHEN 11PM THEN '10PM-11PM'
+      WHEN 12PM THEN '11PM-12PM'
+      END,'N/A') least
+    FROM
+      (
+        SELECT
+          SUM(zero_session) AS 1AM, SUM(one_session) AS 2AM, SUM(two_session) AS 3AM, SUM(three_session) AS 4AM,
+          SUM(four_session) AS 5AM, SUM(five_session) AS 6AM, SUM(six_session) AS 7AM, SUM(seven_session) AS 8AM,
+          SUM(eight_session) AS 9AM, SUM(nine_session) AS 10AM, SUM(ten_session) AS 11AM, SUM(eleven_session) AS 12AM,
+          SUM(twelve_session) AS 1PM, SUM(thirteen_session) AS 2PM, SUM(fourteen_session) AS 3PM, SUM(fifteen_session) AS 4PM,
+          SUM(sixteen_session) AS 5PM, SUM(seventeen_session) AS 6PM, SUM(eighteen_session) AS 7PM, SUM(nineteen_session) AS 8PM,
+          SUM(twenty_session) AS 9PM, SUM(twentyone_session) AS 10PM, SUM(twentytwo_session) AS 11PM, SUM(twentythree_session) AS 12PM
+        FROM st_time_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      ) a
+    ]]>
+  </select>
+
+  <!-- =============== Top Resolution =============== -->
+
+  <!-- Daily : topN -->
+  <select id="getResolutionDailyTopNList" parameterType="FingraphSearchParam" resultType="string">
+    SELECT resolution
+    FROM st_resolution_day
+    WHERE appkey=#{appkey}
+      AND date BETWEEN #{from} AND #{to}
+    GROUP BY resolution
+    ORDER BY SUM(user) DESC, resolution
+  </select>
+
+  <!-- Daily : total graph -->
+  <select id="getResolutionDailySum" parameterType="FingraphSearchParam" resultType="ResolutionData">
+    SELECT resolution, user
+    FROM
+      (
+        SELECT resolution, SUM(user) user
+        FROM st_resolution_day
+        WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+          AND resolution IN
+          <foreach item="topNList0" index="index" collection="topNList" separator="," open="(" close=")" >
+            #{topNList0}
+          </foreach>
+        GROUP BY resolution
+        ORDER BY SUM(user) DESC, resolution
+      ) a
+      <if test="isOthers eq true">
+      UNION ALL
+      SELECT 'others' resolution, IFNULL(SUM(user),0) user
+      FROM st_resolution_day
+      WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+        AND resolution NOT IN
+        <foreach item="topNList1" index="index" collection="topNList" separator="," open="(" close=")" >
+          #{topNList1}
+        </foreach>
+      </if>
+  </select>
+
+  <!-- Daily : time series graph -->
+  <select id="getResolutionDailyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="ResolutionTimeSeriesData">
+    SELECT date,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+      <if test="isOthers eq true">
+        , SUM(others) others
+      </if>
+    FROM
+      (
+        SELECT date,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE resolution WHEN #{topN1} THEN user ELSE 0 END) top${index}
+          </foreach>
+          <if test="isOthers eq true">
+            , (CASE resolution WHEN 'others' THEN user ELSE 0 END) others
+          </if>
+        FROM
+          (
+            SELECT d.date, b.resolution resolution, b.user
+            FROM
+              (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+              LEFT OUTER JOIN
+              (
+                SELECT date, resolution, user
+                FROM
+                  (
+                    SELECT date, resolution, user
+                    FROM st_resolution_day
+                    WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+                      AND resolution IN
+                      <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                        #{topN2}
+                      </foreach>
+                  ) a
+                  <if test="isOthers eq true">
+                  UNION ALL
+                  SELECT date, resolution, user
+                  FROM
+                    (
+                      SELECT date, 'others' resolution, SUM(user) user
+                      FROM st_resolution_day
+                      WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+                        AND resolution NOT IN
+                        <foreach item="topN3" index="index" collection="topNList" separator="," open="(" close=")" >
+                          #{topN3}
+                        </foreach>
+                      GROUP BY date
+                    ) a
+                  </if>
+              ) b
+              ON d.date=b.date
+          ) c
+      ) d
+    GROUP BY date
+  </select>
+
+  <!-- Weekly : topN -->
+  <select id="getResolutionWeeklyTopNList" parameterType="FingraphSearchParam" resultType="string">
+    SELECT resolution
+    FROM
+      (
+        SELECT week_year, week_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, week, fromdate, todate, resolution, user
+        FROM st_resolution_week
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.week_year=b.year AND a.week_of_year=b.week
+    GROUP BY resolution
+    ORDER BY SUM(user) DESC, resolution
+  </select>
+
+  <!-- Weekly : total graph -->
+  <select id="getResolutionWeeklySum" parameterType="FingraphSearchParam" resultType="ResolutionData">
+    SELECT resolution, user
+    FROM
+      (
+        SELECT resolution, SUM(user) user
+        FROM
+          (
+            SELECT week_year, week_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY week_year, week_of_year
+          ) a
+          JOIN
+          (
+            SELECT year, week, resolution, user
+            FROM st_resolution_week
+            WHERE appkey=#{appkey}
+              AND resolution IN
+              <foreach item="topN0" index="index" collection="topNList" separator="," open="(" close=")" >
+                #{topN0}
+              </foreach>
+          ) b
+          ON a.week_year=b.year AND a.week_of_year=b.week
+        GROUP BY resolution
+        ORDER BY SUM(user) DESC, resolution
+      ) a
+      <if test="isOthers eq true">
+      UNION ALL
+      SELECT 'others' resolution, IFNULL(SUM(user),0) user
+      FROM
+        (
+          SELECT week_year, week_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY week_year, week_of_year
+        ) a
+        JOIN
+        (
+          SELECT year, week, resolution, user
+          FROM st_resolution_week
+          WHERE appkey=#{appkey}
+            AND resolution NOT IN
+            <foreach item="topN1" index="index" collection="topNList" separator="," open="(" close=")" >
+              #{topN1}
+            </foreach>
+        ) b
+        ON a.week_year=b.year AND a.week_of_year=b.week
+      </if>
+  </select>
+
+  <!-- Weekly : time series graph -->
+  <select id="getResolutionWeeklyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="ResolutionTimeSeriesData">
+    SELECT
+      MAX(fromDate) fromDate, MAX(toDate) toDate, year, week,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+      <if test="isOthers eq true">
+        , SUM(others) others
+      </if>
+    FROM
+      (
+        SELECT fromDate, toDate, year, week,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE resolution WHEN #{topN1} THEN user ELSE 0 END) top${index}
+          </foreach>
+          <if test="isOthers eq true">
+            , (CASE resolution WHEN 'others' THEN user ELSE 0 END) others
+          </if>
+        FROM
+          (
+            SELECT
+              IFNULL(b.fromdate,a.fromdate) fromDate, IFNULL(b.todate,a.todate) toDate,
+              a.week_year year, a.week_of_year week, resolution, IFNULL(user,0) user
+            FROM
+              (
+                SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+                FROM dates_dimension
+                WHERE date BETWEEN #{from} AND #{to}
+                GROUP BY week_year, week_of_year
+              ) a
+              LEFT OUTER JOIN
+              (
+                SELECT year, week, fromdate, todate, resolution, user
+                FROM st_resolution_week
+                WHERE appkey=#{appkey}
+                  AND resolution IN
+                  <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                    #{topN2}
+                  </foreach>
+              ) b
+              ON a.week_year=b.year AND a.week_of_year=b.week
+            <if test="isOthers eq true">
+            UNION ALL
+            SELECT
+              IFNULL(b.fromdate,a.fromdate) fromDate, IFNULL(b.todate,a.todate) toDate,
+              a.week_year year, a.week_of_year week, 'others' resolution, IFNULL(SUM(user),0) user
+            FROM
+              (
+                SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+                FROM dates_dimension
+                WHERE date BETWEEN #{from} AND #{to}
+                GROUP BY week_year, week_of_year
+              ) a
+              LEFT OUTER JOIN
+              (
+                SELECT year, week, fromdate, todate, resolution, user
+                FROM st_resolution_week
+                WHERE appkey=#{appkey}
+                  AND resolution NOT IN
+                  <foreach item="topN3" index="index" collection="topNList" separator="," open="(" close=")" >
+                    #{topN3}
+                  </foreach>
+              ) b
+              ON a.week_year=b.year AND a.week_of_year=b.week
+            GROUP BY week_year, week_of_year
+            </if>
+          ) a
+      ) b
+    GROUP BY year, week
+  </select>
+
+  <!-- Monthly : topN -->
+  <select id="getResolutionMonthlyTopNList" parameterType="FingraphSearchParam" resultType="string">
+    SELECT resolution
+    FROM
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY year, month_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, month, resolution, user
+        FROM st_resolution_month
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.year=b.year AND a.month_of_year=b.month
+    GROUP BY resolution
+    ORDER BY SUM(user) DESC, resolution
+  </select>
+
+  <!-- Monthly : total graph -->
+  <select id="getResolutionMonthlySum" parameterType="FingraphSearchParam" resultType="ResolutionData">
+    SELECT resolution, user
+    FROM
+      (
+        SELECT resolution, SUM(user) user
+        FROM
+          (
+            SELECT year, month_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY year, month_of_year
+          ) a
+          JOIN
+          (
+            SELECT year, month, resolution, user
+            FROM st_resolution_month
+            WHERE appkey=#{appkey}
+              AND resolution IN
+              <foreach item="topN0" index="index" collection="topNList" separator="," open="(" close=")" >
+                #{topN0}
+              </foreach>
+          ) b
+          ON a.year=b.year AND a.month_of_year=b.month
+        GROUP BY resolution
+        ORDER BY SUM(user) desc, resolution
+      ) a
+      <if test="isOthers eq true">
+      UNION ALL
+      SELECT 'others' resolution, IFNULL(SUM(user),0) user
+      FROM
+        (
+          SELECT year, month_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY year,month_of_year
+        ) a
+        JOIN
+        (
+          SELECT year, month, resolution, user
+          FROM st_resolution_month
+          WHERE appkey=#{appkey}
+            AND resolution NOT IN
+            <foreach item="topN1" index="index" collection="topNList" separator="," open="(" close=")" >
+              #{topN1}
+            </foreach>
+        ) b
+        ON a.year=b.year AND a.month_of_year=b.month
+      </if>
+  </select>
+
+  <!-- Monthly : time series graph -->
+  <select id="getResolutionMonthlyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="ResolutionTimeSeriesData">
+    SELECT year, month,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+      <if test="isOthers eq true">
+        , SUM(others) others
+      </if>
+    FROM
+      (
+        SELECT year, month,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE resolution WHEN #{topN1} THEN user ELSE 0 END) top${index}
+          </foreach>
+          <if test="isOthers eq true">
+            , (CASE resolution WHEN 'others' THEN user ELSE 0 END) others
+          </if>
+        FROM
+          (
+            SELECT a.year year, a.month_of_year month, resolution, IFNULL(user,0) user
+            FROM
+              (
+                SELECT year, month_of_year
+                FROM dates_dimension
+                WHERE date BETWEEN #{from} AND #{to}
+                GROUP BY year, month_of_year
+              ) a
+              LEFT OUTER JOIN
+              (
+                SELECT year, month, resolution, user
+                FROM st_resolution_month
+                WHERE appkey=#{appkey}
+                  AND resolution IN
+                  <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                    #{topN2}
+                  </foreach>
+              ) b
+              ON a.year=b.year AND a.month_of_year=b.month
+            <if test="isOthers eq true">
+            UNION ALL
+            SELECT a.year year, a.month_of_year week, 'others' resolution, IFNULL(SUM(user),0) user
+            FROM
+              (
+                SELECT year, month_of_year
+                FROM dates_dimension
+                WHERE date BETWEEN #{from} AND #{to}
+                GROUP BY year, month_of_year
+              ) a
+              LEFT OUTER JOIN
+              (
+                SELECT year, month, resolution, user
+                FROM st_resolution_month
+                WHERE appkey=#{appkey}
+                  AND resolution NOT IN
+                  <foreach item="topN3" index="index" collection="topNList" separator="," open="(" close=")" >
+                    #{topN3}
+                  </foreach>
+              ) b
+              ON a.year=b.year AND a.month_of_year=b.month
+            GROUP BY a.year,a.month_of_year
+            </if>
+          ) a
+      ) b
+    GROUP BY year, month
+  </select>
+
+  <!-- =============== Top Versions : App Versions =============== -->
+
+  <!-- Daily : topN -->
+  <select id="getAppVersionsDailyTopNList" parameterType="FingraphSearchParam" resultType="string">
+    SELECT appversion
+    FROM st_appversion_day
+    WHERE appkey=#{appkey}
+      AND date BETWEEN #{from} AND #{to}
+    GROUP BY appversion
+    ORDER BY SUM(user) DESC, appversion
+    LIMIT 0, #{topN}
+  </select>
+
+  <!-- Daily : total graph -->
+  <select id="getAppVersionsDailyTopNSum" parameterType="FingraphSearchParam" resultType="VersionsData" >
+    SELECT appversion type, SUM(user) AS user
+    FROM st_appversion_day
+    WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+      AND appversion IN
+      <foreach item="topNList" index="index" collection="topNList" separator="," open="(" close=")" >
+        #{topNList}
+      </foreach>
+    GROUP BY appversion
+    ORDER BY SUM(user) DESC, appversion
+  </select>
+
+  <!-- Daily : time series graph -->
+  <select id="getAppVersionsDailyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="VersionsTimeSeriesData" >
+    SELECT date,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT date,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE appversion WHEN #{topN1} THEN user ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (
+            SELECT d.date date, a.appversion, a.user
+            FROM
+              (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+              LEFT OUTER JOIN
+              (
+                SELECT date, appversion, user
+                FROM st_appversion_day
+                WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+                  AND appversion IN
+                  <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                    #{topN2}
+                  </foreach>
+              ) a
+              ON d.date=a.date
+          ) b
+      ) c
+    GROUP BY date
+  </select>
+
+  <!-- Weekly : topN -->
+  <select id="getAppVersionsWeeklyTopNList" parameterType="FingraphSearchParam" resultType="string">
+    SELECT appversion
+    FROM
+      (
+        SELECT week_year, week_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, week, fromdate, todate, appversion, user
+        FROM st_appversion_week
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.week_year=b.year AND a.week_of_year=b.week
+    GROUP BY appversion
+    ORDER BY SUM(user) DESC, appversion
+    LIMIT 0, #{topN}
+  </select>
+
+  <!-- Weekly : total graph -->
+  <select id="getAppVersionsWeeklyTopNSum" parameterType="FingraphSearchParam" resultType="VersionsData" >
+    SELECT appversion type, SUM(user) user
+    FROM
+      (
+        SELECT week_year, week_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+      ) a
+      JOIN
+      (
+        SELECT year, week, fromdate, todate, appversion, user
+        FROM st_appversion_week
+        WHERE appkey=#{appkey}
+          AND appversion IN
+          <foreach item="topNList" index="index" collection="topNList" separator="," open="(" close=")" >
+            #{topNList}
+          </foreach>
+      ) b
+      ON a.week_year=b.year AND a.week_of_year=b.week
+    GROUP BY appversion
+    ORDER BY SUM(user) DESC, appversion
+  </select>
+
+  <!-- Weekly : time series graph -->
+  <select id="getAppVersionsWeeklyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="VersionsTimeSeriesData" >
+    SELECT MAX(fromdate) fromDate, MAX(todate) toDate, year, week,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT fromdate, todate, year, week,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE appversion WHEN #{topN1} THEN user ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (
+            SELECT
+              IFNULL(b.fromdate,a.fromdate) fromDate, IFNULL(b.todate,a.todate) toDate,
+              a.week_year year, a.week_of_year week, appversion, user
+            FROM
+              (
+                SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+                FROM dates_dimension
+                WHERE date BETWEEN #{from} AND #{to}
+                GROUP BY week_year, week_of_year
+              ) a
+              LEFT OUTER JOIN
+              (
+                SELECT year, week, fromdate, todate, appversion, user
+                FROM st_appversion_week
+                WHERE appkey=#{appkey}
+                  AND appversion IN
+                  <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                    #{topN2}
+                  </foreach>
+              ) b
+              ON a.week_year=b.year AND a.week_of_year=b.week
+          ) c
+      ) d
+    GROUP BY year, week
+  </select>
+
+  <!-- Monthly : topN -->
+  <select id="getAppVersionsMonthlyTopNList" parameterType="FingraphSearchParam" resultType="string">
+    SELECT appversion
+    FROM
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year,week_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, month, appversion, user
+        FROM st_appversion_month
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.year=b.year AND a.month_of_year=b.month
+    GROUP BY appversion
+    ORDER BY SUM(user) DESC, appversion
+    LIMIT 0, #{topN}
+  </select>
+
+  <!-- Monthly : total graph -->
+  <select id="getAppVersionsMonthlyTopNSum" parameterType="FingraphSearchParam" resultType="VersionsData" >
+    SELECT appversion type, SUM(b.user) user
+    FROM
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY year, month_of_year
+      ) a
+      JOIN
+      (
+        SELECT year, month, appversion, user
+        FROM st_appversion_month
+        WHERE appkey=#{appkey}
+          AND appversion IN
+          <foreach item="topNList" index="index" collection="topNList" separator="," open="(" close=")" >
+            #{topNList}
+          </foreach>
+      ) b
+      ON a.year=b.year AND a.month_of_year=b.month
+    GROUP BY appversion
+    ORDER BY SUM(user) DESC, appversion
+  </select>
+
+  <!-- Monthly : time series graph -->
+  <select id="getAppVersionsMonthlyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="VersionsTimeSeriesData" >
+    SELECT year, month,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT year, month,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE appversion WHEN #{topN1} THEN user ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (
+            SELECT a.year year, a.month_of_year month, appversion, user
+            FROM
+              (
+                SELECT year, month_of_year
+                FROM dates_dimension
+                WHERE date BETWEEN #{from} AND #{to}
+                GROUP BY year, month_of_year
+              ) a
+              LEFT OUTER JOIN
+              (
+                SELECT year, month, appversion, user
+                FROM st_appversion_month
+                WHERE appkey=#{appkey}
+                  AND appversion IN
+                  <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                    #{topN2}
+                  </foreach>
+              ) b
+              ON a.year=b.year AND a.month_of_year=b.month
+          ) c
+      ) d
+    GROUP BY year, month
+  </select>
+
+  <!-- =============== Top Versions : OS Versions =============== -->
+
+  <!-- Daily : topN -->
+  <select id="getOsVersionsDailyTopNList" parameterType="FingraphSearchParam" resultType="string">
+    SELECT osversion
+    FROM st_osversion_day
+    WHERE appkey=#{appkey}
+        AND date BETWEEN #{from} AND #{to}
+    GROUP BY osversion
+    ORDER BY SUM(user) DESC, osversion
+    LIMIT 0, #{topN}
+  </select>
+
+  <!-- Daily : total graph -->
+  <select id="getOsVersionsDailyTopNSum" parameterType="FingraphSearchParam" resultType="VersionsData" >
+    SELECT osversion type, SUM(user) AS user
+    FROM st_osversion_day
+    WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+        AND osversion IN
+        <foreach item="topNList" index="index" collection="topNList" separator="," open="(" close=")" >
+            #{topNList}
+        </foreach>
+    GROUP BY osversion
+    ORDER BY SUM(user) DESC, osversion
+  </select>
+
+  <!-- Daily : time series graph -->
+  <select id="getOsVersionsDailyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="VersionsTimeSeriesData" >
+    SELECT date,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT date,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+              (CASE osversion WHEN #{topN1} THEN user ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (
+            SELECT d.date date, a.osversion, a.user
+            FROM
+              (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+              LEFT OUTER JOIN
+              (
+                SELECT date, osversion, user
+                FROM st_osversion_day
+                WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+                  AND osversion IN
+                  <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                    #{topN2}
+                  </foreach>
+              ) a
+              ON d.date=a.date
+          ) b
+      ) c
+    GROUP BY date
+  </select>
+
+  <!-- Weekly : topN -->
+  <select id="getOsVersionsWeeklyTopNList" parameterType="FingraphSearchParam" resultType="string">
+    SELECT osversion
+    FROM
+      (
+        SELECT week_year, week_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, week, fromdate, todate, osversion, user
+        FROM st_osversion_week
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.week_year=b.year AND a.week_of_year=b.week
+    GROUP BY osversion
+    ORDER BY SUM(user) DESC, osversion
+    LIMIT 0, #{topN}
+  </select>
+
+  <!-- Weekly : total graph -->
+  <select id="getOsVersionsWeeklyTopNSum" parameterType="FingraphSearchParam" resultType="VersionsData" >
+    SELECT osversion type, SUM(user) user
+    FROM
+      (
+        SELECT week_year, week_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+      ) a
+      JOIN
+      (
+        SELECT year, week, fromdate, todate, osversion, user
+        FROM st_osversion_week
+        WHERE appkey=#{appkey}
+          AND osversion IN
+          <foreach item="topNList" index="index" collection="topNList" separator="," open="(" close=")" >
+            #{topNList}
+          </foreach>
+      ) b
+      ON a.week_year=b.year AND a.week_of_year=b.week
+    GROUP BY osversion
+    ORDER BY SUM(user) DESC, osversion
+  </select>
+
+  <!-- Weekly : time series graph -->
+  <select id="getOsVersionsWeeklyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="VersionsTimeSeriesData" >
+    SELECT MAX(fromdate) fromDate, MAX(todate) toDate, year, week,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT fromdate, todate, year, week,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE osversion WHEN #{topN1} THEN user ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (
+            SELECT
+              IFNULL(b.fromdate,a.fromdate) fromDate, IFNULL(b.todate,a.todate) toDate,
+              a.week_year year, a.week_of_year week, osversion, user
+            FROM
+              (
+                SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+                FROM dates_dimension
+                WHERE date BETWEEN #{from} AND #{to}
+                GROUP BY week_year, week_of_year
+              ) a
+              LEFT OUTER JOIN
+              (
+                SELECT year, week, fromdate, todate, osversion, user
+                FROM st_osversion_week
+                WHERE appkey=#{appkey}
+                  AND osversion IN
+                  <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                    #{topN2}
+                  </foreach>
+              ) b
+              ON a.week_year=b.year AND a.week_of_year=b.week
+          ) c
+      ) d
+    GROUP BY year, week
+  </select>
+
+  <!-- Monthly : topN -->
+  <select id="getOsVersionsMonthlyTopNList" parameterType="FingraphSearchParam" resultType="string">
+    SELECT osversion
+    FROM
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, month, osversion, user
+        FROM st_osversion_month
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.year=b.year AND a.month_of_year=b.month
+    GROUP BY osversion
+    ORDER BY SUM(user) DESC, osversion
+    LIMIT 0, #{topN}
+  </select>
+
+  <!-- Monthly : total graph -->
+  <select id="getOsVersionsMonthlyTopNSum" parameterType="FingraphSearchParam" resultType="VersionsData" >
+    SELECT osversion type, SUM(b.user) user
+    FROM
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY year, month_of_year
+      ) a
+      JOIN
+      (
+        SELECT year, month, osversion, user
+        FROM st_osversion_month
+        WHERE appkey=#{appkey}
+          AND osversion IN
+          <foreach item="topNList" index="index" collection="topNList" separator="," open="(" close=")" >
+            #{topNList}
+          </foreach>
+      ) b
+      ON a.year=b.year AND a.month_of_year=b.month
+    GROUP BY osversion
+    ORDER BY SUM(user) DESC, osversion
+  </select>
+
+  <!-- Monthly : time series graph -->
+  <select id="getOsVersionsMonthlyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="VersionsTimeSeriesData" >
+    SELECT year, month,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT year, month,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE osversion WHEN #{topN1} THEN user ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (
+            SELECT a.year year, a.month_of_year month, osversion, user
+            FROM
+              (
+                SELECT year, month_of_year
+                FROM dates_dimension
+                WHERE date BETWEEN #{from} AND #{to}
+                GROUP BY year, month_of_year
+              ) a
+              LEFT OUTER JOIN
+              (
+                SELECT year, month, osversion, user
+                FROM st_osversion_month
+                WHERE appkey=#{appkey}
+                  AND osversion IN
+                  <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                    #{topN2}
+                  </foreach>
+              ) b
+              ON a.year=b.year AND a.month_of_year=b.month
+          ) c
+      ) d
+    GROUP BY year, month
+  </select>
+
+</mapper>

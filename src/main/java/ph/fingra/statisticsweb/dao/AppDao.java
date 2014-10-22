@@ -16,9 +16,7 @@
 
 package ph.fingra.statisticsweb.dao;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 import ph.fingra.statisticsweb.domain.App;
 import ph.fingra.statisticsweb.domain.AppCategory;
@@ -27,29 +25,19 @@ import ph.fingra.statisticsweb.domain.DashBoardSearchParam;
 
 public interface AppDao {
     
-    List<AppCategory> findAllCategories();
+    public void insert(App app);
     
-    void insert(App app);
+    public void update(App app);
     
-    List<App> findPairedAppsByMemberid(Integer memberid);
+    public void updateAppType(App app);
     
-    List<App> findNotPairedAppsByMemberid(Integer memberid);
+    public void updateAppStatus(App app);
     
-    List<App> getAppList(DashBoardSearchParam param);
+    public void updateAppInfo(AppInfo appInfo);
     
-    void updateAppInfo(AppInfo appInfo);
+    public List<AppCategory> findAllCategories();
     
-    void updateAppType(App app);
+    public List<App> getAppList(DashBoardSearchParam param);
     
-    void updateAppStatus(App app);
-    
-    Map<String, BigDecimal> countAppTypeByMemberid(Integer memberid);
-    
-    App findById(String appkey);
-    
-    void update(App app);
-    
-    List<App> getAppListByReSeller(DashBoardSearchParam param);
-    
-    int hasAccessPermission(String email, String appkey);
+    public App findById(String appkey);
 }

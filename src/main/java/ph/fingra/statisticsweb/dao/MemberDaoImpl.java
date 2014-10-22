@@ -30,43 +30,55 @@ public class MemberDaoImpl implements MemberDao {
     @Autowired
     private SqlSessionTemplate sqlSessionTemplate;
     
-    public List<Member> getList() {
-        return sqlSessionTemplate.selectList("member.getList");
-    }
-    
-    public Member findByEmail(String email) {
-        return sqlSessionTemplate.selectOne("member.findByEmail", email);
-    }
-    
-    public void updateMemberLastLoginTime(Member member) {
-        sqlSessionTemplate.update("member.updateMemberLastLoginTime", member);
-    }
-    
     public void insert(Member member) {
         sqlSessionTemplate.insert("member.insert", member);
-    }
-    
-    public int countByEmail(String email) {
-        return sqlSessionTemplate.selectOne("member.countByEmail", email);
-    }
-    
-    public void delete(String email) {
-        sqlSessionTemplate.delete("member.delete", email);
-    }
-    
-    public void updateStatus(Member member) {
-        sqlSessionTemplate.update("member.updateStatus", member);
-    }
-    
-    public Member findById(Integer memberid) {
-        return sqlSessionTemplate.selectOne("member.findById", memberid);
     }
     
     public void update(Member member) {
         sqlSessionTemplate.update("member.update", member);
     }
     
+    public void updateStatus(Member member) {
+        sqlSessionTemplate.update("member.updateStatus", member);
+    }
+    
+    public void updateJoinstatus(Member member) {
+        sqlSessionTemplate.update("member.updateJoinstatus", member);
+    }
+    
     public void updatePassword(Member member) {
         sqlSessionTemplate.update("member.updatePassword", member);
+    }
+    
+    public void delete(String email) {
+        sqlSessionTemplate.delete("member.delete", email);
+    }
+    
+    public void updateMemberLastLoginTime(Member member) {
+        sqlSessionTemplate.update("member.updateMemberLastLoginTime", member);
+    }
+    
+    public List<Member> getList() {
+        return sqlSessionTemplate.selectList("member.getList");
+    }
+    
+    public List<Member> getListByStatus(int status) {
+        return sqlSessionTemplate.selectList("member.getListByStatus", status);
+    }
+    
+    public List<Member> getListByJoinstatus(int joinstatus) {
+        return sqlSessionTemplate.selectList("member.getListByJoinstatus", joinstatus);
+    }
+    
+    public Member findByEmail(String email) {
+        return sqlSessionTemplate.selectOne("member.findByEmail", email);
+    }
+    
+    public int countByEmail(String email) {
+        return sqlSessionTemplate.selectOne("member.countByEmail", email);
+    }
+    
+    public Member findById(Integer memberid) {
+        return sqlSessionTemplate.selectOne("member.findById", memberid);
     }
 }

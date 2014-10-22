@@ -20,18 +20,78 @@
 
 <mapper namespace="member">
 
+  <insert id="insert" useGeneratedKeys="true" keyProperty="memberid">
+    INSERT INTO member
+      (memberid,email,name,password,department,phone,status,joinstatus,created)
+    VALUES
+      (#{memberid},#{email},#{name},#{password},#{department},#{phone},#{status},#{joinstatus},now())
+  </insert>
+
+  <update id="update">
+    UPDATE member SET
+      name=#{name},
+      <if test="@ph.fingra.statisticsweb.common.util.ComparatorUtil@isNotEmpty(password)">
+        password=#{password},
+      </if>
+      department=#{department},
+      phone=#{phone},
+      modified=now()
+    WHERE memberid=#{memberid}
+  </update>
+
+  <update id="updateStatus">
+    UPDATE member SET
+      status=#{status},
+      modified=now()
+    WHERE email=#{email}
+  </update>
+
+  <update id="updateJoinstatus">
+    UPDATE member SET
+      joinstatus=#{joinstatus},
+      modified=now()
+    WHERE email=#{email}
+  </update>
+
+  <update id="updatePassword">
+    UPDATE member SET
+      password=#{password},
+      modified=now()
+    WHERE memberid=#{memberid}
+  </update>
+
+  <delete id="delete">
+    DELETE FROM member WHERE email=#{value}
+  </delete>
+
+  <update id="updateMemberLastLoginTime">
+    UPDATE member SET
+      lastlogin=now()
+    WHERE memberid=#{memberid}
+  </update>
+
   <select id="getList" resultType="Member">
     SELECT *, 0 AS role FROM member
   </select>
 
-  <select id="findByEmail" resultType="Member">
-    SELECT *, 0 AS role FROM member WHERE email = #{email}
+  <select id="getListByStatus" resultType="Member">
+    SELECT *, 0 AS role FROM member WHERE status=#{value}
   </select>
 
-  <update id="updateMemberLastLoginTime">
-    UPDATE member
-    SET lastlogin = now()
-    WHERE memberid = #{memberid}
-  </update>
+  <select id="getListByJoinstatus" resultType="Member">
+    SELECT *, 0 AS role FROM member WHERE joinstatus=#{value}
+  </select>
+
+  <select id="findByEmail" resultType="Member">
+    SELECT *, 0 AS role FROM member WHERE email=#{email}
+  </select>
+
+  <select id="countByEmail" resultType="int">
+    SELECT count(*) FROM member WHERE email=#{value}
+  </select>
+
+  <select id="findById" resultType="Member">
+    SELECT *, 0 AS role FROM member WHERE memberid=#{value}
+  </select>
 
 </mapper>

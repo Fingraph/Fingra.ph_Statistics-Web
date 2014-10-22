@@ -1,0 +1,891 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright 2014 tgrape Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ -->
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dashboard">
+
+  <!-- =============== App =============== -->
+
+  <!-- app -->
+  <select id="getApp" parameterType="DashBoardSearchParam" resultType="App">
+    SELECT
+      appkey, platform, appname, appid, marketid, categoryid, a.status, apptype,
+      (SELECT categoryname FROM category WHERE categoryid=a.categoryid ) categoryname,
+      (SELECT CASE WHEN (COUNT(*) &gt; 0) THEN 'true' ELSE 'false' END FROM component WHERE appkey=a.appkey AND isdel=0) hasComponents
+    FROM app a
+    WHERE appkey=#{appkey} AND a.status=1
+  </select>
+
+  <!-- appinfo -->
+  <select id="getAppInfo" parameterType="DashBoardSearchParam" resultType="AppInfo">
+    SELECT appkey, smallicon, mediumicon, largeicon
+    FROM appinfo
+    WHERE appkey=#{appkey}
+  </select>
+
+  <!-- =============== Perfomance Snapshot =============== -->
+
+  <!-- performance period check -->
+  <select id="getIsCompare" parameterType="DashBoardSearchParam" resultType="boolean">
+    SELECT
+      CASE count(date) WHEN 0 THEN 'false' ELSE (
+        CASE when date > DATE_FORMAT(#{prevFrom},'%Y-%m-%d') THEN 'false' ELSE 'true' END) END 
+    FROM app_log_first 
+    WHERE appkey=#{appkey}
+  </select>
+
+  <!-- new users -->
+  <select id="getNewUsers" parameterType="DashBoardSearchParam" resultType="CurrPrevNumericValue">
+    SELECT
+      previous, current
+    FROM
+    (
+      SELECT IFNULL(AVG(IFNULL(u.newuser,0)),0) previous
+      FROM
+      (
+        SELECT date FROM dates_dimension
+        WHERE date BETWEEN #{prevFrom} AND #{prevTo}
+      ) d
+      LEFT OUTER JOIN
+      (
+        SELECT date, newuser FROM st_newuser_day
+        WHERE appkey=#{appkey} AND
+          date BETWEEN #{prevFrom} AND #{prevTo}
+      ) u
+      ON d.date=u.date
+    ) a,
+    (
+      SELECT IFNULL(AVG(IFNULL(u.newuser,0)),0) current
+      FROM
+      (
+        SELECT date FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+      ) d
+      LEFT OUTER JOIN
+      (
+        SELECT date, newuser FROM st_newuser_day
+        WHERE appkey=#{appkey} AND
+          date BETWEEN #{from} AND #{to}
+      ) u
+      ON d.date=u.date
+    ) b
+  </select>
+
+  <!-- active users -->
+  <select id="getActiveUsers" parameterType="DashBoardSearchParam" resultType="CurrPrevNumericValue">
+    SELECT
+      previous, current
+    FROM
+    (
+      SELECT IFNULL(AVG(IFNULL(u.user,0)),0) previous
+      FROM
+      (
+        SELECT date FROM dates_dimension
+        WHERE date BETWEEN #{prevFrom} AND #{prevTo}
+      ) d
+      LEFT OUTER JOIN
+      (
+        SELECT date, user FROM st_user_day
+        WHERE appkey=#{appkey} AND
+          date BETWEEN #{prevFrom} AND #{prevTo}
+      ) u
+      ON d.date=u.date
+    ) a,
+    (
+      SELECT IFNULL(AVG(IFNULL(u.user,0)),0) current
+      FROM
+      (
+        SELECT date FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+      ) d
+      LEFT OUTER JOIN
+      (
+        SELECT date, user FROM st_user_day
+        WHERE appkey=#{appkey} AND
+          date BETWEEN #{from} AND #{to}
+      ) u
+      ON d.date=u.date
+    ) b
+  </select>
+
+  <!-- sessions -->
+  <select id="getSessions" parameterType="DashBoardSearchParam" resultType="CurrPrevNumericValue">
+    SELECT
+      previous, current , 0 AS aux
+    FROM
+    (
+      SELECT IFNULL(AVG(IFNULL(u.session,0)),0) previous
+      FROM
+      (
+        SELECT date FROM dates_dimension
+        WHERE date BETWEEN #{prevFrom} AND #{prevTo}
+      ) d
+      LEFT OUTER JOIN
+      (
+        SELECT date, session FROM st_session_day
+        WHERE appkey=#{appkey} AND
+          date BETWEEN #{prevFrom} AND #{prevTo}
+      ) u
+      ON d.date=u.date
+    ) a,
+    (
+      SELECT IFNULL(AVG(IFNULL(u.session,0)),0) current
+      FROM
+      (
+        SELECT date FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+      ) d
+      LEFT OUTER JOIN
+      (
+        SELECT date, session FROM st_session_day
+        WHERE appkey=#{appkey} AND
+          date BETWEEN #{from} AND #{to}
+      ) u
+      ON d.date=u.date
+    ) b
+  </select>
+
+  <!-- session length -->
+  <select id="getSessionLength" parameterType="DashBoardSearchParam" resultType="CurrPrevNumericValue">
+    SELECT
+      previous, current
+    FROM
+    (
+      SELECT IFNULL(AVG(IFNULL(s.sessionlength,0)),0) previous
+      FROM
+      (
+        (
+          SELECT date FROM dates_dimension
+          WHERE date BETWEEN #{prevFrom} AND #{prevTo}
+        ) d
+        LEFT OUTER JOIN
+        (
+          SELECT date, sessionlength
+          FROM st_sessionlength_day
+          WHERE appkey=#{appkey} AND
+            date BETWEEN #{prevFrom} AND #{prevTo}
+        ) s
+        ON d.date=s.date
+      )
+    ) a,
+    (
+      SELECT IFNULL(AVG(IFNULL(s.sessionlength,0)),0) current
+      FROM
+      (
+        (
+          SELECT date FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+        ) d
+        LEFT OUTER JOIN
+        (
+          SELECT date, sessionlength
+          FROM st_sessionlength_day
+          WHERE appkey=#{appkey} AND
+            date BETWEEN #{from} AND #{to}
+        ) s
+        ON d.date=s.date
+      )
+    ) b
+  </select>
+
+  <!-- page views -->
+  <select id="getPageViews" parameterType="DashBoardSearchParam" resultType="CurrPrevNumericValue">
+    SELECT
+      previous, current , 0 AS aux
+    FROM
+    (
+      SELECT IFNULL(AVG(IFNULL(u.pageview,0)),0) previous
+      FROM
+      (
+        SELECT date FROM dates_dimension
+        WHERE date BETWEEN #{prevFrom} AND #{prevTo}
+      ) d
+      LEFT OUTER JOIN
+      (
+        SELECT date, pageview FROM st_pageview_day
+        WHERE appkey=#{appkey} AND
+          date BETWEEN #{prevFrom} AND #{prevTo}
+      ) u
+      ON d.date=u.date
+    ) a,
+    (
+      SELECT IFNULL(AVG(IFNULL(u.pageview,0)),0) current
+      FROM
+      (
+        SELECT date FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+      ) d
+      LEFT OUTER JOIN
+      (
+        SELECT date, pageview FROM st_pageview_day
+        WHERE appkey=#{appkey} AND
+          date BETWEEN #{from} AND #{to}
+      ) u
+      ON d.date=u.date
+    ) b
+  </select>
+
+  <!-- =============== Distribution Snapshot =============== -->
+
+  <!-- day of week -->
+  <select id="getDayOfWeek" parameterType="DashBoardSearchParam" resultType="string">
+    SELECT UPPER(DAYNAME(date))
+    FROM st_session_day
+    WHERE appkey=#{appkey}
+      AND date BETWEEN #{from} AND #{to}
+    GROUP BY DAYNAME(date)
+    ORDER BY SUM(session) DESC, DAYNAME(date)
+    LIMIT 0,1
+  </select>
+
+  <!-- time of day -->
+  <select id="getTimeOfDay" parameterType="DashBoardSearchParam" resultType="string">
+    SELECT CASE GREATEST(1AM,2AM,3AM,4AM,5AM,6AM,7AM,8AM,9AM,10AM,11AM,12AM,1PM,2PM,3PM,4PM,5PM,6PM,7PM,8PM,9PM,10PM,11PM,12PM)
+      WHEN 1AM THEN '0AM-1AM'
+      WHEN 2AM THEN '1AM-2AM'
+      WHEN 3AM THEN '2AM-3AM'
+      WHEN 4AM THEN '3AM-4AM'
+      WHEN 5AM THEN '4AM-5AM'
+      WHEN 6AM THEN '5AM-6AM'
+      WHEN 7AM THEN '6AM-7AM'
+      WHEN 8AM THEN '7AM-8AM'
+      WHEN 9AM THEN '8AM-9AM'
+      WHEN 10AM THEN '9AM-10AM'
+      WHEN 11AM THEN '10AM-11AM'
+      WHEN 12AM THEN '11AM-12AM'
+      WHEN 1PM THEN '0PM-1PM'
+      WHEN 2PM THEN '1PM-2PM'
+      WHEN 3PM THEN '2PM-3PM'
+      WHEN 4PM THEN '3PM-4PM'
+      WHEN 5PM THEN '4PM-5PM'
+      WHEN 6PM THEN '5PM-6PM'
+      WHEN 7PM THEN '6PM-7PM'
+      WHEN 8PM THEN '7PM-8PM'
+      WHEN 9PM THEN '8PM-9PM'
+      WHEN 10PM THEN '9PM-10PM'
+      WHEN 11PM THEN '10PM-11PM'
+      WHEN 12PM THEN '11PM-12PM'
+      END NAME
+    FROM
+    (
+      SELECT
+        SUM(zero_session) AS 1AM, SUM(one_session) AS 2AM, SUM(two_session) AS 3AM, SUM(three_session) AS 4AM,
+        SUM(four_session) AS 5AM, SUM(five_session) AS 6AM, SUM(six_session) AS 7AM, SUM(seven_session) AS 8AM,
+        SUM(eight_session) AS 9AM, SUM(nine_session) AS 10AM, SUM(ten_session) AS 11AM, SUM(eleven_session) AS 12AM,
+        SUM(twelve_session) AS 1PM, SUM(thirteen_session) AS 2PM, SUM(fourteen_session) AS 3PM, SUM(fifteen_session) AS 4PM,
+        SUM(sixteen_session) AS 5PM, SUM(seventeen_session) AS 6PM, SUM(eighteen_session) AS 7PM, SUM(nineteen_session) AS 8PM,
+        SUM(twenty_session) AS 9PM, SUM(twentyone_session) AS 10PM, SUM(twentytwo_session) AS 11PM, SUM(twentythree_session) AS 12PM
+      FROM st_time_day
+      WHERE appkey=#{appkey}
+        AND date BETWEEN #{from} AND #{to}
+    ) a
+  </select>
+
+  <!-- top countries -->
+  <select id="getTopContries" parameterType="DashBoardSearchParam" resultType="hashmap">
+    SELECT
+      countryName, (cnt/tcnt*100) as percentage
+    FROM
+    (
+      SELECT c.country, cc.short_name as countryName, SUM(user) cnt
+      FROM st_country_day c, country cc
+      WHERE c.appkey=#{appkey}
+        AND date BETWEEN #{from} AND #{to}
+        AND c.country=cc.iso2
+      GROUP BY c.country
+      ORDER BY SUM(user) DESC, c.country
+      LIMIT 3
+    ) b,
+    (
+      SELECT SUM(user) tcnt
+      FROM st_country_day
+      WHERE appkey=#{appkey}
+        AND date BETWEEN #{from} AND #{to}
+    ) c
+  </select>
+
+  <!-- top resolution -->
+  <select id="getTopResolution" parameterType="DashBoardSearchParam" resultType="CurrPrevTextValue">
+    SELECT
+    (
+      SELECT resolution
+      FROM st_resolution_day
+      WHERE appkey=#{appkey}
+        AND date BETWEEN #{prevFrom} AND #{prevTo}
+      GROUP BY resolution
+      ORDER BY SUM(user) DESC, resolution
+      LIMIT 1
+    ) previous,
+    (
+      SELECT resolution
+      FROM st_resolution_day
+      WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      GROUP BY resolution
+      ORDER BY SUM(user) DESC, resolution
+      LIMIT 1
+    ) current
+    FROM dual
+  </select>
+
+  <!-- top appversions -->
+  <select id="getTopAppVersion" parameterType="DashBoardSearchParam" resultType="CurrPrevTextValue">
+    SELECT
+    (
+      SELECT IFNULL(appversion,'Unknown')
+      FROM st_appversion_day
+      WHERE appkey=#{appkey}
+        AND date BETWEEN #{prevFrom} AND #{prevTo}
+      GROUP BY appversion
+      ORDER BY SUM(user) DESC, appversion
+      LIMIT 1
+    ) previous,
+    (
+      SELECT IFNULL(appversion,'Unknown')
+      FROM st_appversion_day
+      WHERE appkey=#{appkey}
+        AND date BETWEEN #{from} AND #{to}
+      GROUP BY appversion
+      ORDER BY SUM(user) DESC, appversion
+      LIMIT 1
+    ) current
+    FROM dual
+  </select>
+
+  <!-- top osversions -->
+  <select id="getTopOsVersion" parameterType="DashBoardSearchParam" resultType="CurrPrevTextValue">
+    SELECT
+    (
+      SELECT osversion
+      FROM st_osversion_day
+      WHERE appkey = #{appkey}
+        AND date BETWEEN #{prevFrom} AND #{prevTo}
+      GROUP BY osversion
+      ORDER BY SUM(user) DESC, osversion
+      LIMIT 1
+    ) previous,
+    (
+      SELECT osversion
+      FROM st_osversion_day
+      WHERE appkey = #{appkey}
+        AND date BETWEEN #{from} AND #{to}
+      GROUP BY osversion
+      ORDER BY SUM(user) DESC, osversion
+      LIMIT 1
+    ) current
+    FROM dual
+  </select>
+
+  <!-- =============== Components Snapshot =============== -->
+
+  <!-- group List -->
+  <select id="getComponentsGroupList" parameterType="DashBoardSearchParam" resultType="ComponentsGroup">
+    SELECT appkey,groupkey,groupname,
+      CASE WHEN LENGTH(groupname)>10 then CONCAT(LEFT(groupname,10),'...') ELSE groupname END shortname
+    FROM component_group
+    WHERE appkey=#{appkey}  AND isdel=0
+  </select>
+
+  <!-- Component new users -->
+  <select id="getComponentsNewUsersList" parameterType="DashBoardSearchParam" resultType="Components">
+    SELECT appkey,componentkey, name, shortname,intValue
+    FROM
+    (
+      SELECT e.appkey, e.componentkey, e.componentname name,
+        CASE WHEN LENGTH(e.componentname)>10 THEN CONCAT(LEFT(e.componentname,10),'...') ELSE e.componentname END shortname,
+        IFNULL(SUM(a.newuser),0) intValue
+      FROM
+      (
+        SELECT g.appkey, g.groupkey,e.componentkey,e.componentname
+        FROM component e, component_group g
+        WHERE g.appkey=#{appkey}
+          AND e.isdel=0
+          <if test="groupkey >= 0">
+            AND g.groupkey=#{groupkey}
+          </if>
+          AND g.isdel=0
+          AND e.appkey=g.appkey
+          AND e.groupkey=g.groupkey
+        ) e
+        LEFT OUTER JOIN
+        (
+          SELECT * FROM cp_compo_newuser_day
+          WHERE date BETWEEN #{from} AND #{to}
+        ) a
+        ON e.appkey=a.appkey AND e.componentkey=a.componentkey
+      GROUP BY e.appkey, e.componentkey
+    ) a
+    ORDER BY a.intValue DESC, a.componentkey
+    LIMIT 0,3
+  </select>
+
+  <!-- Component active users -->
+  <select id="getComponentsActiveUsersList" parameterType="DashBoardSearchParam" resultType="Components">
+    SELECT appkey,componentkey,name, shortname,intValue
+    FROM
+    (
+      SELECT e.appkey, e.componentkey, e.componentname name,
+        CASE WHEN LENGTH(e.componentname)>10 THEN CONCAT(LEFT(e.componentname,10),'...') ELSE e.componentname END shortname,
+        IFNULL(SUM(a.user),0) intValue
+      FROM
+      (
+        SELECT g.appkey, g.groupkey,e.componentkey,e.componentname
+        FROM component e, component_group g
+        WHERE g.appkey=#{appkey}
+          AND e.isdel=0
+          <if test="groupkey >= 0">
+            AND g.groupkey=#{groupkey}
+          </if>
+          AND g.isdel=0
+          AND e.appkey=g.appkey
+          AND e.groupkey=g.groupkey
+      ) e
+      LEFT OUTER JOIN
+      (
+        SELECT * FROM cp_compo_user_day
+        WHERE date BETWEEN #{from} AND #{to}
+      ) a
+      ON e.appkey=a.appkey AND e.componentkey=a.componentkey
+      GROUP BY e.appkey, e.componentkey
+    ) a
+    ORDER BY a.intValue DESC, a.componentkey
+    LIMIT 0,3
+  </select>
+
+  <!-- Component page views -->
+  <select id="getComponentsPageViewsList" parameterType="DashBoardSearchParam" resultType="Components">
+    SELECT appkey,componentkey,name, shortname,intValue
+    FROM
+    (
+      SELECT e.appkey, e.componentkey, e.componentname name,
+        CASE WHEN LENGTH(e.componentname)>10 THEN CONCAT(LEFT(e.componentname,10),'...') ELSE e.componentname END shortname,
+        IFNULL(SUM(a.session),0) intValue
+      FROM
+      (
+        SELECT g.appkey, g.groupkey,e.componentkey,e.componentname
+        FROM component e, component_group g
+        WHERE g.appkey=#{appkey}
+          AND e.isdel=0
+          <if test="groupkey >= 0">
+            AND g.groupkey=#{groupkey}
+          </if>
+          AND g.isdel=0
+          AND e.appkey=g.appkey
+          AND e.groupkey=g.groupkey
+      ) e
+      LEFT OUTER JOIN
+      (
+        SELECT * FROM cp_compo_session_day
+        WHERE date BETWEEN #{from} AND #{to}
+      ) a
+      ON e.appkey=a.appkey AND e.componentkey=a.componentkey
+      GROUP BY e.appkey, e.componentkey
+    ) a
+    ORDER BY a.intValue DESC, a.componentkey
+    LIMIT 0,3
+  </select>
+
+  <!-- Component time of day -->
+  <select id="getComponentsTimeOfDayList" parameterType="DashBoardSearchParam" resultType="Components">
+    SELECT
+      appkey, componentkey, name,
+      CASE WHEN LENGTH(name)>10 THEN CONCAT(LEFT(name,10),'...') ELSE name END shortname,
+      IFNULL(CASE GREATEST(1AM,2AM,3AM,4AM,5AM,6AM,7AM,8AM,9AM,10AM,11AM,12AM,1PM,2PM,3PM,4PM,5PM,6PM,7PM,8PM,9PM,10PM,11PM,12PM)
+        WHEN 1AM THEN '0AM-1AM'
+        WHEN 2AM THEN '1AM-2AM'
+        WHEN 3AM THEN '2AM-3AM'
+        WHEN 4AM THEN '3AM-4AM'
+        WHEN 5AM THEN '4AM-5AM'
+        WHEN 6AM THEN '5AM-6AM'
+        WHEN 7AM THEN '6AM-7AM'
+        WHEN 8AM THEN '7AM-8AM'
+        WHEN 9AM THEN '8AM-9AM'
+        WHEN 10AM THEN '9AM-10AM'
+        WHEN 11AM THEN '10AM-11AM'
+        WHEN 12AM THEN '11AM-12AM'
+        WHEN 1PM THEN '0PM-1PM'
+        WHEN 2PM THEN '1PM-2PM'
+        WHEN 3PM THEN '2PM-3PM'
+        WHEN 4PM THEN '3PM-4PM'
+        WHEN 5PM THEN '4PM-5PM'
+        WHEN 6PM THEN '5PM-6PM'
+        WHEN 7PM THEN '6PM-7PM'
+        WHEN 8PM THEN '7PM-8PM'
+        WHEN 9PM THEN '8PM-9PM'
+        WHEN 10PM THEN '9PM-10PM'
+        WHEN 11PM THEN '10PM-11PM'
+        WHEN 12PM THEN '11PM-12PM'
+        END,'Unknown') strValue,
+      IFNULL(1AM+2AM+3AM+4AM+5AM+6AM+7AM+8AM+9AM+10AM+11AM+12AM+1PM+2PM+3PM+4PM+5PM+6PM+7PM+8PM+9PM+10PM+11PM+12PM,0) intValue
+    FROM
+    (
+      SELECT e.appkey, e.componentkey, e.componentname name,
+        SUM(zero_session) AS 1AM, SUM(one_session) AS 2AM, SUM(two_session) AS 3AM, SUM(three_session) AS 4AM,
+        SUM(four_session) AS 5AM, SUM(five_session) AS 6AM, SUM(six_session) AS 7AM, SUM(seven_session) AS 8AM,
+        SUM(eight_session) AS 9AM, SUM(nine_session) AS 10AM, SUM(ten_session) AS 11AM, SUM(eleven_session) AS 12AM,
+        SUM(twelve_session) AS 1PM, SUM(thirteen_session) AS 2PM, SUM(fourteen_session) AS 3PM, SUM(fifteen_session) AS 4PM,
+        SUM(sixteen_session) AS 5PM, SUM(seventeen_session) AS 6PM, SUM(eighteen_session) AS 7PM, SUM(nineteen_session) AS 8PM,
+        SUM(twenty_session) AS 9PM, SUM(twentyone_session) AS 10PM, SUM(twentytwo_session) AS 11PM, SUM(twentythree_session) AS 12PM
+      FROM
+      (
+        SELECT g.appkey, g.groupkey,e.componentkey,e.componentname
+        FROM component e, component_group g
+        WHERE g.appkey=#{appkey}
+          AND e.isdel=0
+          <if test="groupkey >= 0">
+            AND g.groupkey=#{groupkey}
+          </if>
+          AND g.isdel=0
+          AND e.appkey=g.appkey
+          AND e.groupkey=g.groupkey
+      ) e
+      LEFT OUTER JOIN
+      (
+        SELECT * FROM cp_compo_time_day
+        WHERE date BETWEEN #{from} AND #{to}
+      ) a
+      ON e.appkey=a.appkey AND e.componentkey=a.componentkey
+      GROUP BY e.appkey, e.componentkey
+    ) a
+    ORDER BY intValue DESC, a.componentkey
+    LIMIT 0,3
+  </select>
+
+  <!-- Component top countries -->
+  <select id="getComponentsTopCountriesList" parameterType="DashBoardSearchParam" resultType="Components">
+    <foreach item="topN0" index="index" collection="topNList"  separator=" union all " >
+    (
+      SELECT
+        e.appkey appkey, e.componentkey componentkey, e.componentname name,
+        CASE WHEN LENGTH(e.componentname)>10 then CONCAT(LEFT(e.componentname,10),'...') ELSE e.componentname END shortname,
+        a.country,
+        IFNULL((SELECT iso3 FROM country WHERE iso2=a.country),'Unknown') country3
+      FROM (
+        SELECT * FROM component
+        WHERE appkey=#{appkey}
+          AND componentkey=#{topN0}
+          AND isdel=0
+      ) e
+      LEFT OUTER JOIN (
+        SELECT * FROM cp_compo_country_day
+        WHERE date BETWEEN #{from} AND #{to}
+      ) a
+      ON e.appkey=a.appkey AND e.componentkey=a.componentkey
+      GROUP BY e.appkey, e.componentkey, a.country
+      ORDER BY SUM(session) desc, a.country
+      LIMIT 0,1
+    )
+    </foreach>
+  </select>
+
+  <!-- InterGroup new users, active users, page views -->
+  <select id="getComponentsInterGroupCommonList" parameterType="DashBoardSearchParam" resultType="Components">
+    SELECT appkey,groupkey, name, shortname,intValue
+    FROM
+    (
+      SELECT e.appkey, e.groupkey, e.groupname name,
+        CASE WHEN LENGTH(e.groupname)>10 THEN CONCAT(LEFT(e.groupname,10),'...') ELSE e.groupname END shortname,
+        IFNULL(SUM(intValue),0) intValue
+      FROM
+      (
+        SELECT g.appkey,g.groupkey,g.groupname,e.componentkey,e.componentname
+        FROM (
+          SELECT * FROM component_group
+          WHERE appkey=#{appkey} AND isdel=0
+        ) g
+        LEFT OUTER JOIN (
+          SELECT * FROM component
+          WHERE appkey=#{appkey} AND isdel=0
+        ) e
+        ON g.groupkey=e.groupkey
+      ) e
+      LEFT OUTER JOIN
+      (
+        <choose>
+          <when test="menu == 'newUsers'">SELECT appkey,componentkey, newuser intValue FROM cp_compo_newuser_day</when>
+          <when test="menu == 'activeUsers'">SELECT appkey,componentkey, user intValue FROM cp_compo_user_day</when>
+          <when test="menu == 'pageViews'">SELECT appkey,componentkey,session intValue FROM cp_compo_session_day</when>
+        </choose>
+        WHERE date BETWEEN #{from} AND #{to}
+      ) a
+      ON e.appkey=a.appkey AND e.componentkey=a.componentkey
+      GROUP BY e.appkey, e.groupkey
+    ) a
+    ORDER BY a.intValue DESC, a.groupkey
+    LIMIT 0,3
+  </select>
+
+  <!-- InterGroup time of day -->
+  <select id="getComponentsInterGroupTimeOfDayList" parameterType="DashBoardSearchParam" resultType="Components">
+    SELECT  appkey, groupkey, name,
+      CASE WHEN LENGTH(name)>10 THEN CONCAT(LEFT(name,10),'...') ELSE name END shortname,
+      IFNULL(CASE GREATEST(1AM,2AM,3AM,4AM,5AM,6AM,7AM,8AM,9AM,10AM,11AM,12AM,1PM,2PM,3PM,4PM,5PM,6PM,7PM,8PM,9PM,10PM,11PM,12PM)
+        WHEN 1AM THEN '0AM-1AM'
+        WHEN 2AM THEN '1AM-2AM'
+        WHEN 3AM THEN '2AM-3AM'
+        WHEN 4AM THEN '3AM-4AM'
+        WHEN 5AM THEN '4AM-5AM'
+        WHEN 6AM THEN '5AM-6AM'
+        WHEN 7AM THEN '6AM-7AM'
+        WHEN 8AM THEN '7AM-8AM'
+        WHEN 9AM THEN '8AM-9AM'
+        WHEN 10AM THEN '9AM-10AM'
+        WHEN 11AM THEN '10AM-11AM'
+        WHEN 12AM THEN '11AM-12AM'
+        WHEN 1PM THEN '0PM-1PM'
+        WHEN 2PM THEN '1PM-2PM'
+        WHEN 3PM THEN '2PM-3PM'
+        WHEN 4PM THEN '3PM-4PM'
+        WHEN 5PM THEN '4PM-5PM'
+        WHEN 6PM THEN '5PM-6PM'
+        WHEN 7PM THEN '6PM-7PM'
+        WHEN 8PM THEN '7PM-8PM'
+        WHEN 9PM THEN '8PM-9PM'
+        WHEN 10PM THEN '9PM-10PM'
+        WHEN 11PM THEN '10PM-11PM'
+        WHEN 12PM THEN '11PM-12PM'
+        END,'Unknown') strValue,
+      IFNULL(1AM+2AM+3AM+4AM+5AM+6AM+7AM+8AM+9AM+10AM+11AM+12AM+1PM+2PM+3PM+4PM+5PM+6PM+7PM+8PM+9PM+10PM+11PM+12PM,0) intValue
+    FROM
+    (
+      SELECT e.appkey, e.groupkey, e.groupname name,
+        SUM(zero_session) AS 1AM, SUM(one_session) AS 2AM, SUM(two_session) AS 3AM, SUM(three_session) AS 4AM,
+        SUM(four_session) AS 5AM, SUM(five_session) AS 6AM, SUM(six_session) AS 7AM, SUM(seven_session) AS 8AM,
+        SUM(eight_session) AS 9AM, SUM(nine_session) AS 10AM, SUM(ten_session) AS 11AM, SUM(eleven_session) AS 12AM,
+        SUM(twelve_session) AS 1PM, SUM(thirteen_session) AS 2PM, SUM(fourteen_session) AS 3PM, SUM(fifteen_session) AS 4PM,
+        SUM(sixteen_session) AS 5PM, SUM(seventeen_session) AS 6PM, SUM(eighteen_session) AS 7PM, SUM(nineteen_session) AS 8PM,
+        SUM(twenty_session) AS 9PM, SUM(twentyone_session) AS 10PM, SUM(twentytwo_session) AS 11PM, SUM(twentythree_session) AS 12PM
+      FROM
+      (
+        SELECT g.appkey,g.groupkey,g.groupname,e.componentkey,e.componentname
+        FROM (
+          SELECT * FROM component_group
+          WHERE appkey=#{appkey} AND isdel=0
+        ) g
+        LEFT OUTER JOIN (
+          SELECT * FROM component
+          WHERE appkey=#{appkey} AND isdel=0
+        ) e
+        ON g.groupkey=e.groupkey
+      ) e
+      LEFT OUTER JOIN
+      (
+        SELECT * FROM cp_compo_time_day
+        WHERE date BETWEEN #{from} AND #{to}
+      ) a
+      ON e.appkey=a.appkey AND e.componentkey=a.componentkey
+      GROUP BY e.appkey, e.groupkey
+    ) a
+    ORDER BY intValue DESC, a.groupkey
+    LIMIT 0,3
+  </select>
+
+  <!-- InterGroup top countries -->
+  <select id="getComponentsInterGroupTopCountriesList" parameterType="DashBoardSearchParam" resultType="Components">
+    <foreach item="topN0" index="index" collection="topNGrpList"  separator=" union all " >
+    (
+      SELECT e.appkey appkey, e.groupkey groupkey, e.groupname name,
+        CASE WHEN LENGTH(e.groupname)>10 then CONCAT(LEFT(e.groupname,10),'...') ELSE e.groupname END shortname,
+        a.country,
+        IFNULL((SELECT iso3 FROM country WHERE iso2=a.country),'Unknown') country3
+      FROM (
+        SELECT appkey, groupkey, groupname
+        FROM component_group
+        WHERE appkey=#{appkey}
+          AND groupkey=#{topN0}
+          AND isdel=0
+      ) e
+      LEFT OUTER JOIN (
+        SELECT appkey,date,country,session FROM cp_compo_country_day
+        WHERE date BETWEEN #{from} AND #{to}
+          AND appkey=#{appkey}
+      ) a
+      ON e.appkey=a.appkey
+      GROUP BY e.appkey, e.groupkey, a.country
+      ORDER BY SUM(session) desc, a.country
+      LIMIT 0,1
+    )
+    </foreach>
+  </select>
+
+  <!-- =============== Today Snapshot =============== -->
+
+  <!-- new users -->
+  <select id="getTodayNewUsers" parameterType="DashBoardSearchParam" resultType="CurrPrevNumericValue">
+    SELECT
+      a.today, b.current
+    FROM
+    (
+      SELECT IFNULL(SUM(newuser),0) today
+      FROM st_newuser_hour
+      WHERE appkey=#{appkey}
+      <choose>
+        <when test="nowTime eq 00">
+          AND date(datehour) = date(#{yesterday})
+        </when>
+        <otherwise>
+          AND date(datehour) = date(#{now})
+          AND time(datehour) <![CDATA[ < ]]> #{nowTime}
+        </otherwise>
+      </choose>
+    ) a,
+    (
+      SELECT IFNULL(SUM(newuser),0) current
+      FROM st_newuser_hour
+      WHERE appkey=#{appkey}
+        AND date(datehour) = date(#{now})
+        AND hour = #{prevTime}
+    ) b
+  </select>
+
+  <!-- active users -->
+  <select id="getTodayActiveUsers" parameterType="DashBoardSearchParam" resultType="CurrPrevNumericValue">
+    SELECT
+      a.today, b.current
+    FROM
+    (
+      SELECT IFNULL(SUM(user),0) today
+      FROM st_user_hour
+      WHERE appkey=#{appkey}
+      <choose>
+        <when test="nowTime eq 00">
+          AND date(datehour) = date(#{yesterday})
+        </when>
+        <otherwise>
+          AND date(datehour) = date(#{now})
+          AND time(datehour) <![CDATA[ < ]]> #{nowTime}
+        </otherwise>
+      </choose>
+    ) a,
+    (
+      SELECT IFNULL(SUM(user),0) current
+      FROM st_user_hour
+      WHERE appkey=#{appkey}
+        AND date(datehour) = date(#{now})
+        AND hour = #{prevTime}
+    ) b
+  </select>
+
+  <!-- sessions -->
+  <select id="getTodaySessions" parameterType="DashBoardSearchParam" resultType="CurrPrevNumericValue">
+    SELECT
+      a.today, b.current
+    FROM
+    (
+      SELECT IFNULL(SUM(session),0) today
+      FROM st_session_hour
+      WHERE appkey=#{appkey}
+      <choose>
+        <when test="nowTime eq 00">
+          AND date(datehour) = date(#{yesterday})
+        </when>
+        <otherwise>
+          AND date(datehour) = date(#{now})
+          AND time(datehour) <![CDATA[ < ]]> #{nowTime}
+        </otherwise>
+      </choose>
+    ) a,
+    (
+      SELECT IFNULL(SUM(session),0) current
+      FROM st_session_hour
+      WHERE appkey=#{appkey}
+        AND date(datehour) = date(#{now})
+        AND hour = #{prevTime}
+    ) b
+  </select>
+
+  <!-- session length -->
+  <select id="getTodaySessionLength" parameterType="DashBoardSearchParam" resultType="CurrPrevNumericValue">
+    SELECT
+      today, current
+    FROM
+    (
+      SELECT IFNULL(avg(t1.sessionlength),0) as today 
+      FROM 
+      (
+        SELECT @rownum:=@rownum+1 as `row_number`, IFNULL(d.sessionlength, 0) sessionlength
+        FROM st_sessionlength_hour d, (SELECT @rownum:=0) r 
+        WHERE 1 AND appkey=#{appkey} 
+        <choose>
+          <when test="nowTime eq 00">
+            AND date(datehour) = date(#{yesterday})
+          </when>
+          <otherwise>
+            AND date(datehour) = date(#{now})
+            AND hour  <![CDATA[ < ]]> #{nowTime}
+          </otherwise>
+        </choose>
+        ORDER BY d.sessionlength 
+      ) as t1,
+      (
+        SELECT count(*) as total_rows 
+        FROM st_sessionlength_hour d 
+        WHERE 1 AND appkey=#{appkey}
+        <choose>
+          <when test="nowTime eq 00">
+            AND date(datehour) = date(#{yesterday})
+          </when>
+          <otherwise>
+            AND date(datehour) = date(#{now})
+            AND hour  <![CDATA[ < ]]> #{nowTime}
+          </otherwise>
+        </choose>
+      ) as t2 
+      WHERE 1 
+      AND t1.row_number <![CDATA[ >= ]]> total_rows/2 
+      AND t1.row_number <![CDATA[ <= ]]> total_rows/2+1
+    ) a,
+    (
+      SELECT IFNULL(SUM(sessionlength),0) current
+      FROM st_sessionlength_hour
+      WHERE appkey=#{appkey}
+        AND date(datehour) = date(#{now})
+        AND hour = #{prevTime}
+    ) b
+  </select>
+
+  <!-- page views -->
+  <select id="getTodayPageViews" parameterType="DashBoardSearchParam" resultType="CurrPrevNumericValue">
+    SELECT
+      a.today, b.current
+    FROM
+    (
+      SELECT IFNULL(SUM(pageview),0) today
+      FROM st_pageview_hour
+      WHERE appkey=#{appkey}
+      <choose>
+        <when test="nowTime eq 00">
+          AND date(datehour) = date(#{yesterday})
+        </when>
+        <otherwise>
+          AND date(datehour) = date(#{now})
+          AND time(datehour) <![CDATA[ < ]]> #{nowTime}
+        </otherwise>
+      </choose>
+    ) a,
+    (
+      SELECT IFNULL(SUM(pageview),0) current
+      FROM st_pageview_hour
+      WHERE appkey=#{appkey}
+        AND date(datehour) = date(#{now})
+        AND hour = #{prevTime}
+    ) b
+  </select>
+
+</mapper>

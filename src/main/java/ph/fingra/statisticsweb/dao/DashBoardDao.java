@@ -30,44 +30,69 @@ import ph.fingra.statisticsweb.domain.DashBoardSearchParam;
 
 public interface DashBoardDao {
     
-	App getApp(DashBoardSearchParam param);
-	
-	AppInfo getAppInfo(DashBoardSearchParam param);
-	
-    List<App> getAppListByMemberid(Integer memberid);
+    // App ====================================================================
     
-    boolean getIsCompare(DashBoardSearchParam param);
+    public App getApp(DashBoardSearchParam param);
     
-    //PERFORMANCE SNAPSHOT
-	CurrPrevNumericValue getNewUsers(DashBoardSearchParam param);
-	CurrPrevNumericValue getActiveUsers(DashBoardSearchParam param);
-	CurrPrevNumericValue getSessions(DashBoardSearchParam param);
-	CurrPrevNumericValue getSessionLength(DashBoardSearchParam param);
-	CurrPrevNumericValue getPageViews(DashBoardSearchParam param);
-	
-    //DISTRIBUTION SNAPSHOT
-	String getTimeOfDay(DashBoardSearchParam param);
-	List<Map<String, BigDecimal>> getTopContries(DashBoardSearchParam param);
-	CurrPrevTextValue getTopResolution(DashBoardSearchParam param);
-	CurrPrevTextValue getTopAppVersion(DashBoardSearchParam param);
-	CurrPrevTextValue getTopOsVersion(DashBoardSearchParam param);
-	String getDayOfWeek(DashBoardSearchParam param);
-	
-    //COMPONENTS SNAPSHOT
-	List<Components> getComponentsNewUsersList(DashBoardSearchParam param);
-	List<Components> getComponentsActiveUsersList(DashBoardSearchParam param);
-	List<Components> getComponentsPageViewsList(DashBoardSearchParam param);
-	List<Components> getComponentsTimeOfDayList(DashBoardSearchParam param);
-	List<Components> getComponentsTopCountriesList(DashBoardSearchParam param);
-    List<ComponentsGroup> getComponentsGroupList(DashBoardSearchParam param);
-    List<Components> getComponentsInterGroupCommonList(DashBoardSearchParam param);
-    List<Components> getComponentsInterGroupTimeOfDayList(DashBoardSearchParam param);
-    List<Components> getComponentsInterGroupTopCountriesList(DashBoardSearchParam param);
+    public AppInfo getAppInfo(DashBoardSearchParam param);
     
-    //TODAY SNAPSHOT
-    CurrPrevNumericValue getTodayNewUsers(DashBoardSearchParam param);
-    CurrPrevNumericValue getTodayActiveUsers(DashBoardSearchParam param);
-    CurrPrevNumericValue getTodaySessions(DashBoardSearchParam param);
-    CurrPrevNumericValue getTodaySessionLength(DashBoardSearchParam param);
-    CurrPrevNumericValue getTodayPageViews(DashBoardSearchParam param);
+    // Perfomance Snapshot ====================================================
+    
+    public boolean getIsCompare(DashBoardSearchParam param);
+    
+    public CurrPrevNumericValue getNewUsers(DashBoardSearchParam param);
+    
+    public CurrPrevNumericValue getActiveUsers(DashBoardSearchParam param);
+    
+    public CurrPrevNumericValue getSessions(DashBoardSearchParam param);
+    
+    public CurrPrevNumericValue getSessionLength(DashBoardSearchParam param);
+    
+    public CurrPrevNumericValue getPageViews(DashBoardSearchParam param);
+    
+    // Distribution Snapshot ==================================================
+    
+    public String getDayOfWeek(DashBoardSearchParam param);
+    
+    public String getTimeOfDay(DashBoardSearchParam param);
+    
+    public List<Map<String, BigDecimal>> getTopContries(DashBoardSearchParam param);
+    
+    public CurrPrevTextValue getTopResolution(DashBoardSearchParam param);
+    
+    public CurrPrevTextValue getTopAppVersion(DashBoardSearchParam param);
+    
+    public CurrPrevTextValue getTopOsVersion(DashBoardSearchParam param);
+    
+    // Components Snapshot ====================================================
+    
+    public List<ComponentsGroup> getComponentsGroupList(DashBoardSearchParam param);
+    
+    public List<Components> getComponentsNewUsersList(DashBoardSearchParam param);
+    
+    public List<Components> getComponentsActiveUsersList(DashBoardSearchParam param);
+    
+    public List<Components> getComponentsPageViewsList(DashBoardSearchParam param);
+    
+    public List<Components> getComponentsTimeOfDayList(DashBoardSearchParam param);
+    
+    public List<Components> getComponentsTopCountriesList(DashBoardSearchParam param);
+    
+    public List<Components> getComponentsInterGroupCommonList(DashBoardSearchParam param);
+    
+    public List<Components> getComponentsInterGroupTimeOfDayList(DashBoardSearchParam param);
+    
+    public List<Components> getComponentsInterGroupTopCountriesList(DashBoardSearchParam param);
+    
+    // Today Snapshot =========================================================
+    
+    public CurrPrevNumericValue getTodayNewUsers(DashBoardSearchParam param);
+    
+    public CurrPrevNumericValue getTodayActiveUsers(DashBoardSearchParam param);
+    
+    public CurrPrevNumericValue getTodaySessions(DashBoardSearchParam param);
+    
+    public CurrPrevNumericValue getTodaySessionLength(DashBoardSearchParam param);
+    
+    public CurrPrevNumericValue getTodayPageViews(DashBoardSearchParam param);
 }

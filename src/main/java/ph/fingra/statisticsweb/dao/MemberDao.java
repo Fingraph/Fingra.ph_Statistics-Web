@@ -22,23 +22,29 @@ import ph.fingra.statisticsweb.domain.Member;
 
 public interface MemberDao {
     
-    public List<Member> getList();
+    public void insert(Member member);
     
-    public Member findByEmail(String email);
+    public void update(Member member);
+    
+    public void updateStatus(Member member);
+    
+    public void updateJoinstatus(Member member);
+    
+    public void updatePassword(Member member);
+    
+    public void delete(String email);
     
     public void updateMemberLastLoginTime(Member member);
     
-    void insert(Member member);
+    public List<Member> getList();
     
-    int countByEmail(String email);
+    public List<Member> getListByStatus(int status);
     
-    void delete(String email);
+    public List<Member> getListByJoinstatus(int joinstatus);
     
-    void updateStatus(Member member);
+    public Member findByEmail(String email);
     
-    Member findById(Integer memberid);
+    public int countByEmail(String email);
     
-    void update(Member member);
-    
-    void updatePassword(Member member);
+    public Member findById(Integer memberid);
 }

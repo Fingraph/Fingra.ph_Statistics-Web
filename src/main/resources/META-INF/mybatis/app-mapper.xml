@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright 2014 tgrape Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ -->
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="app">
+
+  <insert id="insert">
+    <selectKey order="BEFORE" keyProperty="appkey" resultType="string">SELECT newAppkey()</selectKey>
+    INSERT INTO app
+      (appkey,platform,appname,appid,marketid,categoryid,status,apptype,created)
+    VALUES
+      (#{appkey},#{platform},#{appname},#{appid},#{marketid},#{categoryid},#{status},#{apptype},now())
+  </insert>
+
+  <update id="update">
+    UPDATE app SET
+      platform=#{platform},
+      appname=#{appname},
+      appid=#{appid},
+      marketid=#{marketid},
+      categoryid=#{categoryid},
+      modified=now()
+    WHERE appkey=#{appkey}
+  </update>
+
+  <update id="updateAppType">
+    UPDATE app SET
+      apptype=#{apptype}, modified=now()
+    WHERE appkey=#{appkey}
+      AND status=1
+  </update>
+
+  <update id="updateAppStatus">
+    UPDATE app SET
+      status=-1, modified=now()
+    WHERE appkey=#{appkey}
+      AND status=1
+  </update>
+
+  <update id="updateAppInfo">
+    INSERT INTO appinfo
+      (appkey,smallicon,created,updated)
+    VALUES
+      (#{appkey},#{smallicon},now(),NULL)
+    ON DUPLICATE KEY UPDATE
+      smallicon=#{smallicon}, updated=now()
+  </update>
+
+  <select id="findAllCategories" resultType="AppCategory">
+    SELECT * FROM category
+  </select>
+
+  <select id="getAppList" parameterType="DashBoardSearchParam" resultType="App">
+    SELECT
+      appkey, platform, appname, appid, marketid, categoryid, apptype, created
+    FROM app
+    WHERE status=1
+    ORDER BY apptype DESC, appname
+  </select>
+
+  <select id="findById" resultType="App">
+    SELECT
+      a.appkey, a.platform, a.appname, a.appid, a.marketid, a.categoryid, a.status, a.apptype,
+      (SELECT categoryname FROM category WHERE categoryid=a.categoryid) categoryname,
+      (SELECT CASE WHEN (COUNT(*) &gt; 0) THEN 'true' ELSE 'false' END FROM component WHERE appkey=a.appkey AND isdel=0) hasComponents
+    FROM app a
+    WHERE appkey=#{value}
+  </select>
+
+</mapper>

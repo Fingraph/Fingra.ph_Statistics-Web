@@ -24,63 +24,73 @@ import ph.fingra.statisticsweb.domain.FingraphSearchParam;
 
 public interface CountryDao {
     
-    List<CountryData> getCountrySessionsDailySumList(FingraphSearchParam searchParam);
+    // Top Countries : Sessions ===============================================
     
-    List<CountryTimeSeriesData> getCountrySessionsDailyTimeSeriesDataList(FingraphSearchParam searchParam);
+    public List<CountryData> getCountrySessionsDailySumList(FingraphSearchParam searchParam);
     
-    List<CountryData> getCountryActiveUsersDailySumList(FingraphSearchParam searchParam);
+    public List<CountryTimeSeriesData> getCountrySessionsDailyTimeSeriesDataList(FingraphSearchParam searchParam);
     
-    List<CountryTimeSeriesData> getCountryActiveUsersDailyTimeSeriesDataList(FingraphSearchParam searchParam);
+    public List<CountryData> getCountrySessionsWeeklySumList(FingraphSearchParam searchParam);
     
-    List<CountryData> getCountryPageViewsDailySumList(FingraphSearchParam searchParam);
+    public List<CountryTimeSeriesData> getCountrySessionsWeeklyTimeSeriesDataList(FingraphSearchParam searchParam);
     
-    List<CountryTimeSeriesData> getCountryPageViewsDailyTimeSeriesDataList(FingraphSearchParam searchParam);
+    public List<CountryData> getCountrySessionsMonthlySumList(FingraphSearchParam searchParam);
     
-    List<CountryData> getCountrySessionLengthDailySumList(FingraphSearchParam searchParam);
+    public List<CountryTimeSeriesData> getCountrySessionsMonthlyTimeSeriesDataList(FingraphSearchParam searchParam);
     
-    List<CountryTimeSeriesData> getCountrySessionLengthDailyTimeSeriesDataList(FingraphSearchParam searchParam);
+    // Top Countries : Active Users ===========================================
     
-    List<CountryData> getCountrySessionsWeeklySumList(FingraphSearchParam searchParam);
+    public List<CountryData> getCountryActiveUsersDailySumList(FingraphSearchParam searchParam);
     
-    List<CountryTimeSeriesData> getCountrySessionsWeeklyTimeSeriesDataList(FingraphSearchParam searchParam);
+    public List<CountryTimeSeriesData> getCountryActiveUsersDailyTimeSeriesDataList(FingraphSearchParam searchParam);
     
-    List<CountryData> getCountryActiveUsersWeeklySumList(FingraphSearchParam searchParam);
+    public List<CountryData> getCountryActiveUsersWeeklySumList(FingraphSearchParam searchParam);
     
-    List<CountryTimeSeriesData> getCountryActiveUsersWeeklyTimeSeriesDataList(FingraphSearchParam searchParam);
+    public List<CountryTimeSeriesData> getCountryActiveUsersWeeklyTimeSeriesDataList(FingraphSearchParam searchParam);
     
-    List<CountryData> getCountrySessionLengthWeeklySumList(FingraphSearchParam searchParam);
+    public List<CountryData> getCountryActiveUsersMonthlySumList(FingraphSearchParam searchParam);
     
-    List<CountryTimeSeriesData> getCountrySessionLengthWeeklyTimeSeriesDataList(FingraphSearchParam searchParam);
+    public List<CountryTimeSeriesData> getCountryActiveUsersMonthlyTimeSeriesDataList(FingraphSearchParam searchParam);
     
-    List<CountryData> getCountryPageViewsWeeklySumList(FingraphSearchParam searchParam);
+    // Top Countries : Session Length =========================================
     
-    List<CountryTimeSeriesData> getCountryPageViewsWeeklyTimeSeriesDataList(FingraphSearchParam searchParam);
+    public List<CountryData> getCountrySessionLengthDailySumList(FingraphSearchParam searchParam);
     
-    List<CountryData> getCountrySessionsMonthlySumList(FingraphSearchParam searchParam);
+    public List<CountryTimeSeriesData> getCountrySessionLengthDailyTimeSeriesDataList(FingraphSearchParam searchParam);
     
-    List<CountryTimeSeriesData> getCountrySessionsMonthlyTimeSeriesDataList(FingraphSearchParam searchParam);
+    public List<CountryData> getCountrySessionLengthWeeklySumList(FingraphSearchParam searchParam);
     
-    List<CountryData> getCountryActiveUsersMonthlySumList(FingraphSearchParam searchParam);
+    public List<CountryTimeSeriesData> getCountrySessionLengthWeeklyTimeSeriesDataList(FingraphSearchParam searchParam);
     
-    List<CountryTimeSeriesData> getCountryActiveUsersMonthlyTimeSeriesDataList(FingraphSearchParam searchParam);
+    public List<CountryData> getCountrySessionLengthMonthlySumList(FingraphSearchParam searchParam);
     
-    List<CountryData> getCountrySessionLengthMonthlySumList(FingraphSearchParam searchParam);
+    public List<CountryTimeSeriesData> getCountrySessionLengthMonthlyTimeSeriesDataList(FingraphSearchParam searchParam);
     
-    List<CountryTimeSeriesData> getCountrySessionLengthMonthlyTimeSeriesDataList(FingraphSearchParam searchParam);
+    // Top Countries : Page Views =============================================
     
-    List<CountryData> getCountryPageViewsMonthlySumList(FingraphSearchParam searchParam);
+    public List<CountryData> getCountryPageViewsDailySumList(FingraphSearchParam searchParam);
     
-    List<CountryTimeSeriesData> getCountryPageViewsMonthlyTimeSeriesDataList(FingraphSearchParam searchParam);
+    public List<CountryTimeSeriesData> getCountryPageViewsDailyTimeSeriesDataList(FingraphSearchParam searchParam);
     
-    List<CountryData> getCountryNewUsersDailySumList(FingraphSearchParam searchParam);
+    public List<CountryData> getCountryPageViewsWeeklySumList(FingraphSearchParam searchParam);
     
-    List<CountryTimeSeriesData> getCountryNewUsersDailyTimeSeriesDataList(FingraphSearchParam searchParam);
+    public List<CountryTimeSeriesData> getCountryPageViewsWeeklyTimeSeriesDataList(FingraphSearchParam searchParam);
     
-    List<CountryData> getCountryNewUsersWeeklySumList(FingraphSearchParam searchParam);
+    public List<CountryData> getCountryPageViewsMonthlySumList(FingraphSearchParam searchParam);
     
-    List<CountryTimeSeriesData> getCountryNewUsersWeeklyTimeSeriesDataList(FingraphSearchParam searchParam);
+    public List<CountryTimeSeriesData> getCountryPageViewsMonthlyTimeSeriesDataList(FingraphSearchParam searchParam);
     
-    List<CountryData> getCountryNewUsersMonthlySumList(FingraphSearchParam searchParam);
+    // Top Countries : Active Users ===========================================
     
-    List<CountryTimeSeriesData> getCountryNewUsersMonthlyTimeSeriesDataList(FingraphSearchParam searchParam);
+    public List<CountryData> getCountryNewUsersDailySumList(FingraphSearchParam searchParam);
+    
+    public List<CountryTimeSeriesData> getCountryNewUsersDailyTimeSeriesDataList(FingraphSearchParam searchParam);
+    
+    public List<CountryData> getCountryNewUsersWeeklySumList(FingraphSearchParam searchParam);
+    
+    public List<CountryTimeSeriesData> getCountryNewUsersWeeklyTimeSeriesDataList(FingraphSearchParam searchParam);
+    
+    public List<CountryData> getCountryNewUsersMonthlySumList(FingraphSearchParam searchParam);
+    
+    public List<CountryTimeSeriesData> getCountryNewUsersMonthlyTimeSeriesDataList(FingraphSearchParam searchParam);
 }

@@ -38,6 +38,8 @@ public class DashBoardDaoImpl implements DashBoardDao{
     @Autowired
     private SqlSessionTemplate sqlSessionTemplate;
     
+    // App ====================================================================
+    
     @Override
     public App getApp(DashBoardSearchParam param) {
         return sqlSessionTemplate.selectOne("dashboard.getApp", param);
@@ -48,123 +50,139 @@ public class DashBoardDaoImpl implements DashBoardDao{
         return sqlSessionTemplate.selectOne("dashboard.getAppInfo", param);
     }
     
-    @Override
-    public List<App> getAppListByMemberid(Integer memberid) {
-        return sqlSessionTemplate.selectList("dashboard.getAppListByMemberid", memberid);
-    }
+    // Perfomance Snapshot ====================================================
     
     @Override
     public boolean getIsCompare(DashBoardSearchParam param) {
         return sqlSessionTemplate.selectOne("dashboard.getIsCompare", param);
     }
     
-    
-    //PERFORMANCE SNAPSHOT
     @Override
     public CurrPrevNumericValue getNewUsers(DashBoardSearchParam param) {
         return sqlSessionTemplate.selectOne("dashboard.getNewUsers", param);
     }
+    
     @Override
     public CurrPrevNumericValue getActiveUsers(DashBoardSearchParam param) {
         return sqlSessionTemplate.selectOne("dashboard.getActiveUsers", param);
     }
+    
     @Override
     public CurrPrevNumericValue getSessions(DashBoardSearchParam param) {
         return sqlSessionTemplate.selectOne("dashboard.getSessions", param);
     }
+    
     @Override
     public CurrPrevNumericValue getSessionLength(DashBoardSearchParam param) {
         return sqlSessionTemplate.selectOne("dashboard.getSessionLength", param);
     }
+    
     @Override
     public CurrPrevNumericValue getPageViews(DashBoardSearchParam param) {
         return sqlSessionTemplate.selectOne("dashboard.getPageViews", param);
     }
     
+    // Distribution Snapshot ==================================================
     
-    //DISTRIBUTION SNAPSHOT
-    @Override
-    public String getTimeOfDay(DashBoardSearchParam param) {
-        return sqlSessionTemplate.selectOne("dashboard.getTimeOfDay", param);
-    }
-    @Override
-    public List<Map<String, BigDecimal>> getTopContries(DashBoardSearchParam param) {
-        return sqlSessionTemplate.selectList("dashboard.getTopContries", param);
-    }
-    @Override
-    public CurrPrevTextValue getTopResolution(DashBoardSearchParam param) {
-        return sqlSessionTemplate.selectOne("dashboard.getTopResolution", param);
-    }
-    @Override
-    public CurrPrevTextValue getTopAppVersion(DashBoardSearchParam param) {
-        return sqlSessionTemplate.selectOne("dashboard.getTopAppVersion", param);
-    }
-    @Override
-    public CurrPrevTextValue getTopOsVersion(DashBoardSearchParam param) {
-        return sqlSessionTemplate.selectOne("dashboard.getTopOsVersion", param);
-    }
     @Override
     public String getDayOfWeek(DashBoardSearchParam param) {
         return sqlSessionTemplate.selectOne("dashboard.getDayOfWeek", param);
     }
     
+    @Override
+    public String getTimeOfDay(DashBoardSearchParam param) {
+        return sqlSessionTemplate.selectOne("dashboard.getTimeOfDay", param);
+    }
     
-    //COMPONENTS SNAPSHOT
     @Override
-    public List<Components> getComponentsNewUsersList(DashBoardSearchParam param) {
-        return sqlSessionTemplate.selectList("dashboard.getComponentsNewUsersList", param);
+    public List<Map<String, BigDecimal>> getTopContries(DashBoardSearchParam param) {
+        return sqlSessionTemplate.selectList("dashboard.getTopContries", param);
     }
+    
     @Override
-    public List<Components> getComponentsActiveUsersList(DashBoardSearchParam param) {
-        return sqlSessionTemplate.selectList("dashboard.getComponentsActiveUsersList", param);
+    public CurrPrevTextValue getTopResolution(DashBoardSearchParam param) {
+        return sqlSessionTemplate.selectOne("dashboard.getTopResolution", param);
     }
+    
     @Override
-    public List<Components> getComponentsPageViewsList(DashBoardSearchParam param) {
-        return sqlSessionTemplate.selectList("dashboard.getComponentsPageViewsList", param);
+    public CurrPrevTextValue getTopAppVersion(DashBoardSearchParam param) {
+        return sqlSessionTemplate.selectOne("dashboard.getTopAppVersion", param);
     }
+    
     @Override
-    public List<Components> getComponentsTimeOfDayList(DashBoardSearchParam param) {
-        return sqlSessionTemplate.selectList("dashboard.getComponentsTimeOfDayList", param);
+    public CurrPrevTextValue getTopOsVersion(DashBoardSearchParam param) {
+        return sqlSessionTemplate.selectOne("dashboard.getTopOsVersion", param);
     }
-    @Override
-    public List<Components> getComponentsTopCountriesList(DashBoardSearchParam param) {
-        return sqlSessionTemplate.selectList("dashboard.getComponentsTopCountriesList", param);
-    }
+    
+    // Components Snapshot ====================================================
+    
     @Override
     public List<ComponentsGroup> getComponentsGroupList(DashBoardSearchParam param) {
         return sqlSessionTemplate.selectList("dashboard.getComponentsGroupList", param);
     }
+    
+    @Override
+    public List<Components> getComponentsNewUsersList(DashBoardSearchParam param) {
+        return sqlSessionTemplate.selectList("dashboard.getComponentsNewUsersList", param);
+    }
+    
+    @Override
+    public List<Components> getComponentsActiveUsersList(DashBoardSearchParam param) {
+        return sqlSessionTemplate.selectList("dashboard.getComponentsActiveUsersList", param);
+    }
+    
+    @Override
+    public List<Components> getComponentsPageViewsList(DashBoardSearchParam param) {
+        return sqlSessionTemplate.selectList("dashboard.getComponentsPageViewsList", param);
+    }
+    
+    @Override
+    public List<Components> getComponentsTimeOfDayList(DashBoardSearchParam param) {
+        return sqlSessionTemplate.selectList("dashboard.getComponentsTimeOfDayList", param);
+    }
+    
+    @Override
+    public List<Components> getComponentsTopCountriesList(DashBoardSearchParam param) {
+        return sqlSessionTemplate.selectList("dashboard.getComponentsTopCountriesList", param);
+    }
+    
     @Override
     public List<Components> getComponentsInterGroupCommonList(DashBoardSearchParam param) {
         return sqlSessionTemplate.selectList("dashboard.getComponentsInterGroupCommonList",param);
     }
+    
     @Override
     public List<Components> getComponentsInterGroupTimeOfDayList(DashBoardSearchParam param) {
         return sqlSessionTemplate.selectList("dashboard.getComponentsInterGroupTimeOfDayList", param);
     }
+    
     @Override
     public List<Components> getComponentsInterGroupTopCountriesList(DashBoardSearchParam param) {
         return sqlSessionTemplate.selectList("dashboard.getComponentsInterGroupTopCountriesList", param);
     }
     
+    // Today Snapshot =========================================================
     
-    //TODAY SNAPSHOT
     @Override
     public CurrPrevNumericValue getTodayNewUsers(DashBoardSearchParam param) {
         return sqlSessionTemplate.selectOne("dashboard.getTodayNewUsers", param);
     }
+    
     @Override
     public CurrPrevNumericValue getTodayActiveUsers(DashBoardSearchParam param) {
         return sqlSessionTemplate.selectOne("dashboard.getTodayActiveUsers", param);
     }
+    
     @Override
     public CurrPrevNumericValue getTodaySessions(DashBoardSearchParam param) {
         return sqlSessionTemplate.selectOne("dashboard.getTodaySessions", param);
     }
+    
     @Override
     public CurrPrevNumericValue getTodaySessionLength(DashBoardSearchParam param) {
         return sqlSessionTemplate.selectOne("dashboard.getTodaySessionLength", param);
     }
+    
     @Override
     public CurrPrevNumericValue getTodayPageViews(DashBoardSearchParam param) {
         return sqlSessionTemplate.selectOne("dashboard.getTodayPageViews", param);

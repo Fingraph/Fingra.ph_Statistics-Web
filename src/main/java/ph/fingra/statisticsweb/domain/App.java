@@ -33,6 +33,9 @@ public class App extends BaseDomain implements Serializable {
     private int status;
     private int apptype;
     
+    private String categoryname;
+    private boolean hasComponents;
+    
     private AppInfo appInfo;
     private DashBoard dashBoard;
     
@@ -95,6 +98,18 @@ public class App extends BaseDomain implements Serializable {
     }
     public void setApptype(int apptype) {
         this.apptype = apptype;
+    }
+    public String getCategoryname() {
+        return categoryname;
+    }
+    public void setCategoryname(String categoryname) {
+        this.categoryname = categoryname;
+    }
+    public boolean isHasComponents() {
+        return hasComponents;
+    }
+    public void setHasComponents(boolean hasComponents) {
+        this.hasComponents = hasComponents;
     }
     public AppInfo getAppInfo() {
         return appInfo;

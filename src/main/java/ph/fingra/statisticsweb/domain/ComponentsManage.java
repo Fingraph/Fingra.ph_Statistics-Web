@@ -31,7 +31,6 @@ public class ComponentsManage extends BaseDomain implements Serializable {
     private Integer groupkey;
     private String groupname;
     private String groupShortname;
-    private Integer memberid;
     private String description;
     private Date regdate;
     private List<Component> clist;
@@ -71,12 +70,6 @@ public class ComponentsManage extends BaseDomain implements Serializable {
     }
     public void setGroupShortname(String groupShortname) {
         this.groupShortname = groupShortname;
-    }
-    public Integer getMemberid() {
-        return memberid;
-    }
-    public void setMemberid(Integer memberid) {
-        this.memberid = memberid;
     }
     public String getDescription() {
         return description;

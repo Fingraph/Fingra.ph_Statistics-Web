@@ -1,0 +1,963 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright 2014 tgrape Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ -->
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="performance">
+
+  <!-- =============== New Users =============== -->
+
+  <!-- Daily : graph -->
+  <select id="getNewUsersDailyInfoList" parameterType="FingraphSearchParam" resultType="TimeSeriesData">
+    SELECT
+      d.date date, IFNULL(b.value,0) value
+    FROM
+      (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+      LEFT OUTER JOIN
+      (
+        SELECT date, newuser value
+        FROM st_newuser_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      ) b
+      ON d.date=b.date
+  </select>
+
+  <!-- Daily : figure -->
+  <select id="getNewUsersDailyFigures" parameterType="FingraphSearchParam" resultType="Figures">
+    SELECT
+      IFNULL(SUM(value),0) total, IFNULL(AVG(IFNULL(value,0)),0) average,
+      IFNULL(MAX(IFNULL(value,0)),0) maximum, IFNULL(MIN(IFNULL(value,0)),0) minimum,
+      IFNULL(STD(IFNULL(value,0)),0) stddev
+    FROM
+      (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+      LEFT OUTER JOIN
+      (
+        SELECT date, newuser value
+        FROM st_newuser_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      ) b
+      ON d.date=b.date
+  </select>
+
+  <!-- Weekly : graph -->
+  <select id="getNewUsersWeeklyInfoList" parameterType="FingraphSearchParam" resultType="TimeSeriesData">
+    SELECT
+      IFNULL(b.fromdate,a.fromdate) fromDate, IFNULL(b.todate,a.todate) toDate,
+      a.week_year year, a.week_of_year week,
+      IFNULL(b.value,0) value
+    FROM
+      (
+        SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, week, fromdate, todate, newuser value
+        FROM st_newuser_week
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.week_year=b.year AND a.week_of_year=b.week
+  </select>
+
+  <!-- Weekly : figure -->
+  <select id="getNewUsersWeeklyFigures" parameterType="FingraphSearchParam" resultType="Figures">
+    SELECT
+      IFNULL(SUM(value),0) total, IFNULL(AVG(IFNULL(value,0)),0) average,
+      IFNULL(MAX(IFNULL(value,0)),0) maximum, IFNULL(MIN(IFNULL(value,0)),0) minimum,
+      IFNULL(STD(IFNULL(value,0)),0) stddev
+    FROM
+      (
+        SELECT week_year, week_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, week, fromdate, todate, newuser value
+        FROM st_newuser_week
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.week_year=b.year AND a.week_of_year=b.week
+  </select>
+
+  <!-- Monthly : graph -->
+  <select id="getNewUsersMonthlyInfoList" parameterType="FingraphSearchParam" resultType="TimeSeriesData">
+    SELECT
+      a.year year, a.month_of_year month, IFNULL(b.value,0) value
+    FROM
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY year, month_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, month, newuser value
+        FROM st_newuser_month
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.year=b.year AND a.month_of_year=b.month
+  </select>
+
+  <!-- Monthly : figure -->
+  <select id="getNewUsersMonthlyFigures"  parameterType="FingraphSearchParam" resultType="Figures">
+    SELECT
+      IFNULL(SUM(value),0) total, IFNULL(AVG(IFNULL(value,0)),0) average,
+      IFNULL(MAX(IFNULL(value,0)),0) maximum, IFNULL(MIN(IFNULL(value,0)),0) minimum,
+      IFNULL(STD(IFNULL(value,0)),0) stddev
+    FROM
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY year, month_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, month, newuser value
+        FROM st_newuser_month
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.year=b.year AND a.month_of_year=b.month
+  </select>
+
+  <!-- =============== Active Users =============== -->
+
+  <!-- Daily : graph -->
+  <select id="getActiveUsersDailyInfoList" parameterType="FingraphSearchParam" resultType="TimeSeriesData">
+    SELECT
+      d.date, IFNULL(b.value,0) value
+    FROM
+      (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+      LEFT OUTER JOIN
+      (
+        SELECT date, user value
+        FROM st_user_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      ) b
+      ON d.date=b.date
+  </select>
+
+  <!-- Daily : figure -->
+  <select id="getActiveUsersDailyFigures" parameterType="FingraphSearchParam" resultType="Figures">
+    SELECT
+      IFNULL(SUM(value),0) total, IFNULL(AVG(IFNULL(value,0)),0) average,
+      IFNULL(MAX(IFNULL(value,0)),0) maximum, IFNULL(MIN(IFNULL(value,0)),0) minimum,
+      IFNULL(STD(IFNULL(value,0)),0) stddev
+    FROM
+      (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+      LEFT OUTER JOIN
+      (
+        SELECT date, user value
+        FROM st_user_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      ) b
+      ON d.date=b.date
+  </select>
+
+  <!-- Weekly : graph -->
+  <select id="getActiveUsersWeeklyInfoList" parameterType="FingraphSearchParam" resultType="TimeSeriesData">
+    SELECT
+      IFNULL(b.fromdate,a.fromdate) fromDate, IFNULL(b.todate,a.todate) toDate,
+      a.week_year year, a.week_of_year week,
+      IFNULL(b.value,0) value
+    FROM
+      (
+        SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+        ORDER BY week_year, week_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, week, fromdate, todate, user value
+        FROM st_user_week
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.week_year=b.year AND a.week_of_year=b.week
+  </select>
+
+  <!-- Weekly : figure -->
+  <select id="getActiveUsersWeeklyFigures" parameterType="FingraphSearchParam" resultType="Figures">
+    SELECT
+      IFNULL(SUM(value),0) total, IFNULL(AVG(IFNULL(value,0)),0) average,
+      IFNULL(MAX(IFNULL(value,0)),0) maximum, IFNULL(MIN(IFNULL(value,0)),0) minimum,
+      IFNULL(STD(IFNULL(value,0)),0) stddev
+    FROM
+      (
+        SELECT week_year, week_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, week, fromdate, todate, user value
+        FROM st_user_week
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.week_year=b.year AND a.week_of_year=b.week
+  </select>
+
+  <!-- Monthly : graph -->
+  <select id="getActiveUsersMonthlyInfoList" parameterType="FingraphSearchParam" resultType="TimeSeriesData">
+    SELECT
+      a.year year, a.month_of_year month, IFNULL(b.value,0) value
+    FROM
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY year, month_of_year
+        ORDER BY year, month_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, month, user value
+        FROM st_user_month
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.year=b.year AND a.month_of_year=b.month
+  </select>
+
+  <!-- Monthly : figure -->
+  <select id="getActiveUsersMonthlyFigures"  parameterType="FingraphSearchParam" resultType="Figures">
+    SELECT
+      IFNULL(SUM(value),0) total, IFNULL(AVG(IFNULL(value,0)),0) average,
+      IFNULL(MAX(IFNULL(value,0)),0) maximum, IFNULL(MIN(IFNULL(value,0)),0) minimum,
+      IFNULL(STD(IFNULL(value,0)),0) stddev
+    FROM
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY year, month_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, month, user value
+        FROM st_user_month
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.year=b.year AND a.month_of_year=b.month
+  </select>
+
+  <!-- =============== Sessions (1) Sessions Frequencys =============== -->
+
+  <!-- Common : figure -->
+  <select id="getSessionsFigures"  parameterType="FingraphSearchParam" resultType="Figures">
+    SELECT
+      IFNULL(SUM(value),0) total, IFNULL(AVG(IFNULL(value,0)),0) average,
+      IFNULL(MAX(IFNULL(value,0)),0) maximum, IFNULL(MIN(IFNULL(value,0)),0) minimum,
+      IFNULL(STD(IFNULL(value,0)),0) stddev
+    FROM
+      (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+      LEFT OUTER JOIN
+      (
+        SELECT date, session value
+        FROM st_session_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      ) b
+      ON d.date=b.date
+  </select>
+
+  <!-- Daily : time series sessions graph -->
+  <select id="getTimeSeriesSessionsDailyList" parameterType="FingraphSearchParam" resultType="FrequencyData">
+    SELECT
+      d.date date,
+      IFNULL(freq_user_1,0) freq_user_1, IFNULL(freq_user_2,0) freq_user_2,
+      IFNULL(freq_user_3_4,0) freq_user_3_4, IFNULL(freq_user_5_6,0) freq_user_5_6,
+      IFNULL(freq_user_7_9,0) freq_user_7_9, IFNULL(freq_user_10_14,0) freq_user_10_14,
+      IFNULL(freq_user_15_19,0) freq_user_15_19, IFNULL(freq_user_20_49,0) freq_user_20_49,
+      IFNULL(freq_user_50_99,0) freq_user_50_99, IFNULL(freq_user_100_499,0) freq_user_100_499,
+      IFNULL(freq_user_over_500,0) freq_user_over_500
+    FROM
+      (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+      LEFT OUTER JOIN
+      (
+        SELECT *
+        FROM st_frequency_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      ) a
+      ON d.date=a.date
+  </select>
+
+  <!-- Daily : session frequences ranges graph -->
+  <select id="getFrequencyDailyRanges" parameterType="FingraphSearchParam" resultType="FrequencyData">
+    SELECT
+      IFNULL(SUM(freq_user_1),0) AS freq_user_1, IFNULL(SUM(freq_user_2),0) AS freq_user_2,
+      IFNULL(SUM(freq_user_3_4),0) AS freq_user_3_4, IFNULL(SUM(freq_user_5_6),0) AS freq_user_5_6,
+      IFNULL(SUM(freq_user_7_9),0) AS freq_user_7_9, IFNULL(SUM(freq_user_10_14),0) AS freq_user_10_14,
+      IFNULL(SUM(freq_user_15_19),0) AS freq_user_15_19, IFNULL(SUM(freq_user_20_49),0) AS freq_user_20_49,
+      IFNULL(SUM(freq_user_50_99),0) AS freq_user_50_99, IFNULL(SUM(freq_user_100_499),0) AS freq_user_100_499,
+      IFNULL(SUM(freq_user_over_500),0) AS freq_user_over_500
+    FROM st_frequency_day
+    WHERE appkey=#{appkey}
+      AND date BETWEEN #{from} AND #{to}
+  </select>
+
+  <!-- Weekly : time series sessions graph -->
+  <select id="getTimeSeriesSessionsWeeklyList" parameterType="FingraphSearchParam" resultType="FrequencyData">
+    SELECT
+      IFNULL(b.fromdate,a.fromdate) fromDate, IFNULL(b.todate,a.todate) toDate,
+      a.week_year year, a.week_of_year week,
+      IFNULL(freq_user_1,0) freq_user_1, IFNULL(freq_user_2,0) freq_user_2,
+      IFNULL(freq_user_3_4,0) freq_user_3_4, IFNULL(freq_user_5_6,0) freq_user_5_6,
+      IFNULL(freq_user_7_9,0) freq_user_7_9, IFNULL(freq_user_10_14,0) freq_user_10_14,
+      IFNULL(freq_user_15_19,0) freq_user_15_19, IFNULL(freq_user_20_49,0) freq_user_20_49,
+      IFNULL(freq_user_50_99,0) freq_user_50_99, IFNULL(freq_user_100_499,0) freq_user_100_499,
+      IFNULL(freq_user_over_500,0) freq_user_over_500
+    FROM
+      (
+        SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT *
+        FROM st_frequency_week
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.week_year=b.year AND a.week_of_year=b.week
+  </select>
+
+  <!-- Weekly : session frequences ranges graph -->
+  <select id="getFrequencyWeeklyRanges" parameterType="FingraphSearchParam" resultType="FrequencyData">
+    SELECT
+      IFNULL(SUM(freq_user_1),0) AS freq_user_1, IFNULL(SUM(freq_user_2),0) AS freq_user_2,
+      IFNULL(SUM(freq_user_3_4),0) AS freq_user_3_4, IFNULL(SUM(freq_user_5_6),0) AS freq_user_5_6,
+      IFNULL(SUM(freq_user_7_9),0) AS freq_user_7_9, IFNULL(SUM(freq_user_10_14),0) AS freq_user_10_14,
+      IFNULL(SUM(freq_user_15_19),0) AS freq_user_15_19, IFNULL(SUM(freq_user_20_49),0) AS freq_user_20_49,
+      IFNULL(SUM(freq_user_50_99),0) AS freq_user_50_99, IFNULL(SUM(freq_user_100_499),0) AS freq_user_100_499,
+      IFNULL(SUM(freq_user_over_500),0) AS freq_user_over_500
+    FROM
+      (
+        SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT *
+        FROM st_frequency_week
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.week_year=b.year AND a.week_of_year=b.week
+  </select>
+
+  <!-- Monthly : time series sessions graph -->
+  <select id="getTimeSeriesSessionsMonthlyList" parameterType="FingraphSearchParam" resultType="FrequencyData">
+    SELECT
+      a.year year, a.month_of_year month,
+      IFNULL(freq_user_1,0) freq_user_1, IFNULL(freq_user_2,0) freq_user_2,
+      IFNULL(freq_user_3_4,0) freq_user_3_4, IFNULL(freq_user_5_6,0) freq_user_5_6,
+      IFNULL(freq_user_7_9,0) freq_user_7_9, IFNULL(freq_user_10_14,0) freq_user_10_14,
+      IFNULL(freq_user_15_19,0) freq_user_15_19, IFNULL(freq_user_20_49,0) freq_user_20_49,
+      IFNULL(freq_user_50_99,0) freq_user_50_99, IFNULL(freq_user_100_499,0) freq_user_100_499,
+      IFNULL(freq_user_over_500,0) freq_user_over_500
+    FROM
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY year, month_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT *
+        FROM st_frequency_month
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.year=b.year AND a.month_of_year=b.month
+  </select>
+
+  <!-- Monthly : session frequences ranges graph -->
+  <select id="getFrequencyMonthlyRanges" parameterType="FingraphSearchParam" resultType="FrequencyData">
+    SELECT
+      IFNULL(SUM(freq_user_1),0) AS freq_user_1, IFNULL(SUM(freq_user_2),0) AS freq_user_2,
+      IFNULL(SUM(freq_user_3_4),0) AS freq_user_3_4, IFNULL(SUM(freq_user_5_6),0) AS freq_user_5_6,
+      IFNULL(SUM(freq_user_7_9),0) AS freq_user_7_9, IFNULL(SUM(freq_user_10_14),0) AS freq_user_10_14,
+      IFNULL(SUM(freq_user_15_19),0) AS freq_user_15_19, IFNULL(SUM(freq_user_20_49),0) AS freq_user_20_49,
+      IFNULL(SUM(freq_user_50_99),0) AS freq_user_50_99, IFNULL(SUM(freq_user_100_499),0) AS freq_user_100_499,
+      IFNULL(SUM(freq_user_over_500),0) AS freq_user_over_500
+    FROM
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY year, month_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT *
+        FROM st_frequency_month
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.year=b.year AND a.month_of_year=b.month
+  </select>
+
+  <!-- =============== Sessions (2) Total Sessions =============== -->
+
+  <!-- Daily : total sessions graph -->
+  <select id="getSessionsDailyList" parameterType="FingraphSearchParam" resultType="TimeSeriesData">
+    SELECT
+      d.date date, IFNULL(b.value,0) value
+    FROM
+      (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+      LEFT OUTER JOIN
+      (
+        SELECT date, session value
+        FROM st_session_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      ) b
+      ON d.date=b.date
+  </select>
+
+  <!-- Weekly : total sessions graph -->
+  <select id="getSessionsWeeklyList" parameterType="FingraphSearchParam" resultType="TimeSeriesData">
+    SELECT
+      IFNULL(b.fromdate,a.fromdate) fromDate, IFNULL(b.todate,a.todate) toDate,
+      a.week_year year, a.week_of_year week,
+      IFNULL(b.value,0) value
+    FROM
+      (
+        SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, week, fromdate, todate, session value
+        FROM st_session_week
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.week_year=b.year AND a.week_of_year=b.week
+  </select>
+
+  <!-- Monthly : total sessions graph -->
+  <select id="getSessionsMonthlyList" parameterType="FingraphSearchParam" resultType="TimeSeriesData">
+    SELECT
+      a.year year, a.month_of_year month, IFNULL(b.value,0) value
+    FROM
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY year, month_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, month, session value
+        FROM st_session_month
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.year=b.year AND a.month_of_year=b.month
+  </select>
+
+  <!-- =============== Session Length (1) Total =============== -->
+
+  <!-- Daily : session length (total) graph -->
+  <select id="getSessionLengthDailyTotal" parameterType="FingraphSearchParam"  resultType="SessionLengthData">
+    SELECT
+      IFNULL(SUM(under_three_sec),0) under_three_sec, IFNULL(SUM(three_ten_sec),0) three_ten_sec,
+      IFNULL(SUM(ten_thirty_sec),0) ten_thirty_sec, IFNULL(SUM(thirty_sixty_sec),0) thirty_sixty_sec,
+      IFNULL(SUM(one_three_min),0) one_three_min, IFNULL(SUM(three_ten_min),0) three_ten_min,
+      IFNULL(SUM(ten_thirty_min),0) ten_thirty_min, IFNULL(SUM(over_thirty_min),0) over_thirty_min
+    FROM st_sessionlength_section_day
+    WHERE appkey=#{appkey}
+      AND date BETWEEN #{from} AND #{to}
+  </select>
+
+  <!-- Daily : session length graph -->
+  <select id="getSessionLengthDailySectionList"  parameterType="FingraphSearchParam"  resultType="SessionLengthData">
+    SELECT
+      d.date,
+      IFNULL(under_three_sec,0) under_three_sec, IFNULL(three_ten_sec,0) three_ten_sec,
+      IFNULL(ten_thirty_sec,0) ten_thirty_sec, IFNULL(thirty_sixty_sec,0) thirty_sixty_sec,
+      IFNULL(one_three_min,0) one_three_min, IFNULL(three_ten_min,0) three_ten_min,
+      IFNULL(ten_thirty_min,0) ten_thirty_min, IFNULL(over_thirty_min,0) over_thirty_min
+    FROM
+      (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+      LEFT OUTER JOIN
+      (
+        SELECT date, under_three_sec, three_ten_sec, ten_thirty_sec, thirty_sixty_sec,
+          one_three_min, three_ten_min, ten_thirty_min, over_thirty_min
+        FROM st_sessionlength_section_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      ) b
+      ON d.date=b.date
+  </select>
+
+  <!-- Daily : figure -->
+  <select id="getSessionLengthDailyFigures" parameterType="FingraphSearchParam" resultType="Figures">
+    SELECT
+      a.average, c.most
+    FROM
+      (
+        SELECT AVG(IFNULL(b.value,0)) average
+        FROM
+          (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+          LEFT OUTER JOIN
+          (
+            SELECT date, sessionlength value
+            FROM st_sessionlength_day
+            WHERE appkey=#{appkey}
+              AND date BETWEEN #{from} AND #{to}
+          ) b
+          ON d.date=b.date
+      ) a,
+      (
+        SELECT CASE GREATEST(under_three_sec, three_ten_sec, ten_thirty_sec, thirty_sixty_sec, one_three_min, three_ten_min, ten_thirty_min, over_thirty_min)
+          WHEN under_three_sec THEN '0~3 sec'
+          WHEN three_ten_sec THEN '3~10 sec'
+          WHEN ten_thirty_sec THEN '10~30 sec'
+          WHEN thirty_sixty_sec THEN '30~60 sec'
+          WHEN one_three_min THEN '1~3 min'
+          WHEN three_ten_min THEN '3~10 min'
+          WHEN ten_thirty_min THEN '10~30 min'
+          WHEN over_thirty_min THEN 'over 30 min'
+          END most
+        FROM
+          (
+            SELECT
+              IFNULL(SUM(under_three_sec),0) under_three_sec, IFNULL(SUM(three_ten_sec),0) three_ten_sec,
+              IFNULL(SUM(ten_thirty_sec),0) ten_thirty_sec, IFNULL(SUM(thirty_sixty_sec),0) thirty_sixty_sec,
+              IFNULL(SUM(one_three_min),0) one_three_min, IFNULL(SUM(three_ten_min),0) three_ten_min,
+              IFNULL(SUM(ten_thirty_min),0) ten_thirty_min, IFNULL(SUM(over_thirty_min),0) over_thirty_min
+            FROM st_sessionlength_section_day
+            WHERE appkey=#{appkey}
+              AND date BETWEEN #{from} AND #{to}
+          ) b
+      ) c
+  </select>
+
+  <!-- Weekly : session length (total) graph -->
+  <select id="getSessionLengthWeeklyTotal" parameterType="FingraphSearchParam"  resultType="SessionLengthData">
+    SELECT
+      IFNULL(SUM(under_three_sec),0) under_three_sec, IFNULL(SUM(three_ten_sec),0) three_ten_sec,
+      IFNULL(SUM(ten_thirty_sec),0) ten_thirty_sec, IFNULL(SUM(thirty_sixty_sec),0) thirty_sixty_sec,
+      IFNULL(SUM(one_three_min),0) one_three_min, IFNULL(SUM(three_ten_min),0) three_ten_min,
+      IFNULL(SUM(ten_thirty_min),0) ten_thirty_min, IFNULL(SUM(over_thirty_min),0) over_thirty_min
+    FROM
+      (
+        SELECT week_year, week_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+      ) d
+      LEFT OUTER JOIN
+      (
+        SELECT *
+        FROM st_sessionlength_section_week
+        WHERE appkey=#{appkey}
+      ) a
+      ON d.week_year=a.year AND d.week_of_year=a.week
+  </select>
+
+  <!-- Weekly : session length graph -->
+  <select id="getSessionLengthWeeklySectionList" parameterType="FingraphSearchParam"  resultType="SessionLengthData">
+    SELECT
+      IFNULL(a.fromdate,d.fromdate) fromDate, IFNULL(a.todate,d.todate) toDate,
+      d.week_year year, d.week_of_year week,
+      IFNULL(under_three_sec,0) under_three_sec, IFNULL(three_ten_sec,0) three_ten_sec,
+      IFNULL(ten_thirty_sec,0) ten_thirty_sec, IFNULL(thirty_sixty_sec,0) thirty_sixty_sec,
+      IFNULL(one_three_min,0) one_three_min, IFNULL(three_ten_min,0) three_ten_min,
+      IFNULL(ten_thirty_min,0) ten_thirty_min, IFNULL(over_thirty_min,0) over_thirty_min
+    FROM
+      (
+        SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+      ) d
+      LEFT OUTER JOIN
+      (
+        SELECT *
+        FROM st_sessionlength_section_week
+        WHERE appkey=#{appkey}
+      ) a
+      ON d.week_year=a.year AND d.week_of_year=a.week
+  </select>
+
+  <!-- Weekly : figure -->
+  <select id="getSessionLengthWeeklyFigures" parameterType="FingraphSearchParam" resultType="Figures">
+    SELECT
+      c.average, d.most
+    FROM
+      (
+        SELECT AVG(IFNULL(sessionlength,0)) average
+        FROM
+          (
+            SELECT week_year, week_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY week_year, week_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, week, sessionlength
+            FROM st_sessionlength_week
+            WHERE appkey=#{appkey}
+          ) a
+          ON d.week_year=a.year AND d.week_of_year=a.week
+      ) c,
+      (
+        SELECT CASE GREATEST(under_three_sec, three_ten_sec, ten_thirty_sec, thirty_sixty_sec, one_three_min, three_ten_min, ten_thirty_min, over_thirty_min)
+          WHEN under_three_sec THEN '0~3 sec'
+          WHEN three_ten_sec THEN '3~10 sec'
+          WHEN ten_thirty_sec THEN '10~30 sec'
+          WHEN thirty_sixty_sec THEN '30~60 sec'
+          WHEN one_three_min THEN '1~3 min'
+          WHEN three_ten_min THEN '3~10 min'
+          WHEN ten_thirty_min THEN '10~30 min'
+          WHEN over_thirty_min THEN 'over 30 min'
+          END most
+        FROM
+          (
+            SELECT
+              IFNULL(SUM(under_three_sec),0) under_three_sec, IFNULL(SUM(three_ten_sec),0) three_ten_sec,
+              IFNULL(SUM(ten_thirty_sec),0) ten_thirty_sec, IFNULL(SUM(thirty_sixty_sec),0) thirty_sixty_sec,
+              IFNULL(SUM(one_three_min),0) one_three_min, IFNULL(SUM(three_ten_min),0) three_ten_min,
+              IFNULL(SUM(ten_thirty_min),0) ten_thirty_min, IFNULL(SUM(over_thirty_min),0) over_thirty_min
+            FROM
+              (
+                SELECT week_year, week_of_year
+                FROM dates_dimension
+                WHERE date BETWEEN #{from} AND #{to}
+                GROUP BY week_year, week_of_year
+              ) d
+              LEFT OUTER JOIN
+              (
+                SELECT *
+                FROM st_sessionlength_section_week
+                WHERE appkey=#{appkey}
+              ) a
+              ON d.week_year=a.year AND d.week_of_year=a.week
+          ) c
+      ) d
+  </select>
+
+  <!-- Monthly : session length (total) graph -->
+  <select id="getSessionLengthMonthlyTotal" parameterType="FingraphSearchParam"  resultType="SessionLengthData">
+    SELECT
+      IFNULL(SUM(under_three_sec),0) under_three_sec, IFNULL(SUM(three_ten_sec),0) three_ten_sec,
+      IFNULL(SUM(ten_thirty_sec),0) ten_thirty_sec, IFNULL(SUM(thirty_sixty_sec),0) thirty_sixty_sec,
+      IFNULL(SUM(one_three_min),0) one_three_min, IFNULL(SUM(three_ten_min),0) three_ten_min,
+      IFNULL(SUM(ten_thirty_min),0) ten_thirty_min, IFNULL(SUM(over_thirty_min),0) over_thirty_min
+    FROM
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY year, month_of_year
+      ) d
+      LEFT OUTER JOIN
+      (
+        SELECT *
+        FROM st_sessionlength_section_month
+        WHERE appkey=#{appkey}
+      ) a
+      ON d.year=a.year AND d.month_of_year=a.month
+  </select>
+
+  <!-- Monthly : session length graph -->
+  <select id="getSessionLengthMonthlySectionList" parameterType="FingraphSearchParam"  resultType="SessionLengthData">
+    SELECT
+      d.year year, d.month_of_year month,
+      IFNULL(under_three_sec,0) under_three_sec, IFNULL(three_ten_sec,0) three_ten_sec,
+      IFNULL(ten_thirty_sec,0) ten_thirty_sec, IFNULL(thirty_sixty_sec,0) thirty_sixty_sec,
+      IFNULL(one_three_min,0) one_three_min, IFNULL(three_ten_min,0) three_ten_min,
+      IFNULL(ten_thirty_min,0) ten_thirty_min, IFNULL(over_thirty_min,0) over_thirty_min
+    FROM
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY year, month_of_year
+      ) d
+      LEFT OUTER JOIN
+      (
+        SELECT *
+        FROM st_sessionlength_section_month
+        WHERE appkey=#{appkey}
+      ) a
+      ON d.year=a.year AND d.month_of_year=a.month
+  </select>
+
+  <!-- Monthly : figure -->
+  <select id="getSessionLengthMonthlyFigures" parameterType="FingraphSearchParam" resultType="Figures">
+    SELECT
+      c.average, d.most
+    FROM
+      (
+        SELECT AVG(IFNULL(sessionlength,0)) average
+        FROM
+          (
+            SELECT year, month_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY year, month_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, month, sessionlength
+            FROM st_sessionlength_month
+            WHERE appkey=#{appkey}
+          ) a
+          ON d.year=a.year AND d.month_of_year=a.month
+      ) c,
+      (
+        SELECT CASE GREATEST(under_three_sec, three_ten_sec, ten_thirty_sec, thirty_sixty_sec, one_three_min, three_ten_min, ten_thirty_min, over_thirty_min)
+          WHEN under_three_sec THEN '0~3 sec'
+          WHEN three_ten_sec THEN '3~10 sec'
+          WHEN ten_thirty_sec THEN '10~30 sec'
+          WHEN thirty_sixty_sec THEN '30~60 sec'
+          WHEN one_three_min THEN '1~3 min'
+          WHEN three_ten_min THEN '3~10 min'
+          WHEN ten_thirty_min THEN '10~30 min'
+          WHEN over_thirty_min THEN 'over 30 min'
+          END most
+        FROM
+          (
+            SELECT
+              IFNULL(SUM(under_three_sec),0) under_three_sec, IFNULL(SUM(three_ten_sec),0) three_ten_sec,
+              IFNULL(SUM(ten_thirty_sec),0) ten_thirty_sec, IFNULL(SUM(thirty_sixty_sec),0) thirty_sixty_sec,
+              IFNULL(SUM(one_three_min),0) one_three_min, IFNULL(SUM(three_ten_min),0) three_ten_min,
+              IFNULL(SUM(ten_thirty_min),0) ten_thirty_min, IFNULL(SUM(over_thirty_min),0) over_thirty_min
+            FROM
+              (
+                SELECT year, month_of_year
+                FROM dates_dimension
+                WHERE date BETWEEN #{from} AND #{to}
+                GROUP BY year, month_of_year
+              ) d
+              LEFT OUTER JOIN
+              (
+                SELECT *
+                FROM st_sessionlength_section_month
+                WHERE appkey=#{appkey}
+              ) a
+              ON d.year=a.year AND d.month_of_year=a.month
+          ) c
+      ) d
+  </select>
+
+  <!-- =============== Session Length (2) Median =============== -->
+
+  <!-- Daily : session length (median) graph -->
+  <select id="getSessionLengthDailyMedianList" parameterType="FingraphSearchParam" resultType="TimeSeriesData">
+    SELECT
+      d.date, IFNULL(sessionlength,0) value
+    FROM
+      (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+      LEFT OUTER JOIN
+      (
+        SELECT date, sessionlength
+        FROM st_sessionlength_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      ) b
+      ON d.date=b.date
+  </select>
+
+  <!-- Weekly : session length (median) graph -->
+  <select id="getSessionLengthWeeklyMedianList" parameterType="FingraphSearchParam" resultType="TimeSeriesData">
+    SELECT
+      IFNULL(b.fromdate,a.fromdate) fromDate, IFNULL(b.todate,a.todate) toDate,
+      a.week_year year, a.week_of_year week,
+      IFNULL(b.value,0) value
+    FROM
+      (
+        SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+        FROM dates_dimension
+        WHERE  date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+        ORDER BY week_year, week_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, week, fromdate, todate, sessionlength value
+        FROM st_sessionlength_week
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.week_year=b.year AND a.week_of_year=b.week
+  </select>
+
+  <!-- Monthly : session length (median) graph -->
+  <select id="getSessionLengthMonthlyMedianList" parameterType="FingraphSearchParam" resultType="TimeSeriesData">
+    SELECT
+      a.year year, a.month_of_year month, IFNULL(b.value,0) value
+    FROM
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY year, month_of_year
+        ORDER BY year, month_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, month, sessionlength value
+        FROM st_sessionlength_month
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.year=b.year AND a.month_of_year=b.month
+  </select>
+
+  <!-- =============== Page Views =============== -->
+
+  <!-- Daily : graph -->
+  <select id="getPageViewsDailyInfoList" parameterType="FingraphSearchParam" resultType="TimeSeriesData">
+    SELECT
+      d.date, IFNULL(b.value,0) value
+    FROM
+      (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+      LEFT OUTER JOIN
+      (
+        SELECT date, pageview value
+        FROM st_pageview_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      ) b
+      ON d.date=b.date
+  </select>
+
+  <!-- Daily : figure -->
+  <select id="getPageViewsDailyFigures" parameterType="FingraphSearchParam" resultType="Figures">
+    SELECT
+      IFNULL(SUM(value),0) total, IFNULL(AVG(IFNULL(value,0)),0) average,
+      IFNULL(MAX(IFNULL(value,0)),0) maximum, IFNULL(MIN(IFNULL(value,0)),0) minimum,
+      IFNULL(STD(IFNULL(value,0)),0) stddev
+    FROM
+      (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+      LEFT OUTER JOIN
+      (
+        SELECT  date, pageview value
+        FROM st_pageview_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      ) b
+      ON d.date=b.date
+  </select>
+
+  <!-- Weekly : graph -->
+  <select id="getPageViewsWeeklyInfoList" parameterType="FingraphSearchParam" resultType="TimeSeriesData">
+    SELECT
+      IFNULL(b.fromdate,a.fromdate) fromDate, IFNULL(b.todate,a.todate) toDate,
+      a.week_year year, a.week_of_year week,
+      IFNULL(b.value,0) value
+    FROM
+      (
+        SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+        ORDER BY week_year, week_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, week, fromdate, todate, pageview value
+        FROM st_pageview_week
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.week_year=b.year AND a.week_of_year=b.week
+  </select>
+
+  <!-- Weekly : figure -->
+  <select id="getPageViewsWeeklyFigures" parameterType="FingraphSearchParam" resultType="Figures">
+    SELECT
+      IFNULL(SUM(value),0) total, IFNULL(AVG(IFNULL(value,0)),0) average,
+      IFNULL(MAX(IFNULL(value,0)),0) maximum, IFNULL(MIN(IFNULL(value,0)),0) minimum,
+      IFNULL(STD(IFNULL(value,0)),0) stddev
+    FROM
+      (
+        SELECT week_year, week_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, week, fromdate, todate, pageview value
+        FROM st_pageview_week
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.week_year=b.year AND a.week_of_year=b.week
+  </select>
+
+  <!-- Monthly : graph -->
+  <select id="getPageViewsMonthlyInfoList" parameterType="FingraphSearchParam" resultType="TimeSeriesData">
+    SELECT
+      a.year year, a.month_of_year month, IFNULL(b.value,0) value
+    FROM
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY year, month_of_year
+        ORDER BY year, month_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, month, pageview value
+        FROM st_pageview_month
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.year=b.year AND a.month_of_year=b.month
+  </select>
+
+  <!-- Monthly : figure -->
+  <select id="getPageViewsMonthlyFigures"  parameterType="FingraphSearchParam" resultType="Figures">
+    SELECT
+      IFNULL(SUM(value),0) total, IFNULL(AVG(IFNULL(value,0)),0) average,
+      IFNULL(MAX(IFNULL(value,0)),0) maximum, IFNULL(MIN(IFNULL(value,0)),0) minimum,
+      IFNULL(STD(IFNULL(value,0)),0) stddev
+    FROM
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY year, month_of_year
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, month, pageview value
+        FROM st_pageview_month
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.year=b.year AND a.month_of_year=b.month
+  </select>
+
+</mapper>

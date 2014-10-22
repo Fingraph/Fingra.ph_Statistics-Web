@@ -1,0 +1,2054 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright 2014 tgrape Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ -->
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="components">
+
+  <!-- =============== Manage Components =============== -->
+
+  <resultMap id="componentsManageResultMap" type="ComponentsManage">
+    <id property="appkey" column="appkey"/>
+    <id property="groupkey" column="groupkey"/>
+    <result property="groupname" column="groupname"/>
+    <result property="groupShortname" column="groupShortname"/>
+    <result property="description" column="description"/>
+    <result property="regdate" column="regdate"/>
+    <collection property="clist" column="{appkey=appkey,groupkey=groupkey}"
+      javaType="java.util.ArrayList" ofType="Component" select="getComponentsList"/>
+  </resultMap>
+
+  <select id="getComponentsManageList" parameterType="DashBoardSearchParam" resultMap="componentsManageResultMap">
+    SELECT a.appkey,groupkey,groupname,
+      CASE WHEN LENGTH(groupname)>10 THEN CONCAT(LEFT(groupname,10),'...') ELSE groupname END groupShortname,
+      description,regdate
+    FROM component_group g, app a
+    WHERE a.appkey=#{appkey}
+      AND a.appkey=g.appkey
+      AND g.isdel=0
+    ORDER BY groupkey
+  </select>
+
+  <select id="getComponentsList" resultType="Component">
+    SELECT componentkey,e.appkey,e.componentname,regdate
+    FROM component e, app a
+    WHERE a.appkey=#{appkey}
+      <if test="groupkey >= 0">
+        AND e.groupkey=#{groupkey}
+      </if>
+      AND a.appkey=e.appkey
+      AND e.isdel=0
+    ORDER BY e.regdate
+  </select>
+
+  <select id="getComponentsGroupList" parameterType="string" resultType="ComponentsGroup">
+    SELECT groupkey,groupname
+    FROM component_group
+    WHERE appkey=#{appkey}
+      AND isdel=0
+  </select>
+
+  <insert id="addComponent" parameterType="Component">
+    <selectKey order="BEFORE" keyProperty="componentkey" resultType="string">SELECT newComponentkey()</selectKey>
+    INSERT INTO component
+      (componentkey,appkey,groupkey,componentname,regdate)
+    VALUES
+      (#{componentkey},#{appkey},0,#{componentname},now())
+  </insert>
+
+  <insert id="addComponentWithGroup" parameterType="Component">
+    <selectKey order="BEFORE" keyProperty="componentkey" resultType="string">SELECT newComponentkey()</selectKey>
+    INSERT INTO component
+      (componentkey,appkey,groupkey,componentname,regdate)
+    VALUES
+      (#{componentkey},#{appkey},#{groupkey},#{componentname},now())
+  </insert>
+
+  <update id="editComponent" parameterType="Component">
+    UPDATE component SET
+      componentname=#{componentname}
+    WHERE appkey=#{appkey} AND componentkey=#{componentkey} AND groupkey=#{groupkey}
+  </update>
+
+  <update id="removeComponent" parameterType="Component">
+    UPDATE component SET
+      isdel=1, deldate=now()
+    WHERE appkey=#{appkey} AND componentkey=#{componentkey}
+  </update>
+
+  <insert id="addComponentsGroup" parameterType="ComponentsGroup">
+    INSERT INTO component_group
+      (appkey,groupkey,groupname,description,regdate)
+    VALUES
+      (#{appkey},#{groupkey},#{groupname},#{description},now())
+  </insert>
+
+  <select id="makeComponentsGroupKey" parameterType="ComponentsGroup" resultType="int">
+    SELECT IFNULL(MAX(groupkey),0)+1
+    FROM component_group
+    WHERE appkey=#{appkey}
+  </select>
+
+  <update id="updateComponentsGroupName" parameterType="ComponentsGroup">
+    UPDATE component_group SET
+      groupname=#{groupname},moddate=now()
+    WHERE appkey=#{appkey} AND groupkey=#{groupkey}
+  </update>
+
+  <update id="updateComponentsGroupIsdel" parameterType="ComponentsGroup">
+    UPDATE component_group SET
+      isdel=1,moddate=now()
+    WHERE appkey=#{appkey} AND groupkey=#{groupkey}
+  </update>
+
+  <update id="updateComponentsIsdel" parameterType="ComponentsGroup">
+    UPDATE component SET
+      isdel=1,deldate=now()
+    WHERE appkey=#{appkey} AND groupkey=#{groupkey}
+  </update>
+
+  <update id="removeArrayComponent" parameterType="HashMap">
+    UPDATE component SET
+      isdel=1,deldate=now()
+    WHERE appkey=#{appkey}
+      AND componentkey IN
+      <foreach item="list" index="index" collection="icomponentkey" separator="," open="(" close=")">
+        #{list}
+      </foreach>
+  </update>
+
+  <update id="moveArrayComponent" parameterType="HashMap">
+    UPDATE component SET
+      groupkey=#{groupkey}
+    WHERE appkey=#{appkey}
+      AND componentkey in
+      <foreach item="list" index="index" collection="icomponentkey" separator="," open="(" close=")">
+        #{list}
+      </foreach>
+      AND isdel=0
+  </update>
+
+  <!-- =============== New Users =============== -->
+
+  <!-- Common : total list -->
+  <select id="getNewUsersTotalList" parameterType="FingraphSearchParam" resultType="Components">
+    SELECT
+      e.componentkey,e.groupkey,e.name,
+      CASE WHEN LENGTH(e.name)>10 THEN CONCAT(LEFT(e.name,10),'...') ELSE e.name END shortname,
+      IFNULL(SUM(a.newuser),0) value
+    FROM (
+      <choose>
+        <when test="groupkey eq -1">
+          SELECT g.appkey,g.groupkey,e.componentkey,g.groupname name
+          FROM (SELECT * FROM component_group
+            WHERE appkey=#{appkey} AND isdel=0
+          ) g
+          LEFT OUTER JOIN (SELECT * FROM component
+            WHERE appkey=#{appkey} AND isdel=0
+          ) e
+          ON g.groupkey=e.groupkey
+        </when>
+        <otherwise>
+          SELECT g.appkey,g.groupkey,e.componentkey,e.componentname name
+          FROM component e, component_group g
+          WHERE g.appkey=#{appkey}
+            AND e.isdel=0
+            <if test="groupkey >= 0">
+              AND g.groupkey=#{groupkey}
+            </if>
+            AND g.isdel=0
+            AND e.appkey=g.appkey
+            AND e.groupkey=g.groupkey
+        </otherwise>
+      </choose>
+    ) e
+    LEFT OUTER JOIN
+    (
+      <if test="term eq 'daily'">
+        SELECT * FROM cp_compo_newuser_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      </if>
+      <if test="term eq 'weekly'">
+        SELECT * FROM cp_compo_newuser_week x,
+        (
+          SELECT week_year, week_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY week_year, week_of_year
+        ) d
+        WHERE appkey=#{appkey}
+          AND d.week_year=x.year AND d.week_of_year=x.week
+      </if>
+      <if test="term eq 'monthly'">
+        SELECT * FROM cp_compo_newuser_month x,
+        (
+          SELECT year year2, month_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY year2, month_of_year
+        ) d
+        WHERE appkey=#{appkey}
+          AND d.year2=x.year AND d.month_of_year=x.month
+      </if>
+    ) a
+    ON e.appkey=a.appkey AND e.componentkey=a.componentkey
+    <choose>
+      <when test="groupkey eq -1">
+      GROUP BY e.appkey, e.groupkey
+      ORDER BY value DESC, e.groupkey
+      </when>
+      <otherwise>
+      GROUP BY e.appkey, e.componentkey
+      ORDER BY value DESC, e.componentkey
+      </otherwise>
+    </choose>
+    LIMIT 0,25
+  </select>
+
+  <!-- Daily : time series graph -->
+  <select id="getNewUsersDailyTimeSeriesList" parameterType="FingraphSearchParam" resultType="HashMap">
+    SELECT
+      DATE_FORMAT(b.date,'%Y-%m-%d') date,
+      <foreach item="topN0" index="index" collection="topNList"  separator="," >
+        IFNULL(SUM(CASE componentkey WHEN #{topN0} THEN b.newuser ELSE 0 END),0) top${index}
+      </foreach>
+      ,IFNULL(AVG(IFNULL(a2.newuser,0)),0) appTotal
+    FROM
+      (
+        SELECT d.date,componentkey,newuser
+        FROM
+          (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+          LEFT OUTER JOIN
+          (
+            SELECT date, componentkey, newuser
+            FROM cp_compo_newuser_day
+            WHERE appkey=#{appkey}
+              AND date BETWEEN #{from} AND #{to}
+              AND componentkey IN
+              <foreach item="topN1" index="index" collection="topNList"  separator="," open="(" close=")" >
+                #{topN1}
+              </foreach>
+          ) a
+          ON d.date=a.date
+      ) b
+      LEFT OUTER JOIN
+      (
+        SELECT date, newuser
+        FROM st_newuser_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      ) a2
+      ON b.date=a2.date
+    GROUP BY b.date
+  </select>
+
+  <!-- Daily : intergroup time series graph -->
+  <select id="getNewUsersInterGroupDailyTimeSeriesList" parameterType="FingraphSearchParam" resultType="HashMap">
+    SELECT
+      DATE_FORMAT(d.date,'%Y-%m-%d') date,
+      <foreach item="topN0" index="index" collection="topNGrpList"  separator="," >
+        IFNULL(SUM(CASE x.groupkey WHEN #{topN0} THEN x.newuser ELSE 0 END),0) top${index}
+      </foreach>
+      , IFNULL(AVG(IFNULL(a2.newuser,0)),0) appTotal
+    FROM (
+      SELECT date FROM dates_dimension
+      WHERE date BETWEEN #{from} AND #{to}
+    ) d
+    LEFT OUTER JOIN
+    (
+      SELECT b.date,a.groupkey,a.groupname,b.newuser
+      FROM
+      (
+        SELECT g.appkey,g.groupkey,g.groupname,e.componentkey
+        FROM
+        (
+          SELECT * FROM component_group
+          WHERE appkey=#{appkey}
+            AND groupkey in
+            <foreach item="topN1" index="index" collection="topNGrpList"  separator="," open="(" close=")" >
+              #{topN1}
+            </foreach>
+            AND isdel=0
+          ) g
+          LEFT OUTER JOIN
+          (
+            SELECT * FROM component
+            WHERE appkey=#{appkey} AND isdel=0
+          ) e
+          ON g.groupkey=e.groupkey
+        ) a
+        LEFT OUTER JOIN
+        (
+          SELECT * FROM cp_compo_newuser_day
+          WHERE appkey=#{appkey}
+            AND date BETWEEN #{from} AND #{to}
+        ) b
+        ON a.componentkey=b.componentkey
+      ) x
+      ON d.date=x.date
+      LEFT OUTER JOIN
+      (
+         SELECT date, newuser
+         FROM st_newuser_day
+          WHERE appkey=#{appkey}
+         AND date BETWEEN #{from} AND #{to}
+      ) a2
+    ON d.date=a2.date
+    GROUP BY d.date
+  </select>
+
+  <!-- Weekly : time series graph -->
+  <select id="getNewUsersWeeklyTimeSeriesList" parameterType="FingraphSearchParam" resultType="HashMap">
+    SELECT
+      fromDate,toDate,b.year, b.week,
+      <foreach item="topN0" index="index" collection="topNList"  separator="," >
+        IFNULL(SUM(CASE componentkey WHEN #{topN0} THEN b.newuser ELSE 0 END),0) top${index}
+      </foreach>
+      ,IFNULL(AVG(IFNULL(a2.newuser,0)),0) appTotal
+    FROM
+    (
+      SELECT
+        DATE_FORMAT(IFNULL(a.fromdate,d.fromdate),'%Y-%m-%d') fromDate,
+        DATE_FORMAT(IFNULL(a.todate,d.todate),'%Y-%m-%d') toDate,
+        d.week_year year, d.week_of_year week,componentkey,newuser
+      FROM
+      (
+        SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+      ) d
+      LEFT OUTER JOIN
+      (
+        SELECT year, week, fromdate, todate, componentkey, newuser
+        FROM cp_compo_newuser_week
+        WHERE appkey=#{appkey}
+          AND componentkey IN
+          <foreach item="topN1" index="index" collection="topNList"  separator="," open="(" close=")" >
+            #{topN1}
+          </foreach>
+      ) a
+      ON d.week_year=a.year AND d.week_of_year=a.week
+    ) b
+    LEFT OUTER JOIN
+    (
+      SELECT year, week, newuser
+      FROM st_newuser_week
+      WHERE appkey=#{appkey}
+    ) a2
+    ON b.year=a2.year AND b.week=a2.week
+    GROUP BY b.year,b.week
+  </select>
+
+  <!-- Weekly : intergroup time series graph -->
+  <select id="getNewUsersInterGroupWeeklyTimeSeriesList" parameterType="FingraphSearchParam" resultType="HashMap">
+    SELECT
+      DATE_FORMAT(IFNULL(x.fromdate,d.fromdate),'%Y-%m-%d') fromDate,
+      DATE_FORMAT(IFNULL(x.todate,d.todate),'%Y-%m-%d') toDate,
+      <foreach item="topN0" index="index" collection="topNGrpList"  separator="," >
+        IFNULL(SUM(CASE x.groupkey WHEN #{topN0} THEN x.newuser ELSE 0 END),0) top${index}
+      </foreach>
+      , IFNULL(AVG(IFNULL(a2.newuser,0)),0) appTotal
+    FROM
+    (
+      SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+      FROM dates_dimension
+      WHERE date BETWEEN #{from} AND #{to}
+      GROUP BY week_year, week_of_year
+    ) d
+    LEFT OUTER JOIN
+    (
+      SELECT b.year year,b.week week,b.fromdate ,b.todate,a.groupkey,a.groupname,b.newuser
+      FROM
+      (
+        SELECT g.appkey,g.groupkey,g.groupname,e.componentkey
+        FROM
+        (
+          SELECT * FROM component_group
+          WHERE appkey=#{appkey}
+            AND groupkey in
+            <foreach item="topN1" index="index" collection="topNGrpList"  separator="," open="(" close=")" >
+              #{topN1}
+            </foreach>
+            AND isdel=0
+        ) g
+        LEFT OUTER JOIN
+        (
+          SELECT * FROM component
+          WHERE appkey=#{appkey} AND isdel=0
+        ) e
+        ON g.groupkey=e.groupkey
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, week, fromdate, todate, componentkey, newuser
+        FROM cp_compo_newuser_week
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.componentkey=b.componentkey
+    ) x
+    ON d.week_year=x.year AND d.week_of_year=x.week
+    LEFT OUTER JOIN
+    (
+      SELECT year, week, newuser
+      FROM st_newuser_week
+      WHERE appkey=#{appkey}
+    ) a2
+    ON d.week_year=a2.year AND d.week_of_year=a2.week
+    GROUP BY d.week_year,d.week_of_year
+  </select>
+
+  <!-- Monthly : time series graph -->
+  <select id="getNewUsersMonthlyTimeSeriesList" parameterType="FingraphSearchParam" resultType="HashMap">
+    SELECT
+      b.year year, b.month_of_year month,
+      <foreach item="topN0" index="index" collection="topNList"  separator="," >
+        IFNULL(SUM(CASE componentkey WHEN #{topN0} THEN b.newuser ELSE 0 END),0) top${index}
+      </foreach>
+      ,IFNULL(AVG(IFNULL(a2.newuser,0)),0) appTotal
+    FROM
+    (
+      SELECT d.year,d.month_of_year,componentkey,newuser
+      FROM
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY year, month_of_year
+
+      ) d
+      LEFT OUTER JOIN
+      (
+        SELECT year, month, componentkey, newuser
+        FROM cp_compo_newuser_month
+        WHERE appkey=#{appkey}
+          AND componentkey IN
+          <foreach item="topN1" index="index" collection="topNList"  separator="," open="(" close=")" >
+            #{topN1}
+          </foreach>
+      ) a
+      ON d.year=a.year AND d.month_of_year=a.month
+    ) b
+    LEFT OUTER JOIN
+    (
+      SELECT year, month, newuser
+      FROM st_newuser_month
+      WHERE appkey=#{appkey}
+    ) a2
+    ON b.year=a2.year AND b.month_of_year=a2.month
+    GROUP BY b.year, b.month_of_year
+  </select>
+
+  <!-- Monthly : intergroup time series graph -->
+  <select id="getNewUsersInterGroupMonthlyTimeSeriesList" parameterType="FingraphSearchParam" resultType="HashMap">
+    SELECT
+      d.year year, d.month_of_year month,
+      <foreach item="topN0" index="index" collection="topNGrpList"  separator="," >
+        IFNULL(SUM(CASE x.groupkey WHEN #{topN0} THEN x.newuser ELSE 0 END),0) top${index}
+      </foreach>
+      , IFNULL(AVG(IFNULL(a2.newuser,0)),0) appTotal
+    FROM
+    (
+      SELECT year, month_of_year
+      FROM dates_dimension
+      WHERE date BETWEEN #{from} AND #{to}
+      GROUP BY year, month_of_year
+    ) d
+    LEFT OUTER JOIN
+    (
+      SELECT b.year year,b.month month,a.groupkey,a.groupname,b.newuser
+      FROM
+      (
+        SELECT g.appkey,g.groupkey,g.groupname,e.componentkey
+        FROM
+        (
+          SELECT * FROM component_group
+          WHERE appkey=#{appkey}
+            AND groupkey in
+            <foreach item="topN1" index="index" collection="topNGrpList"  separator="," open="(" close=")" >
+              #{topN1}
+            </foreach>
+            AND isdel=0
+        ) g
+        LEFT OUTER JOIN
+        (
+          SELECT * FROM component
+          WHERE appkey=#{appkey} AND isdel=0
+        ) e
+        ON g.groupkey=e.groupkey
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, month, componentkey, newuser
+        FROM cp_compo_newuser_month
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.componentkey=b.componentkey
+    ) x
+    ON d.year=x.year AND d.month_of_year=x.month
+    LEFT OUTER JOIN
+    (
+            SELECT year, month, newuser
+            FROM st_newuser_month
+             WHERE appkey=#{appkey}
+    ) a2
+    ON d.year=a2.year AND d.month_of_year=a2.month
+    GROUP BY d.year, d.month_of_year
+  </select>
+
+  <!-- Common : app total -->
+  <select id="getNewUsersAppTotal" parameterType="FingraphSearchParam" resultType="BigDecimal">
+    SELECT IFNULL(SUM(newuser),0)
+      <if test="term eq 'daily'">
+        FROM st_newuser_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      </if>
+      <if test="term eq 'weekly'">
+        FROM st_newuser_week a,
+        (
+          SELECT week_year, week_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY week_year, week_of_year
+        ) d
+        WHERE a.appkey=#{appkey}
+          AND d.week_year=a.year AND d.week_of_year=a.week
+      </if>
+      <if test="term eq 'monthly'">
+        FROM st_newuser_month a,
+        (
+          SELECT year, month_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY year, month_of_year
+        ) d
+        WHERE a.appkey=#{appkey}
+          AND d.year=a.year AND d.month_of_year=a.month
+      </if>
+  </select>
+
+  <!-- common : actual data list -->
+  <select id="getNewUsersActualDataList"  parameterType="FingraphSearchParam" resultType="ActualData">
+    SELECT
+      e.componentkey,e.groupkey, e.name,
+      CASE WHEN LENGTH(e.name)>10 THEN CONCAT(LEFT(e.name,10),'...') ELSE e.name END shortname,
+      IFNULL(SUM(a.newuser),0) actual
+    FROM
+    (
+      <choose>
+        <when test="groupkey eq -1">
+          SELECT g.appkey,g.groupkey,e.componentkey,g.groupname name
+          FROM (
+            SELECT * FROM component_group
+            WHERE appkey=#{appkey} AND isdel=0
+          ) g
+          LEFT OUTER JOIN (
+            SELECT * FROM component
+            WHERE appkey=#{appkey} AND isdel=0
+          ) e
+          ON g.groupkey=e.groupkey
+        </when>
+        <otherwise>
+          SELECT g.appkey, g.groupkey,e.componentkey,e.componentname name
+          FROM component e, component_group g
+          WHERE g.appkey=#{appkey}
+            <if test="groupkey >= 0">
+              AND g.groupkey=#{groupkey}
+            </if>
+            AND e.isdel=0
+            AND g.isdel=0
+            AND e.appkey=g.appkey
+            AND e.groupkey=g.groupkey
+        </otherwise>
+      </choose>
+    ) e
+    LEFT OUTER JOIN
+    (
+      <if test="term eq 'daily'">
+        SELECT * FROM cp_compo_newuser_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      </if>
+      <if test="term eq 'weekly'">
+        SELECT * FROM cp_compo_newuser_week x,
+        (
+          SELECT week_year, week_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY week_year, week_of_year
+        ) d
+        WHERE appkey=#{appkey}
+          AND d.week_year=x.year AND d.week_of_year=x.week
+      </if>
+      <if test="term eq 'monthly'">
+        SELECT * FROM cp_compo_newuser_month x,
+        (
+          SELECT year year2, month_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY year2, month_of_year
+        ) d
+        WHERE appkey=#{appkey}
+          AND d.year2=x.year AND d.month_of_year=x.month
+      </if>
+    ) a
+    ON e.appkey=a.appkey AND e.componentkey=a.componentkey
+    <choose>
+      <when test="groupkey eq -1">
+        GROUP BY e.appkey, e.groupkey
+        ORDER BY actual DESC, e.groupkey
+      </when>
+      <otherwise>
+        GROUP BY e.appkey, e.componentkey
+        ORDER BY actual DESC, e.componentkey
+      </otherwise>
+    </choose>
+  </select>
+
+  <!-- =============== Active Users =============== -->
+
+  <!-- Common : total list -->
+  <select id="getActiveUsersTotalList" parameterType="FingraphSearchParam" resultType="Components">
+    SELECT
+      e.componentkey,e.groupkey, e.name,
+      CASE WHEN LENGTH(e.name)>10 THEN CONCAT(LEFT(e.name,10),'...') ELSE e.name END shortname,
+      IFNULL(SUM(a.user),0) value
+    FROM
+    (
+      <choose>
+        <when test="groupkey eq -1">
+          SELECT g.appkey,g.groupkey,e.componentkey,g.groupname name
+          FROM (
+            SELECT * FROM component_group
+            WHERE appkey=#{appkey} AND isdel=0
+          ) g
+          LEFT OUTER JOIN (
+            SELECT * FROM component
+            WHERE appkey=#{appkey} AND isdel=0
+          ) e
+          ON g.groupkey=e.groupkey
+        </when>
+        <otherwise>
+          SELECT g.appkey, g.groupkey,e.componentkey,e.componentname name
+          FROM component e, component_group g
+          WHERE g.appkey=#{appkey}
+            AND e.isdel=0
+            <if test="groupkey >= 0">
+              AND g.groupkey=#{groupkey}
+            </if>
+            AND g.isdel=0
+            AND e.appkey=g.appkey
+            AND e.groupkey=g.groupkey
+        </otherwise>
+      </choose>
+    ) e
+    LEFT OUTER JOIN
+    (
+      <if test="term eq 'daily'">
+        SELECT * FROM cp_compo_user_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      </if>
+      <if test="term eq 'weekly'">
+        SELECT * FROM cp_compo_user_week x,
+        (
+          SELECT week_year, week_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY week_year, week_of_year
+        ) d
+        WHERE appkey=#{appkey}
+          AND d.week_year=x.year AND d.week_of_year=x.week
+      </if>
+      <if test="term eq 'monthly'">
+        SELECT * FROM cp_compo_user_month x,
+        (
+          SELECT year year2, month_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY year2, month_of_year
+        ) d
+        WHERE appkey=#{appkey}
+          AND d.year2=x.year AND d.month_of_year=x.month
+      </if>
+    ) a
+    ON e.appkey=a.appkey AND e.componentkey=a.componentkey
+    <choose>
+      <when test="groupkey eq -1">
+        GROUP BY e.appkey, e.groupkey
+        ORDER BY value DESC, e.groupkey
+      </when>
+      <otherwise>
+        GROUP BY e.appkey, e.componentkey
+        ORDER BY value DESC, e.componentkey
+      </otherwise>
+    </choose>
+    LIMIT 0,25
+  </select>
+
+  <!-- Daily : time series graph -->
+  <select id="getActiveUsersDailyTimeSeriesList" parameterType="FingraphSearchParam" resultType="HashMap">
+    SELECT
+      DATE_FORMAT(d.date,'%Y-%m-%d') date,
+      <foreach item="topN0" index="index" collection="topNList"  separator="," >
+        IFNULL(SUM(CASE componentkey WHEN #{topN0} THEN a.user ELSE 0 END),0) top${index}
+      </foreach>
+      , IFNULL(AVG(IFNULL(a2.user,0)),0) appTotal
+    FROM
+    (
+      (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+      LEFT OUTER JOIN
+      (
+        SELECT date, componentkey, user
+        FROM cp_compo_user_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+          AND componentkey IN
+          <foreach item="topN1" index="index" collection="topNList"  separator="," open="(" close=")" >
+            #{topN1}
+          </foreach>
+      ) a
+      ON d.date=a.date
+    )
+    LEFT OUTER JOIN
+    (
+      SELECT date, user
+      FROM st_user_day
+      WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+    ) a2
+    ON d.date=a2.date
+    GROUP BY d.date
+  </select>
+
+  <!-- Daily : intergroup time series graph -->
+  <select id="getActiveUsersInterGroupDailyTimeSeriesList" parameterType="FingraphSearchParam" resultType="HashMap">
+    SELECT
+      DATE_FORMAT(d.date,'%Y-%m-%d') date,
+      <foreach item="topN0" index="index" collection="topNGrpList"  separator="," >
+        IFNULL(SUM(CASE x.groupkey WHEN #{topN0} THEN x.user ELSE 0 END),0) top${index}
+      </foreach>
+      , IFNULL(AVG(IFNULL(a2.user,0)),0) appTotal
+    FROM
+    (
+      SELECT date FROM dates_dimension
+      WHERE date BETWEEN #{from} AND #{to}
+    ) d
+    LEFT OUTER JOIN
+    (
+      SELECT b.date,a.groupkey,a.groupname,b.user
+      FROM
+      (
+        SELECT g.appkey,g.groupkey,g.groupname,e.componentkey
+        FROM
+        (
+          SELECT * FROM component_group
+          WHERE appkey=#{appkey}
+            AND groupkey in
+            <foreach item="topN1" index="index" collection="topNGrpList"  separator="," open="(" close=")" >
+              #{topN1}
+            </foreach>
+            AND isdel=0
+        ) g
+        LEFT OUTER JOIN
+        (
+          SELECT * FROM component
+          WHERE appkey=#{appkey} AND isdel=0
+        ) e
+        ON g.groupkey=e.groupkey
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT * FROM cp_compo_user_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      ) b
+      ON a.componentkey=b.componentkey
+    ) x
+    ON d.date=x.date
+    LEFT OUTER JOIN
+    (
+      SELECT date, user
+      FROM st_user_day
+      WHERE appkey=#{appkey}
+        AND date BETWEEN #{from} AND #{to}
+    ) a2
+    ON d.date=a2.date
+    GROUP BY d.date
+  </select>
+
+  <!-- Weekly : time series graph -->
+  <select id="getActiveUsersWeeklyTimeSeriesList" parameterType="FingraphSearchParam" resultType="HashMap">
+    SELECT
+      DATE_FORMAT(MAX(IFNULL(a.fromdate,d.fromdate)),'%Y-%m-%d') fromDate,
+      DATE_FORMAT(MAX(IFNULL(a.todate,d.todate)),'%Y-%m-%d') toDate,
+      d.week_year year, d.week_of_year week,
+      <foreach item="topN0" index="index" collection="topNList"  separator="," >
+        IFNULL(SUM(CASE componentkey WHEN #{topN0} THEN a.user ELSE 0 END),0) top${index}
+      </foreach>
+      , IFNULL(AVG(IFNULL(a2.user,0)),0) appTotal
+    FROM
+    (
+      (
+        SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+      ) d
+      LEFT OUTER JOIN
+      (
+        SELECT year, week, fromdate, todate, componentkey, user
+        FROM cp_compo_user_week
+        WHERE appkey=#{appkey}
+          AND componentkey IN
+          <foreach item="topN1" index="index" collection="topNList"  separator="," open="(" close=")" >
+            #{topN1}
+          </foreach>
+      ) a
+      ON d.week_year=a.year AND d.week_of_year=a.week
+    )
+    LEFT OUTER JOIN
+    (
+      SELECT year, week, user
+      FROM st_user_week
+      WHERE appkey=#{appkey}
+    ) a2
+    ON d.week_year=a2.year AND d.week_of_year=a2.week
+    GROUP BY d.week_year, d.week_of_year
+  </select>
+
+  <!-- Weekly : intergroup time series graph -->
+  <select id="getActiveUsersInterGroupWeeklyTimeSeriesList" parameterType="FingraphSearchParam" resultType="HashMap">
+    SELECT
+      DATE_FORMAT(IFNULL(x.fromdate,d.fromdate),'%Y-%m-%d') fromDate,
+      DATE_FORMAT(IFNULL(x.todate,d.todate),'%Y-%m-%d') toDate,
+      <foreach item="topN0" index="index" collection="topNGrpList"  separator="," >
+        IFNULL(SUM(CASE x.groupkey WHEN #{topN0} THEN x.user ELSE 0 END),0) top${index}
+      </foreach>
+      , IFNULL(AVG(IFNULL(a2.user,0)),0) appTotal
+    FROM
+    (
+      SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+      FROM dates_dimension
+      WHERE date BETWEEN #{from} AND #{to}
+      GROUP BY week_year, week_of_year
+    ) d
+    LEFT OUTER JOIN
+    (
+      SELECT b.year year,b.week week,b.fromdate ,b.todate,a.groupkey,a.groupname,b.user
+      FROM
+      (
+        SELECT g.appkey,g.groupkey,g.groupname,e.componentkey
+        FROM
+        (
+          SELECT * FROM component_group
+          WHERE appkey=#{appkey}
+            AND groupkey in
+            <foreach item="topN1" index="index" collection="topNGrpList"  separator="," open="(" close=")" >
+              #{topN1}
+            </foreach>
+            AND isdel=0
+        ) g
+        LEFT OUTER JOIN
+        (
+          SELECT * FROM component
+          WHERE appkey=#{appkey} AND isdel=0
+        ) e
+        ON g.groupkey=e.groupkey
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, week, fromdate, todate, componentkey, user
+        FROM cp_compo_user_week
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.componentkey=b.componentkey
+    ) x
+    ON d.week_year=x.year AND d.week_of_year=x.week
+    LEFT OUTER JOIN
+    (
+      SELECT year, week, user
+      FROM st_user_week
+      WHERE appkey=#{appkey}
+    ) a2
+    ON d.week_year=a2.year AND d.week_of_year=a2.week
+    GROUP BY d.week_year,d.week_of_year
+  </select>
+
+  <!-- Monthly : time series graph -->
+  <select id="getActiveUsersMonthlyTimeSeriesList" parameterType="FingraphSearchParam" resultType="HashMap">
+    SELECT
+      d.year year, d.month_of_year month,
+      <foreach item="topN0" index="index" collection="topNList"  separator="," >
+        IFNULL(SUM(CASE componentkey WHEN #{topN0} THEN a.user ELSE 0 END),0) top${index}
+      </foreach>
+      , IFNULL(AVG(IFNULL(a2.user,0)),0) appTotal
+    FROM
+    (
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY year, month_of_year
+      ) d
+      LEFT OUTER JOIN
+      (
+        SELECT year, month, componentkey, user
+        FROM cp_compo_user_month
+        WHERE appkey=#{appkey}
+          AND componentkey IN
+          <foreach item="topN1" index="index" collection="topNList"  separator="," open="(" close=")" >
+            #{topN1}
+          </foreach>
+      ) a
+      ON d.year=a.year AND d.month_of_year=a.month
+    )
+    LEFT OUTER JOIN
+    (
+      SELECT year, month, user
+      FROM st_user_month
+      WHERE appkey=#{appkey}
+    ) a2
+    ON d.year=a2.year AND d.month_of_year=a2.month
+    GROUP BY d.year, d.month_of_year
+  </select>
+
+  <!-- Monthly : intergroup time series graph -->
+  <select id="getActiveUsersInterGroupMonthlyTimeSeriesList" parameterType="FingraphSearchParam" resultType="HashMap">
+    SELECT
+      d.year year, d.month_of_year month,
+      <foreach item="topN0" index="index" collection="topNGrpList"  separator="," >
+        IFNULL(SUM(CASE x.groupkey WHEN #{topN0} THEN x.user ELSE 0 END),0) top${index}
+      </foreach>
+      , IFNULL(AVG(IFNULL(a2.user,0)),0) appTotal
+    FROM
+    (
+      SELECT year, month_of_year
+      FROM dates_dimension
+      WHERE date BETWEEN #{from} AND #{to}
+      GROUP BY year, month_of_year
+    ) d
+    LEFT OUTER JOIN
+    (
+      SELECT b.year year,b.month month,a.groupkey,a.groupname,b.user
+      FROM
+      (
+        SELECT g.appkey,g.groupkey,g.groupname,e.componentkey
+        FROM
+        (
+          SELECT * FROM component_group
+          WHERE appkey=#{appkey}
+            AND groupkey in
+            <foreach item="topN1" index="index" collection="topNGrpList"  separator="," open="(" close=")" >
+              #{topN1}
+            </foreach>
+            AND isdel=0
+        ) g
+        LEFT OUTER JOIN
+        (
+          SELECT * FROM component
+          WHERE appkey=#{appkey} AND isdel=0
+        ) e
+        ON g.groupkey=e.groupkey
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, month, componentkey, user
+        FROM cp_compo_user_month
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.componentkey=b.componentkey
+    ) x
+    ON d.year=x.year AND d.month_of_year=x.month
+    LEFT OUTER JOIN
+    (
+      SELECT year, month, user
+      FROM st_user_month
+      WHERE appkey=#{appkey}
+    ) a2
+    ON d.year=a2.year AND d.month_of_year=a2.month
+    GROUP BY d.year, d.month_of_year
+  </select>
+
+  <!-- Common : app total -->
+  <select id="getActiveUsersAppTotal" parameterType="FingraphSearchParam" resultType="BigDecimal">
+    SELECT IFNULL(SUM(user),0)
+      <if test="term eq 'daily'">
+        FROM st_user_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      </if>
+      <if test="term eq 'weekly'">
+        FROM st_user_week a,
+        (
+          SELECT week_year, week_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY week_year, week_of_year
+        ) d
+        WHERE a.appkey=#{appkey}
+          AND d.week_year=a.year AND d.week_of_year=a.week
+      </if>
+      <if test="term eq 'monthly'">
+        FROM st_user_month a,
+        (
+          SELECT year, month_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY year, month_of_year
+        ) d
+        WHERE a.appkey=#{appkey}
+          AND d.year=a.year AND d.month_of_year=a.month
+      </if>
+  </select>
+
+  <!-- common : actual data list -->
+  <select id="getActiveUsersActualDataList"  parameterType="FingraphSearchParam" resultType="ActualData">
+    SELECT
+      e.componentkey,e.groupkey, e.name,
+      CASE WHEN LENGTH(e.name)>10 THEN CONCAT(LEFT(e.name,10),'...') ELSE e.name END shortname,
+      IFNULL(SUM(a.user),0) actual
+    FROM
+    (
+      <choose>
+        <when test="groupkey eq -1">
+          SELECT g.appkey,g.groupkey,e.componentkey,g.groupname name
+          FROM (
+            SELECT * FROM component_group
+            WHERE appkey=#{appkey} AND isdel=0
+          ) g
+          LEFT OUTER JOIN (
+            SELECT * FROM component
+            WHERE appkey=#{appkey} AND isdel=0
+          ) e
+          ON g.groupkey=e.groupkey
+        </when>
+        <otherwise>
+          SELECT g.appkey, g.groupkey,e.componentkey,e.componentname name
+          FROM component e, component_group g
+          WHERE g.appkey=#{appkey}
+            <if test="groupkey >= 0">
+              AND g.groupkey=#{groupkey}
+            </if>
+            AND e.isdel=0
+            AND g.isdel=0
+            AND e.appkey=g.appkey
+            AND e.groupkey=g.groupkey
+        </otherwise>
+      </choose>
+    ) e
+    LEFT OUTER JOIN
+    (
+      <if test="term eq 'daily'">
+        SELECT * FROM cp_compo_user_day
+        WHERE appkey=#{appkey}
+        AND date BETWEEN #{from} AND #{to}
+      </if>
+      <if test="term eq 'weekly'">
+        SELECT * FROM cp_compo_user_week x,
+        (
+          SELECT week_year, week_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY week_year, week_of_year
+        ) d
+        WHERE appkey=#{appkey}
+          AND d.week_year=x.year AND d.week_of_year=x.week
+      </if>
+      <if test="term eq 'monthly'">
+        SELECT * FROM cp_compo_user_month x,
+        (
+          SELECT year year2, month_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY year2, month_of_year
+        ) d
+        WHERE appkey=#{appkey}
+          AND d.year2=x.year AND d.month_of_year=x.month
+      </if>
+    ) a
+    ON e.appkey=a.appkey AND e.componentkey=a.componentkey
+      <choose>
+        <when test="groupkey eq -1">
+          GROUP BY e.appkey, e.groupkey
+          ORDER BY actual DESC, e.groupkey
+        </when>
+        <otherwise>
+          GROUP BY e.appkey, e.componentkey
+          ORDER BY actual DESC, e.componentkey
+        </otherwise>
+      </choose>
+  </select>
+
+  <!-- =============== Page Views =============== -->
+
+  <!-- Common : total list -->
+  <select id="getPageViewsTotalList" parameterType="FingraphSearchParam" resultType="Components">
+    SELECT
+      e.componentkey,e.groupkey, e.name,
+      CASE WHEN LENGTH(e.name)>10 THEN CONCAT(LEFT(e.name,10),'...') ELSE e.name END shortname,
+      IFNULL(SUM(a.session),0) value
+    FROM (
+      <choose>
+        <when test="groupkey eq -1">
+          SELECT g.appkey,g.groupkey,e.componentkey,g.groupname name
+          FROM (
+            SELECT * FROM component_group
+            WHERE appkey=#{appkey} AND isdel=0
+          ) g
+          LEFT OUTER JOIN (
+            SELECT * FROM component
+            WHERE appkey=#{appkey} AND isdel=0
+          ) e
+          ON g.groupkey=e.groupkey
+        </when>
+        <otherwise>
+          SELECT g.appkey, g.groupkey,e.componentkey,e.componentname name
+          FROM component e, component_group g
+          WHERE g.appkey=#{appkey}
+            AND e.isdel=0
+            <if test="groupkey >= 0">
+              AND g.groupkey=#{groupkey}
+            </if>
+            AND g.isdel=0
+            AND e.appkey=g.appkey
+            AND e.groupkey=g.groupkey
+        </otherwise>
+      </choose>
+    ) e
+    LEFT OUTER JOIN
+    (
+      <if test="term eq 'daily'">
+        SELECT * FROM cp_compo_session_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      </if>
+      <if test="term eq 'weekly'">
+        SELECT * FROM cp_compo_session_week x,
+        (
+          SELECT week_year, week_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY week_year, week_of_year
+        ) d
+        WHERE appkey=#{appkey}
+          AND d.week_year=x.year AND d.week_of_year=x.week
+      </if>
+      <if test="term eq 'monthly'">
+        SELECT * FROM cp_compo_session_month x,
+        (
+          SELECT year year2, month_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY year2, month_of_year
+        ) d
+        WHERE appkey=#{appkey}
+          AND d.year2=x.year AND d.month_of_year=x.month
+      </if>
+    ) a
+    ON e.appkey=a.appkey AND e.componentkey=a.componentkey
+      <choose>
+        <when test="groupkey eq -1">
+          GROUP BY e.appkey, e.groupkey
+          ORDER BY value DESC, e.groupkey
+        </when>
+        <otherwise>
+          GROUP BY e.appkey, e.componentkey
+          ORDER BY value DESC, e.componentkey
+        </otherwise>
+      </choose>
+    LIMIT 0,25
+  </select>
+
+  <!-- Daily : time series graph -->
+  <select id="getPageViewsDailyTimeSeriesList" parameterType="FingraphSearchParam" resultType="HashMap">
+    SELECT
+      DATE_FORMAT(d.date,'%Y-%m-%d') date,
+      <foreach item="topN0" index="index" collection="topNList"  separator="," >
+        IFNULL(SUM(CASE componentkey WHEN #{topN0} THEN a.session ELSE 0 END),0) top${index}
+      </foreach>
+      , IFNULL(AVG(IFNULL(a2.session,0)),0) appTotal
+    FROM
+    (
+      (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+      LEFT OUTER JOIN
+      (
+        SELECT date, componentkey, session
+        FROM cp_compo_session_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+          AND componentkey IN
+          <foreach item="topN1" index="index" collection="topNList"  separator="," open="(" close=")" >
+            #{topN1}
+          </foreach>
+      ) a
+      ON d.date=a.date
+    )
+    LEFT OUTER JOIN
+    (
+      SELECT date, session
+      FROM st_session_day
+      WHERE appkey=#{appkey}
+        AND date BETWEEN #{from} AND #{to}
+    ) a2
+    ON d.date=a2.date
+    GROUP BY d.date
+  </select>
+
+  <!-- Daily : intergroup time series graph -->
+  <select id="getPageViewsInterGroupDailyTimeSeriesList" parameterType="FingraphSearchParam" resultType="HashMap">
+    SELECT
+      DATE_FORMAT(d.date,'%Y-%m-%d') date,
+      <foreach item="topN0" index="index" collection="topNGrpList"  separator="," >
+        IFNULL(SUM(CASE x.groupkey WHEN #{topN0} THEN x.session ELSE 0 END),0) top${index}
+      </foreach>
+      , IFNULL(AVG(IFNULL(a2.session,0)),0) appTotal
+    FROM
+    (
+      SELECT date
+      FROM dates_dimension
+      WHERE date BETWEEN #{from} AND #{to}
+    ) d
+    LEFT OUTER JOIN
+    (
+      SELECT b.date,a.groupkey,a.groupname,b.session
+      FROM
+      (
+        SELECT g.appkey,g.groupkey,g.groupname,e.componentkey
+        FROM
+        (
+          SELECT * FROM component_group
+          WHERE appkey=#{appkey}
+            AND groupkey in
+            <foreach item="topN1" index="index" collection="topNGrpList"  separator="," open="(" close=")" >
+              #{topN1}
+            </foreach>
+            AND isdel=0
+        ) g
+        LEFT OUTER JOIN
+        (
+          SELECT * FROM component
+          WHERE appkey=#{appkey} AND isdel=0
+        ) e
+        ON g.groupkey=e.groupkey
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT * FROM cp_compo_session_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      ) b
+      ON a.componentkey=b.componentkey
+    ) x
+    ON d.date=x.date
+    LEFT OUTER JOIN
+    (
+      SELECT date, session
+      FROM st_session_day
+      WHERE appkey=#{appkey}
+        AND date BETWEEN #{from} AND #{to}
+    ) a2
+    ON d.date=a2.date
+    GROUP BY d.date
+  </select>
+
+  <!-- Weekly : time series graph -->
+  <select id="getPageViewsWeeklyTimeSeriesList" parameterType="FingraphSearchParam" resultType="HashMap">
+    SELECT
+      DATE_FORMAT(MAX(IFNULL(a.fromdate,d.fromdate)),'%Y-%m-%d') fromDate,
+      DATE_FORMAT(MAX(IFNULL(a.todate,d.todate)),'%Y-%m-%d') toDate,
+      d.week_year year, d.week_of_year week,
+      <foreach item="topN0" index="index" collection="topNList"  separator="," >
+        IFNULL(SUM(CASE componentkey WHEN #{topN0} THEN a.session ELSE 0 END),0) top${index}
+      </foreach>
+      , IFNULL(AVG(IFNULL(a2.session,0)),0) appTotal
+    FROM
+    (
+      (
+        SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY week_year, week_of_year
+      ) d
+      LEFT OUTER JOIN
+      (
+        SELECT year, week, fromdate, todate, componentkey, session
+        FROM cp_compo_session_week
+        WHERE appkey=#{appkey}
+          AND componentkey IN
+          <foreach item="topN1" index="index" collection="topNList"  separator="," open="(" close=")" >
+            #{topN1}
+          </foreach>
+      ) a
+      ON d.week_year=a.year AND d.week_of_year=a.week
+    )
+    LEFT OUTER JOIN
+    (
+      SELECT year, week, session
+      FROM st_session_week
+      WHERE appkey=#{appkey}
+    ) a2
+    ON d.week_year=a2.year AND d.week_of_year=a2.week
+    GROUP BY d.week_year, d.week_of_year
+  </select>
+
+  <!-- Weekly : intergroup time series graph -->
+  <select id="getPageViewsInterGroupWeeklyTimeSeriesList" parameterType="FingraphSearchParam" resultType="HashMap">
+    SELECT
+      DATE_FORMAT(IFNULL(x.fromdate,d.fromdate),'%Y-%m-%d') fromDate,
+      DATE_FORMAT(IFNULL(x.todate,d.todate),'%Y-%m-%d') toDate,
+      <foreach item="topN0" index="index" collection="topNGrpList"  separator="," >
+        IFNULL(SUM(CASE x.groupkey WHEN #{topN0} THEN x.session ELSE 0 END),0) top${index}
+      </foreach>
+      , IFNULL(AVG(IFNULL(a2.session,0)),0) appTotal
+    FROM
+    (
+      SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+      FROM dates_dimension
+      WHERE date BETWEEN #{from} AND #{to}
+      GROUP BY week_year, week_of_year
+    ) d
+    LEFT OUTER JOIN
+    (
+      SELECT b.year year,b.week week,b.fromdate ,b.todate,a.groupkey,a.groupname,b.session
+      FROM
+      (
+        SELECT g.appkey,g.groupkey,g.groupname,e.componentkey
+        FROM
+        (
+          SELECT * FROM component_group
+          WHERE appkey=#{appkey}
+            AND groupkey in
+            <foreach item="topN1" index="index" collection="topNGrpList"  separator="," open="(" close=")" >
+              #{topN1}
+            </foreach>
+            AND isdel=0
+        ) g
+        LEFT OUTER JOIN
+        (
+          SELECT * FROM component
+          WHERE appkey=#{appkey} AND isdel=0
+        ) e
+        ON g.groupkey=e.groupkey
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, week, fromdate, todate, componentkey, session
+        FROM cp_compo_session_week
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.componentkey=b.componentkey
+    ) x
+    ON d.week_year=x.year AND d.week_of_year=x.week
+    LEFT OUTER JOIN
+    (
+      SELECT year, week, session
+      FROM st_session_week
+      WHERE appkey=#{appkey}
+    ) a2
+    ON d.week_year=a2.year AND d.week_of_year=a2.week
+    GROUP BY d.week_year,d.week_of_year
+  </select>
+
+  <!-- Monthly : time series graph -->
+  <select id="getPageViewsMonthlyTimeSeriesList" parameterType="FingraphSearchParam" resultType="HashMap">
+    SELECT
+      d.year year, d.month_of_year month,
+      <foreach item="topN0" index="index" collection="topNList"  separator="," >
+        IFNULL(SUM(CASE componentkey WHEN #{topN0} THEN a.session ELSE 0 END),0) top${index}
+      </foreach>
+      , IFNULL(AVG(IFNULL(a2.session,0)),0) appTotal
+    FROM
+    (
+      (
+        SELECT year, month_of_year
+        FROM dates_dimension
+        WHERE date BETWEEN #{from} AND #{to}
+        GROUP BY year, month_of_year
+      ) d
+      LEFT OUTER JOIN
+      (
+        SELECT year, month, componentkey, session
+        FROM cp_compo_session_month
+        WHERE appkey=#{appkey}
+          AND componentkey IN
+          <foreach item="topN1" index="index" collection="topNList"  separator="," open="(" close=")" >
+            #{topN1}
+          </foreach>
+      ) a
+      ON d.year=a.year AND d.month_of_year=a.month
+    )
+    LEFT OUTER JOIN
+    (
+      SELECT year, month, session
+      FROM st_session_month
+      WHERE appkey=#{appkey}
+    ) a2
+    ON d.year=a2.year AND d.month_of_year=a2.month
+    GROUP BY d.year, d.month_of_year
+  </select>
+
+  <!-- Monthly : intergroup time series graph -->
+  <select id="getPageViewsInterGroupMonthlyTimeSeriesList" parameterType="FingraphSearchParam" resultType="HashMap">
+    SELECT
+      d.year year, d.month_of_year month,
+      <foreach item="topN0" index="index" collection="topNGrpList"  separator="," >
+        IFNULL(SUM(CASE x.groupkey WHEN #{topN0} THEN x.session ELSE 0 END),0) top${index}
+      </foreach>
+      , IFNULL(AVG(IFNULL(a2.session,0)),0) appTotal
+    FROM
+    (
+      SELECT year, month_of_year
+      FROM dates_dimension
+      WHERE date BETWEEN #{from} AND #{to}
+      GROUP BY year, month_of_year
+    ) d
+    LEFT OUTER JOIN
+    (
+      SELECT b.year year,b.month month,a.groupkey,a.groupname,b.session
+      FROM
+      (
+        SELECT g.appkey,g.groupkey,g.groupname,e.componentkey
+        FROM
+        (
+          SELECT * FROM component_group
+          WHERE appkey=#{appkey}
+            AND groupkey in
+            <foreach item="topN1" index="index" collection="topNGrpList"  separator="," open="(" close=")" >
+              #{topN1}
+            </foreach>
+            AND isdel=0
+        ) g
+        LEFT OUTER JOIN
+        (
+          SELECT * FROM component
+          WHERE appkey=#{appkey} AND isdel=0
+        ) e
+        ON g.groupkey=e.groupkey
+      ) a
+      LEFT OUTER JOIN
+      (
+        SELECT year, month, componentkey, session
+        FROM cp_compo_session_month
+        WHERE appkey=#{appkey}
+      ) b
+      ON a.componentkey=b.componentkey
+    ) x
+    ON d.year=x.year AND d.month_of_year=x.month
+    LEFT OUTER JOIN
+    (
+      SELECT year, month, session
+      FROM st_session_month
+      WHERE appkey=#{appkey}
+    ) a2
+    ON d.year=a2.year AND d.month_of_year=a2.month
+    GROUP BY d.year, d.month_of_year
+  </select>
+
+  <!-- Common : app total -->
+  <select id="getPageViewsAppTotal" parameterType="FingraphSearchParam" resultType="BigDecimal">
+    SELECT IFNULL(SUM(pageview),0)
+      <if test="term eq 'daily'">
+        FROM st_pageview_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      </if>
+      <if test="term eq 'weekly'">
+        FROM st_pageview_week a,
+        (
+          SELECT week_year, week_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY week_year, week_of_year
+        ) d
+        WHERE a.appkey=#{appkey}
+          AND d.week_year=a.year AND d.week_of_year=a.week
+      </if>
+      <if test="term eq 'monthly'">
+        FROM st_pageview_month a,
+        (
+          SELECT year, month_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY year, month_of_year
+        ) d
+        WHERE a.appkey=#{appkey}
+          AND d.year=a.year AND d.month_of_year=a.month
+      </if>
+  </select>
+
+  <!-- common : actual data list -->
+  <select id="getPageViewsActualDataList"  parameterType="FingraphSearchParam" resultType="ActualData">
+    SELECT
+      e.componentkey,e.groupkey, e.name,
+      CASE WHEN LENGTH(e.name)>10 THEN CONCAT(LEFT(e.name,10),'...') ELSE e.name END shortname,
+      IFNULL(SUM(a.session),0) actual
+    FROM
+    (
+      <choose>
+        <when test="groupkey eq -1">
+          SELECT g.appkey,g.groupkey,e.componentkey,g.groupname name
+          FROM (
+            SELECT * FROM component_group
+            WHERE appkey=#{appkey} AND isdel=0
+          ) g
+          LEFT OUTER JOIN (
+            SELECT * FROM component
+            WHERE appkey=#{appkey} AND isdel=0
+          ) e
+          ON g.groupkey=e.groupkey
+        </when>
+        <otherwise>
+          SELECT g.appkey, g.groupkey,e.componentkey,e.componentname name
+          FROM component e, component_group g
+          WHERE g.appkey=#{appkey}
+            <if test="groupkey >= 0">
+              AND g.groupkey=#{groupkey}
+            </if>
+            AND e.isdel=0
+            AND g.isdel=0
+            AND e.appkey=g.appkey
+            AND e.groupkey=g.groupkey
+        </otherwise>
+      </choose>
+    ) e
+    LEFT OUTER JOIN
+    (
+      <if test="term eq 'daily'">
+        SELECT * FROM cp_compo_session_day
+        WHERE appkey=#{appkey}
+        AND date BETWEEN #{from} AND #{to}
+      </if>
+      <if test="term eq 'weekly'">
+        SELECT * FROM cp_compo_session_week x,
+        (
+          SELECT week_year, week_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY week_year, week_of_year
+        ) d
+        WHERE appkey=#{appkey}
+          AND d.week_year=x.year AND d.week_of_year=x.week
+      </if>
+      <if test="term eq 'monthly'">
+        SELECT * FROM cp_compo_session_month x,
+        (
+          SELECT year year2, month_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY year2, month_of_year
+        ) d
+        WHERE appkey=#{appkey}
+          AND d.year2=x.year AND d.month_of_year=x.month
+      </if>
+    ) a
+    ON e.appkey=a.appkey AND e.componentkey=a.componentkey
+    <choose>
+      <when test="groupkey eq -1">
+        GROUP BY e.appkey, e.groupkey
+        ORDER BY actual DESC, e.groupkey
+      </when>
+      <otherwise>
+        GROUP BY e.appkey, e.componentkey
+        ORDER BY actual DESC, e.componentkey
+      </otherwise>
+    </choose>
+  </select>
+
+  <!-- =============== Time Of Day =============== -->
+
+  <!-- Common : total list -->
+  <select id="getTimeOfDayTotalList" parameterType="FingraphSearchParam" resultType="TimeOfDayData">
+    SELECT
+      appkey, componentkey, groupkey,name, shortname,
+      zero_session,one_session,two_session,three_session,four_session,five_session,six_session,seven_session,eight_session,nine_session,ten_session,eleven_session,twelve_session,
+      thirteen_session,fourteen_session,fifteen_session,sixteen_session,seventeen_session,eighteen_session,nineteen_session,twenty_session,twentyone_session,twentytwo_session,twentythree_session,
+      (zero_session+one_session+two_session+three_session+four_session+five_session+six_session+seven_session+eight_session+nine_session+ten_session+eleven_session+twelve_session
+        +thirteen_session+fourteen_session+fifteen_session+sixteen_session+seventeen_session+eighteen_session+nineteen_session+twenty_session+twentyone_session+twentytwo_session+twentythree_session) total
+    FROM
+    (
+      SELECT
+        e.appkey appkey, e.componentkey,e.groupkey, e.name name,
+        CASE WHEN LENGTH(e.name)>10 THEN CONCAT(LEFT(e.name,10),'...') ELSE e.name END shortname,
+        IFNULL(SUM(zero_session),0) AS zero_session, IFNULL(SUM(one_session),0) AS one_session, IFNULL(SUM(two_session),0) AS two_session, IFNULL(SUM(three_session),0) AS three_session,
+        IFNULL(SUM(four_session),0) AS four_session, IFNULL(SUM(five_session),0) AS five_session, IFNULL(SUM(six_session),0) AS six_session, IFNULL(SUM(seven_session),0) AS seven_session,
+        IFNULL(SUM(eight_session),0) AS eight_session, IFNULL(SUM(nine_session),0) AS nine_session, IFNULL(SUM(ten_session),0) AS ten_session, IFNULL(SUM(eleven_session),0) AS eleven_session,
+        IFNULL(SUM(twelve_session),0) AS twelve_session, IFNULL(SUM(thirteen_session),0) AS thirteen_session, IFNULL(SUM(fourteen_session),0) AS fourteen_session, IFNULL(SUM(fifteen_session),0) AS fifteen_session,
+        IFNULL(SUM(sixteen_session),0) AS sixteen_session, IFNULL(SUM(seventeen_session),0) AS seventeen_session, IFNULL(SUM(eighteen_session),0) AS eighteen_session, IFNULL(SUM(nineteen_session),0) AS nineteen_session,
+        IFNULL(SUM(twenty_session),0) AS twenty_session, IFNULL(SUM(twentyone_session),0) AS twentyone_session, IFNULL(SUM(twentytwo_session),0) AS twentytwo_session, IFNULL(SUM(twentythree_session),0) AS twentythree_session
+      FROM
+      (
+        <choose>
+          <when test="groupkey eq -1">
+            SELECT g.appkey,g.groupkey,e.componentkey,g.groupname name
+            FROM (
+              SELECT * FROM component_group
+              WHERE appkey=#{appkey} AND isdel=0
+            ) g
+            LEFT OUTER JOIN (
+              SELECT * FROM component
+              WHERE appkey=#{appkey} AND isdel=0
+            ) e
+            ON g.groupkey=e.groupkey
+          </when>
+          <otherwise>
+            SELECT g.appkey, g.groupkey,e.componentkey,e.componentname name
+            FROM component e, component_group g
+            WHERE g.appkey=#{appkey}
+              AND e.isdel=0
+              <if test="groupkey >= 0">
+                AND g.groupkey=#{groupkey}
+              </if>
+              AND g.isdel=0
+              AND e.appkey=g.appkey
+              AND e.groupkey=g.groupkey
+          </otherwise>
+        </choose>
+      ) e
+      LEFT OUTER JOIN
+      (
+        <if test="term eq 'daily'">
+          SELECT * FROM cp_compo_time_day
+          WHERE appkey=#{appkey}
+            AND date BETWEEN #{from} AND #{to}
+        </if>
+        <if test="term eq 'weekly'">
+          SELECT * FROM cp_compo_time_week x,
+          (
+            SELECT week_year, week_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY week_year, week_of_year
+          ) d
+          WHERE appkey=#{appkey}
+            AND d.week_year=x.year AND d.week_of_year=x.week
+        </if>
+        <if test="term eq 'monthly'">
+          SELECT * FROM cp_compo_time_month x,
+          (
+            SELECT year year2, month_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY year2, month_of_year
+          ) d
+          WHERE appkey=#{appkey}
+            AND d.year2=x.year AND d.month_of_year=x.month
+        </if>
+      ) a
+      ON e.appkey=a.appkey AND e.componentkey=a.componentkey
+        <choose>
+          <when test="groupkey eq -1">
+            GROUP BY appkey, groupkey
+          </when>
+          <otherwise>
+            GROUP BY appkey, componentkey
+          </otherwise>
+        </choose>
+    ) a
+    <choose>
+      <when test="groupkey eq -1">
+        ORDER BY total DESC, groupkey
+      </when>
+      <otherwise>
+        ORDER BY total DESC, componentkey
+      </otherwise>
+    </choose>
+  </select>
+
+  <!-- Common : max time -->
+  <select id="getTimeOfDayMaxTime" parameterType="FingraphSearchParam" resultType="string">
+    SELECT
+      CASE GREATEST(zero_session,one_session,two_session,three_session,four_session,five_session,six_session,seven_session,eight_session,nine_session,ten_session,eleven_session,twelve_session,
+          thirteen_session,fourteen_session,fifteen_session,sixteen_session,seventeen_session,eighteen_session,nineteen_session,twenty_session,twentyone_session,twentytwo_session,twentythree_session)
+        WHEN zero_session THEN 'zero_session'
+        WHEN one_session THEN 'one_session'
+        WHEN two_session THEN 'two_session'
+        WHEN three_session THEN 'three_session'
+        WHEN four_session THEN 'four_session'
+        WHEN five_session THEN 'five_session'
+        WHEN six_session THEN 'six_session'
+        WHEN seven_session THEN 'seven_session'
+        WHEN eight_session THEN 'eight_session'
+        WHEN nine_session THEN 'nine_session'
+        WHEN ten_session THEN 'ten_session'
+        WHEN eleven_session THEN 'eleven_session'
+        WHEN twelve_session THEN 'twelve_session'
+        WHEN thirteen_session THEN 'thirteen_session'
+        WHEN fourteen_session THEN 'fourteen_session'
+        WHEN fifteen_session THEN 'fifteen_session'
+        WHEN sixteen_session THEN 'sixteen_session'
+        WHEN seventeen_session THEN 'seventeen_session'
+        WHEN eighteen_session THEN 'eighteen_session'
+        WHEN nineteen_session THEN 'nineteen_session'
+        WHEN twenty_session THEN 'twenty_session'
+        WHEN twentyone_session THEN 'twentyone_session'
+        WHEN twentytwo_session THEN 'twentytwo_session'
+        WHEN twentythree_session THEN 'twentythree_session'
+      END maxTime
+    FROM
+    (
+      SELECT e.appkey appkey,
+        SUM(zero_session) AS zero_session, SUM(one_session) AS one_session, SUM(two_session) AS two_session, SUM(three_session) AS three_session,
+        SUM(four_session) AS four_session, SUM(five_session) AS five_session, SUM(six_session) AS six_session, SUM(seven_session) AS seven_session,
+        SUM(eight_session) AS eight_session, SUM(nine_session) AS nine_session, SUM(ten_session) AS ten_session, SUM(eleven_session) AS eleven_session,
+        SUM(twelve_session) AS twelve_session, SUM(thirteen_session) AS thirteen_session, SUM(fourteen_session) AS fourteen_session, SUM(fifteen_session) AS fifteen_session,
+        SUM(sixteen_session) AS sixteen_session, SUM(seventeen_session) AS seventeen_session, SUM(eighteen_session) AS eighteen_session, SUM(nineteen_session) AS nineteen_session,
+        SUM(twenty_session) AS twenty_session, SUM(twentyone_session) AS twentyone_session, SUM(twentytwo_session) AS twentytwo_session, SUM(twentythree_session) AS twentythree_session
+      FROM
+      (
+        <choose>
+          <when test="groupkey eq -1">
+            SELECT g.appkey,g.groupkey,e.componentkey,g.groupname name
+            FROM (
+              SELECT * FROM component_group
+              WHERE appkey=#{appkey} AND isdel=0
+            ) g
+            LEFT OUTER JOIN (
+              SELECT * FROM component
+              WHERE appkey=#{appkey} AND isdel=0
+            ) e
+            ON g.groupkey=e.groupkey
+          </when>
+          <otherwise>
+            SELECT g.appkey, g.groupkey,e.componentkey,e.componentname name
+            FROM component e, component_group g
+            WHERE g.appkey=#{appkey}
+              AND e.isdel=0
+              <if test="groupkey >= 0">
+                AND g.groupkey=#{groupkey}
+              </if>
+              AND g.isdel=0
+              AND e.appkey=g.appkey
+              AND e.groupkey=g.groupkey
+          </otherwise>
+        </choose>
+      ) e
+      LEFT OUTER JOIN
+      (
+        <if test="term eq 'daily'">
+          SELECT * FROM cp_compo_time_day
+          WHERE appkey=#{appkey}
+            AND date BETWEEN #{from} AND #{to}
+        </if>
+        <if test="term eq 'weekly'">
+          SELECT * FROM cp_compo_time_week x,
+          (
+            SELECT week_year, week_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY week_year, week_of_year
+          ) d
+          WHERE appkey=#{appkey}
+            AND d.week_year=x.year AND d.week_of_year=x.week
+        </if>
+        <if test="term eq 'monthly'">
+          SELECT * FROM cp_compo_time_month x,
+          (
+            SELECT year year2, month_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY year2, month_of_year
+          ) d
+          WHERE appkey=#{appkey}
+            AND d.year2=x.year AND d.month_of_year=x.month
+        </if>
+      ) a
+      ON e.appkey=a.appkey
+    ) x
+    GROUP BY x.appkey
+  </select>
+
+  <!-- Common : actual data list -->
+  <select id="getTimeOfDayActualDataList" parameterType="FingraphSearchParam" resultType="ActualData">
+    SELECT  e.componentkey,e.groupkey, e.name name,
+      CASE WHEN LENGTH(e.name)>10 THEN CONCAT(LEFT(e.name,10),'...') ELSE e.name END shortname,
+      IFNULL(SUM(${selectValue}),0) actual
+    FROM
+    (
+      <choose>
+        <when test="groupkey eq -1">
+          SELECT g.appkey,g.groupkey,e.componentkey,g.groupname name
+          FROM (
+            SELECT * FROM component_group
+            WHERE appkey=#{appkey} AND isdel=0
+          ) g
+          LEFT OUTER JOIN (
+            SELECT * FROM component
+            WHERE appkey=#{appkey} AND isdel=0
+          ) e
+          ON g.groupkey=e.groupkey
+        </when>
+        <otherwise>
+          SELECT g.appkey, g.groupkey,e.componentkey,e.componentname name
+          FROM component e, component_group g
+          WHERE g.appkey=#{appkey}
+            AND e.isdel=0
+            <if test="groupkey >= 0">
+              AND g.groupkey=#{groupkey}
+            </if>
+            AND g.isdel=0
+            AND e.appkey=g.appkey
+            AND e.groupkey=g.groupkey
+        </otherwise>
+      </choose>
+    ) e
+    LEFT OUTER JOIN
+    (
+      <if test="term eq 'daily'">
+        SELECT * FROM cp_compo_time_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+      </if>
+      <if test="term eq 'weekly'">
+        SELECT * FROM cp_compo_time_week x,
+        (
+          SELECT week_year, week_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY week_year, week_of_year
+        ) d
+        WHERE appkey=#{appkey}
+          AND d.week_year=x.year AND d.week_of_year=x.week
+      </if>
+      <if test="term eq 'monthly'">
+        SELECT * FROM cp_compo_time_month x,
+        (
+          SELECT year year2, month_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY year2, month_of_year
+        ) d
+        WHERE appkey=#{appkey}
+          AND d.year2=x.year AND d.month_of_year=x.month
+      </if>
+    ) a
+    ON e.appkey=a.appkey AND e.componentkey=a.componentkey
+    <choose>
+      <when test="groupkey eq -1">
+        GROUP BY e.appkey, e.groupkey
+        ORDER BY actual DESC, e.groupkey
+      </when>
+      <otherwise>
+        GROUP BY e.appkey,e.componentkey
+        ORDER BY actual DESC, componentkey
+      </otherwise>
+    </choose>
+  </select>
+
+  <!-- =============== Top Countries =============== -->
+
+  <!-- Common : total topN list -->
+  <select id="getTopCountriesDailyTotalTopNList" parameterType="FingraphSearchParam" resultType="HashMap">
+    SELECT
+      componentkey, groupkey,name,
+      CASE WHEN LENGTH(name)>10 THEN CONCAT(LEFT(name,10),'...') ELSE name END shortname,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+      ,
+      <foreach item="topN1" index="index" collection="topNList" open="(" close=")" separator="+" >
+        SUM(top${index})
+      </foreach>
+      AS total
+    FROM
+    (
+      SELECT componentkey,groupkey, name,
+        <foreach item="topN2" index="index" collection="topNList" separator="," >
+          (CASE country WHEN #{topN2} THEN session ELSE 0 END) top${index}
+        </foreach>
+      FROM
+      (
+        SELECT e.componentkey,e.groupkey, e.name name,  country,  sum(session) session
+        FROM
+        (
+          <choose>
+            <when test="groupkey eq -1">
+              SELECT g.appkey,g.groupkey,e.componentkey,g.groupname name
+              FROM (
+                SELECT * FROM component_group
+                WHERE appkey=#{appkey} AND isdel=0
+              ) g
+              LEFT OUTER JOIN (
+                SELECT * FROM component
+                WHERE appkey=#{appkey} AND isdel=0
+              ) e
+              ON g.groupkey=e.groupkey
+            </when>
+            <otherwise>
+              SELECT g.appkey, g.groupkey,e.componentkey,e.componentname name
+              FROM component e, component_group g
+              WHERE g.appkey=#{appkey}
+                AND e.isdel=0
+                <if test="groupkey >= 0">
+                  AND g.groupkey=#{groupkey}
+                </if>
+                AND g.isdel=0
+                AND e.appkey=g.appkey
+                AND e.groupkey=g.groupkey
+            </otherwise>
+          </choose>
+        ) e
+        LEFT OUTER JOIN
+        (
+          <if test="term eq 'daily'">
+            SELECT * FROM cp_compo_country_day
+            WHERE appkey=#{appkey}
+              AND date BETWEEN #{from} AND #{to}
+              AND country IN
+              <foreach item="topN3" index="index" collection="topNList" open="(" close=")" separator="," >
+                #{topN3}
+              </foreach>
+          </if>
+          <if test="term eq 'weekly'">
+            SELECT * FROM cp_compo_country_week x,
+            (
+              SELECT week_year, week_of_year
+              FROM dates_dimension
+              WHERE date BETWEEN #{from} AND #{to}
+              GROUP BY week_year, week_of_year
+            ) d
+            WHERE appkey=#{appkey}
+              AND country IN
+              <foreach item="topN3" index="index" collection="topNList" open="(" close=")" separator="," >
+                #{topN3}
+              </foreach>
+              AND d.week_year=x.year AND d.week_of_year=x.week
+          </if>
+          <if test="term eq 'monthly'">
+            SELECT * FROM cp_compo_country_month x,
+            (
+              SELECT year year2, month_of_year
+              FROM dates_dimension
+              WHERE date BETWEEN #{from} AND #{to}
+              GROUP BY year2, month_of_year
+            ) d
+            WHERE appkey=#{appkey}
+              AND country IN
+              <foreach item="topN3" index="index" collection="topNList" open="(" close=")" separator="," >
+                #{topN3}
+              </foreach>
+              AND d.year2=x.year AND d.month_of_year=x.month
+          </if>
+        ) a
+        ON e.appkey=a.appkey AND e.componentkey=a.componentkey
+        <choose>
+          <when test="groupkey eq -1">
+            GROUP BY e.groupkey, a.country
+          </when>
+          <otherwise>
+            GROUP BY e.componentkey, a.country
+          </otherwise>
+        </choose>
+      ) x
+    ) b
+    <choose>
+      <when test="groupkey eq -1">
+        GROUP BY groupkey
+        ORDER BY total DESC, groupkey
+      </when>
+      <otherwise>
+        GROUP BY componentkey
+        ORDER BY total DESC, componentkey
+      </otherwise>
+    </choose>
+    Limit 0,25
+  </select>
+
+  <!-- Common : actual data list -->
+  <select id="getTopCountriesActualDataList" parameterType="FingraphSearchParam" resultType="ActualData">
+    SELECT
+      e.componentkey, e.name,
+      CASE WHEN LENGTH(e.name)>10 THEN CONCAT(LEFT(e.name,10),'...') ELSE e.name END shortname,
+      IFNULL(SUM(session),0) actual
+    FROM
+    (
+      <choose>
+        <when test="groupkey eq -1">
+          SELECT g.appkey,g.groupkey,e.componentkey,g.groupname name
+          FROM (
+            SELECT * FROM component_group
+            WHERE appkey=#{appkey} AND isdel=0
+          ) g
+          LEFT OUTER JOIN (
+            SELECT * FROM component
+            WHERE appkey=#{appkey} AND isdel=0
+          ) e
+          ON g.groupkey=e.groupkey
+        </when>
+        <otherwise>
+          SELECT g.appkey, g.groupkey,e.componentkey,e.componentname name
+          FROM component e, component_group g
+          WHERE g.appkey=#{appkey}
+            AND e.isdel=0
+            <if test="groupkey >= 0">
+              AND g.groupkey=#{groupkey}
+            </if>
+            AND g.isdel=0
+            AND e.appkey=g.appkey
+            AND e.groupkey=g.groupkey
+        </otherwise>
+      </choose>
+    ) e
+    LEFT OUTER JOIN
+    (
+      <if test="term eq 'daily'">
+        SELECT * FROM cp_compo_country_day
+        WHERE appkey=#{appkey}
+          AND date BETWEEN #{from} AND #{to}
+          AND country=#{selectValue}
+      </if>
+      <if test="term eq 'weekly'">
+        SELECT * FROM cp_compo_country_week x,
+        (
+          SELECT week_year, week_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY week_year, week_of_year
+        ) d
+        WHERE appkey=#{appkey}
+          AND x.country=#{selectValue}
+          AND d.week_year=x.year AND d.week_of_year=x.week
+      </if>
+      <if test="term eq 'monthly'">
+        SELECT * FROM cp_compo_country_month x,
+        (
+          SELECT year year2, month_of_year
+          FROM dates_dimension
+          WHERE date BETWEEN #{from} AND #{to}
+          GROUP BY year2, month_of_year
+        ) d
+        WHERE appkey=#{appkey}
+          AND x.country=#{selectValue}
+          AND d.year2=x.year AND d.month_of_year=x.month
+      </if>
+    ) a
+    ON e.appkey=a.appkey AND e.componentkey=a.componentkey
+    <choose>
+      <when test="groupkey eq -1">
+        GROUP BY e.appkey, e.groupkey
+        ORDER BY actual DESC, e.groupkey
+      </when>
+      <otherwise>
+        GROUP BY e.appkey,e.componentkey
+        ORDER BY actual DESC, componentkey
+      </otherwise>
+    </choose>
+  </select>
+
+</mapper>

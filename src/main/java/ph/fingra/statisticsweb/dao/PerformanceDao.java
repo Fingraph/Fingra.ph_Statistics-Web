@@ -25,85 +25,98 @@ import ph.fingra.statisticsweb.domain.SessionLengthData;
 import ph.fingra.statisticsweb.domain.TimeSeriesData;
 
 public interface PerformanceDao {
-
-	Figures getNewUsersDailyFigures(FingraphSearchParam searchParam);
-
-	List<TimeSeriesData> getNewUsersDailyInfoList(FingraphSearchParam searchParam);
-
-	Figures getNewUsersWeeklyFigures(FingraphSearchParam searchParam);
-
-	List<TimeSeriesData> getgetNewUsersWeeklyInfoList(FingraphSearchParam searchParam);
-
-	Figures getNewUsersMonthlyFigures(FingraphSearchParam searchParam);
-
-	List<TimeSeriesData> getNewUsersMonthlyInfoList(FingraphSearchParam searchParam);
-
-	List<SessionLengthData> getSessionLengthDailySectionList(FingraphSearchParam searchParam);
-
-	List<TimeSeriesData> getSessionLengthDailyMedianList(FingraphSearchParam searchParam);
-
-	List<TimeSeriesData> getSessionLengthWeeklyMedianList(FingraphSearchParam searchParam);
-
-	List<TimeSeriesData> getSessionLengthMonthlyMedianList(FingraphSearchParam searchParam);
-
-	Figures getActiveUsersDailyFigures(FingraphSearchParam searchParam);
-
-	List<TimeSeriesData> getActiveUsersDailyInfoList(FingraphSearchParam searchParam);
-
-	Figures getActiveUsersWeeklyFigures(FingraphSearchParam searchParam);
-
-	List<TimeSeriesData> getActiveUsersWeeklyInfoList(FingraphSearchParam searchParam);
-
-	Figures getActiveUsersMonthlyFigures(FingraphSearchParam searchParam);
-
-	List<TimeSeriesData> getActiveUsersMonthlyInfoList(FingraphSearchParam searchParam);
-
-	Figures getPageViewsDailyFigures(FingraphSearchParam searchParam);
-
-	List<TimeSeriesData> getPageViewsDailyInfoList(FingraphSearchParam searchParam);
-
-	Figures getPageViewsWeeklyFigures(FingraphSearchParam searchParam);
-
-	List<TimeSeriesData> getPageViewsWeeklyInfoList(FingraphSearchParam searchParam);
-
-	Figures getPageViewsMonthlyFigures(FingraphSearchParam searchParam);
-
-	List<TimeSeriesData> getPageViewsMonthlyInfoList(FingraphSearchParam searchParam);
-
-	FrequencyData getFrequencyDailyRanges(FingraphSearchParam searchParam);
-
-	FrequencyData getFrequencyWeeklyRanges(FingraphSearchParam searchParam);
-
-	FrequencyData getFrequencyMonthlyRanges(FingraphSearchParam searchParam);
-
-	List<FrequencyData> getTimeSeriesSessionsDailyList(FingraphSearchParam searchParam);
-
-	List<FrequencyData> getTimeSeriesSessionsWeeklyList(FingraphSearchParam searchParam);
-
-	List<FrequencyData> getTimeSeriesSessionsMonthlyList(FingraphSearchParam searchParam);
-
-	List<TimeSeriesData> getSessionsDailyList(FingraphSearchParam searchParam);
-
-	List<TimeSeriesData> getSessionsWeeklyList(FingraphSearchParam searchParam);
-
-	List<TimeSeriesData> getSessionsMonthlyList(FingraphSearchParam searchParam);
-
-	Figures getSessionsFigures(FingraphSearchParam searchParam);
-
-	SessionLengthData getSessionLengthDailyTotal(FingraphSearchParam searchParam);
-
-	Figures getSessionLengthDailyFigures(FingraphSearchParam searchParam);
-
-	SessionLengthData getSessionLengthWeeklyTotal(FingraphSearchParam searchParam);
-
-	List<SessionLengthData> getSessionLengthWeeklySectionList(FingraphSearchParam searchParam);
-
-	Figures getSessionLengthWeeklyFigures(FingraphSearchParam searchParam);
-
-	SessionLengthData getSessionLengthMonthlyTotal(FingraphSearchParam searchParam);
-
-	List<SessionLengthData> getSessionLengthMonthlySectionList(FingraphSearchParam searchParam);
-
-	Figures getSessionLengthMonthlyFigures(FingraphSearchParam searchParam);
-
+    
+    // New Users ==============================================================
+    
+    public List<TimeSeriesData> getNewUsersDailyInfoList(FingraphSearchParam searchParam);
+    
+    public Figures getNewUsersDailyFigures(FingraphSearchParam searchParam);
+    
+    public List<TimeSeriesData> getNewUsersWeeklyInfoList(FingraphSearchParam searchParam);
+    
+    public Figures getNewUsersWeeklyFigures(FingraphSearchParam searchParam);
+    
+    public List<TimeSeriesData> getNewUsersMonthlyInfoList(FingraphSearchParam searchParam);
+    
+    public Figures getNewUsersMonthlyFigures(FingraphSearchParam searchParam);
+    
+    // Active Users ===========================================================
+    
+    public List<TimeSeriesData> getActiveUsersDailyInfoList(FingraphSearchParam searchParam);
+    
+    public Figures getActiveUsersDailyFigures(FingraphSearchParam searchParam);
+    
+    public List<TimeSeriesData> getActiveUsersWeeklyInfoList(FingraphSearchParam searchParam);
+    
+    public Figures getActiveUsersWeeklyFigures(FingraphSearchParam searchParam);
+    
+    public List<TimeSeriesData> getActiveUsersMonthlyInfoList(FingraphSearchParam searchParam);
+    
+    public Figures getActiveUsersMonthlyFigures(FingraphSearchParam searchParam);
+    
+    // Sessions (1) Sessions Frequencys =======================================
+    
+    public Figures getSessionsFigures(FingraphSearchParam searchParam);
+    
+    public List<FrequencyData> getTimeSeriesSessionsDailyList(FingraphSearchParam searchParam);
+    
+    public FrequencyData getFrequencyDailyRanges(FingraphSearchParam searchParam);
+    
+    public List<FrequencyData> getTimeSeriesSessionsWeeklyList(FingraphSearchParam searchParam);
+    
+    public FrequencyData getFrequencyWeeklyRanges(FingraphSearchParam searchParam);
+    
+    public List<FrequencyData> getTimeSeriesSessionsMonthlyList(FingraphSearchParam searchParam);
+    
+    public FrequencyData getFrequencyMonthlyRanges(FingraphSearchParam searchParam);
+    
+    // Sessions (2) Total Sessions ============================================
+    
+    public List<TimeSeriesData> getSessionsDailyList(FingraphSearchParam searchParam);
+    
+    public List<TimeSeriesData> getSessionsWeeklyList(FingraphSearchParam searchParam);
+    
+    public List<TimeSeriesData> getSessionsMonthlyList(FingraphSearchParam searchParam);
+    
+    // Session Length (1) Total ===============================================
+    
+    public SessionLengthData getSessionLengthDailyTotal(FingraphSearchParam searchParam);
+    
+    public List<SessionLengthData> getSessionLengthDailySectionList(FingraphSearchParam searchParam);
+    
+    public Figures getSessionLengthDailyFigures(FingraphSearchParam searchParam);
+    
+    public SessionLengthData getSessionLengthWeeklyTotal(FingraphSearchParam searchParam);
+    
+    public List<SessionLengthData> getSessionLengthWeeklySectionList(FingraphSearchParam searchParam);
+    
+    public Figures getSessionLengthWeeklyFigures(FingraphSearchParam searchParam);
+    
+    public SessionLengthData getSessionLengthMonthlyTotal(FingraphSearchParam searchParam);
+    
+    public List<SessionLengthData> getSessionLengthMonthlySectionList(FingraphSearchParam searchParam);
+    
+    public Figures getSessionLengthMonthlyFigures(FingraphSearchParam searchParam);
+    
+    // Session Length (2) Median ==============================================
+    
+    public List<TimeSeriesData> getSessionLengthDailyMedianList(FingraphSearchParam searchParam);
+    
+    public List<TimeSeriesData> getSessionLengthWeeklyMedianList(FingraphSearchParam searchParam);
+    
+    public List<TimeSeriesData> getSessionLengthMonthlyMedianList(FingraphSearchParam searchParam);
+    
+    // Page Views =============================================================
+    
+    public List<TimeSeriesData> getPageViewsDailyInfoList(FingraphSearchParam searchParam);
+    
+    public Figures getPageViewsDailyFigures(FingraphSearchParam searchParam);
+    
+    public List<TimeSeriesData> getPageViewsWeeklyInfoList(FingraphSearchParam searchParam);
+    
+    public Figures getPageViewsWeeklyFigures(FingraphSearchParam searchParam);
+    
+    public List<TimeSeriesData> getPageViewsMonthlyInfoList(FingraphSearchParam searchParam);
+    
+    public Figures getPageViewsMonthlyFigures(FingraphSearchParam searchParam);
 }

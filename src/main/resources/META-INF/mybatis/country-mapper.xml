@@ -1,0 +1,913 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright 2014 tgrape Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ -->
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="country">
+
+  <!-- =============== Top Countries : Sessions =============== -->
+
+  <!-- Daily : map graph -->
+  <select id="getCountrySessionsDailySumList" parameterType="FingraphSearchParam" resultType="CountryData">
+    SELECT
+      IFNULL(c.short_name,'Unknown') country, a.country iso2, a.session value
+    FROM
+      (
+        SELECT country, SUM(session) session
+        FROM cd_country_session_day
+        WHERE appkey=#{appkey} AND DATE BETWEEN #{from} AND #{to}
+        GROUP BY country
+        ORDER BY SUM(session) DESC, country
+      ) a
+      LEFT OUTER JOIN
+      country c
+      ON a.country=c.iso2
+  </select>
+
+  <!-- Daily : time series graph -->
+  <select id="getCountrySessionsDailyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="CountryTimeSeriesData">
+    SELECT date,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT d.date date,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE country WHEN #{topN1} THEN session ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+          LEFT OUTER JOIN
+          (
+            SELECT date, IFNULL(country,'Unknown') country, session
+            FROM cd_country_session_day
+            WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+              AND country IN
+              <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                #{topN2}
+              </foreach>
+          ) a
+          ON d.date=a.date
+      ) a
+    GROUP BY date
+  </select>
+
+  <!-- Weekly : map graph -->
+  <select id="getCountrySessionsWeeklySumList" parameterType="FingraphSearchParam" resultType="CountryData">
+    SELECT
+      IFNULL(c.short_name,'Unknown') country, a.country iso2, value
+    FROM
+      (
+        SELECT country, SUM(session) value
+        FROM
+          (
+            SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+            FROM dates_dimension
+            WHERE DATE BETWEEN #{from} AND #{to}
+            GROUP BY week_year, week_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, week, fromDate, toDate, country, session
+            FROM cd_country_session_week
+            WHERE appkey=#{appkey}
+          ) a
+          ON d.week_year=a.year AND d.week_of_year=a.week
+        GROUP BY country
+        ORDER BY SUM(session) DESC, country
+      ) a
+      LEFT OUTER JOIN
+      country c
+      ON a.country=c.iso2
+  </select>
+
+  <!-- Weekly : time series graph -->
+  <select id="getCountrySessionsWeeklyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="CountryTimeSeriesData">
+    SELECT
+      MAX(fromDate) fromDate, MAX(toDate) toDate, week_year, week_of_year,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT
+          IFNULL(a.fromdate,d.fromdate) fromDate, IFNULL(a.todate,d.todate) toDate, week_year, week_of_year,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE country WHEN #{topN1} THEN session ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (
+            SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+            FROM dates_dimension
+            WHERE DATE BETWEEN #{from} AND #{to}
+            GROUP BY week_year, week_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, week, fromDate, toDate, country, session
+            FROM cd_country_session_week
+            WHERE appkey=#{appkey}
+              AND country IN
+              <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                #{topN2}
+              </foreach>
+          ) a
+          ON d.week_year=a.year AND d.week_of_year=a.week
+        GROUP BY week_year, week_of_year, country
+      ) c
+    GROUP BY week_year, week_of_year
+  </select>
+
+  <!-- Monthly : map graph -->
+  <select id="getCountrySessionsMonthlySumList" parameterType="FingraphSearchParam" resultType="CountryData">
+    SELECT
+      IFNULL(c.short_name,'Unknown') country, a.country iso2, value
+    FROM
+      (
+        SELECT country, SUM(session) value
+        FROM
+          (
+            SELECT year, month_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY year, month_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, month, country, session
+            FROM cd_country_session_month
+            WHERE appkey=#{appkey}
+          ) a
+          ON d.year=a.year AND d.month_of_year=a.month
+        GROUP BY country
+        ORDER BY SUM(session) DESC, country
+      ) a
+      LEFT OUTER JOIN
+      country c
+      ON a.country=c.iso2
+  </select>
+
+  <!-- Monthly : time series graph -->
+  <select id="getCountrySessionsMonthlyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="CountryTimeSeriesData">
+    SELECT year, month,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT d.year year, d.month_of_year month,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE country WHEN #{topN1} THEN session ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (
+            SELECT year, month_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY year, month_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, month, country, session
+            FROM cd_country_session_month
+            WHERE appkey=#{appkey}
+              AND country IN
+              <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                #{topN2}
+              </foreach>
+          ) a
+          ON d.year=a.year AND d.month_of_year=a.month
+        GROUP BY d.year, d.month_of_year, country
+      ) c
+    GROUP BY year, month
+  </select>
+
+  <!-- =============== Top Countries : Active Users =============== -->
+
+  <!-- Daily : map graph -->
+  <select id="getCountryActiveUsersDailySumList" parameterType="FingraphSearchParam" resultType="CountryData">
+    SELECT
+      IFNULL(c.short_name,'Unknown') country, a.country iso2, a.user value
+    FROM
+      (
+        SELECT country, SUM(user) user
+        FROM st_country_day
+        WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+        GROUP BY country
+        ORDER BY SUM(user) DESC, country
+      ) a
+      LEFT OUTER JOIN
+      country c
+      ON a.country=c.iso2
+  </select>
+
+  <!-- Daily : time series graph -->
+  <select id="getCountryActiveUsersDailyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="CountryTimeSeriesData">
+    SELECT date,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT d.date date,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE country WHEN #{topN1} THEN user ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+          LEFT OUTER JOIN
+          (
+            SELECT date, IFNULL(country,'Unknown') country, user
+            FROM st_country_day
+            WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+              AND country IN
+              <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                #{topN2}
+              </foreach>
+          ) a
+          ON d.date=a.date
+      ) a
+    GROUP BY date
+  </select>
+
+  <!-- Weekly : map graph -->
+  <select id="getCountryActiveUsersWeeklySumList" parameterType="FingraphSearchParam" resultType="CountryData">
+    SELECT
+      IFNULL(c.short_name,'Unknown') country, a.country iso2, value
+    FROM
+      (
+        SELECT country, SUM(user) value
+        FROM
+          (
+            SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY week_year, week_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, week, fromDate, toDate, country, user
+            FROM st_country_week
+            WHERE appkey=#{appkey}
+          ) a
+          ON d.week_year=a.year AND d.week_of_year=a.week
+        GROUP BY country
+        ORDER BY SUM(user) DESC, country
+      ) a
+      LEFT OUTER JOIN
+      country c
+      ON a.country=c.iso2
+  </select>
+
+  <!-- Weekly : time series graph -->
+  <select id="getCountryActiveUsersWeeklyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="CountryTimeSeriesData">
+    SELECT
+      MAX(fromDate) fromDate, MAX(toDate) toDate, week_year, week_of_year,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT
+          IFNULL(a.fromdate,d.fromdate) fromDate, IFNULL(a.todate,d.todate) toDate, week_year, week_of_year,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE country WHEN #{topN1} THEN user ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (
+            SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY week_year, week_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, week, fromDate, toDate, country, user
+            FROM st_country_week
+            WHERE appkey=#{appkey}
+              AND country IN
+              <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                #{topN2}
+              </foreach>
+          ) a
+          ON d.week_year=a.year AND d.week_of_year=a.week
+        GROUP BY week_year, week_of_year, country
+      ) c
+    GROUP BY week_year, week_of_year
+  </select>
+
+  <!-- Monthly : map graph -->
+  <select id="getCountryActiveUsersMonthlySumList" parameterType="FingraphSearchParam" resultType="CountryData">
+    SELECT
+      IFNULL(c.short_name,'Unknown') country, a.country iso2, value
+    FROM
+      (
+        SELECT country, SUM(user) value
+        FROM
+          (
+            SELECT year, month_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY year, month_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, month, country, user
+            FROM st_country_month
+            WHERE appkey=#{appkey}
+          ) a
+          ON d.year=a.year AND d.month_of_year=a.month
+        GROUP BY country
+        ORDER BY SUM(user) DESC, country
+      ) a
+      LEFT OUTER JOIN
+      country c
+      ON a.country=c.iso2
+  </select>
+
+  <!-- Monthly : time series graph -->
+  <select id="getCountryActiveUsersMonthlyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="CountryTimeSeriesData">
+    SELECT year, month,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT d.year year, d.month_of_year month,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE country WHEN #{topN1} THEN user ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (
+            SELECT year, month_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY year, month_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, month, country, user
+            FROM st_country_month
+            WHERE appkey=#{appkey}
+              AND country IN
+              <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                #{topN2}
+              </foreach>
+          ) a
+          ON d.year=a.year AND d.month_of_year=a.month
+        GROUP BY d.year, d.month_of_year, country
+      ) c
+    GROUP BY year, month
+  </select>
+
+  <!-- =============== Top Countries : Session Length =============== -->
+
+  <!-- Daily : map graph -->
+  <select id="getCountrySessionLengthDailySumList" parameterType="FingraphSearchParam" resultType="CountryData">
+    SELECT
+      IFNULL(c.short_name,'Unknown') country, country iso2, a.totaltime value
+    FROM
+      (
+        SELECT country, SUM(totaltime) totaltime
+        FROM cd_country_sessionlength_day
+        WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+        GROUP BY country
+        ORDER BY SUM(totaltime) DESC, country
+      ) a
+      LEFT OUTER JOIN
+      country c
+      ON a.country=c.iso2
+  </select>
+
+  <!-- Daily : time series graph -->
+  <select id="getCountrySessionLengthDailyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="CountryTimeSeriesData">
+    SELECT date,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT d.date date,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE country WHEN #{topN1} THEN totaltime ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+          LEFT OUTER JOIN
+          (
+            SELECT date, IFNULL(country,'Unknown') country, totaltime
+            FROM cd_country_sessionlength_day
+            WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+              AND country IN
+              <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                #{topN2}
+              </foreach>
+          ) a
+          ON d.date=a.date
+      ) a
+    GROUP BY date
+  </select>
+
+  <!-- Weekly : map graph -->
+  <select id="getCountrySessionLengthWeeklySumList" parameterType="FingraphSearchParam" resultType="CountryData">
+    SELECT
+      IFNULL(c.short_name,'Unknown') country, a.country iso2, value
+    FROM
+      (
+        SELECT country, SUM(totaltime) value
+        FROM
+          (
+            SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY week_year, week_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, week, fromDate, toDate, country, totaltime
+            FROM cd_country_sessionlength_week
+            WHERE appkey=#{appkey}
+          ) a
+          ON d.week_year=a.year AND d.week_of_year=a.week
+        GROUP BY country
+        ORDER BY SUM(totaltime) DESC, country
+      ) a
+      LEFT OUTER JOIN
+      country c
+      ON a.country=c.iso2
+  </select>
+
+  <!-- Weekly : time series graph -->
+  <select id="getCountrySessionLengthWeeklyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="CountryTimeSeriesData">
+    SELECT
+      MAX(fromDate) fromDate, MAX(toDate) toDate, week_year, week_of_year,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT
+          IFNULL(a.fromdate,d.fromdate) fromDate, IFNULL(a.todate,d.todate) toDate, week_year, week_of_year,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE country WHEN #{topN1} THEN totaltime ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (
+            SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY week_year, week_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, week, fromDate, toDate, country, totaltime
+            FROM cd_country_sessionlength_week
+            WHERE appkey=#{appkey}
+              AND country IN
+              <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                #{topN2}
+              </foreach>
+          ) a
+          ON d.week_year=a.year AND d.week_of_year=a.week
+        GROUP BY week_year, week_of_year, country
+      ) c
+    GROUP BY week_year, week_of_year
+  </select>
+
+  <!-- Monthly : map graph -->
+  <select id="getCountrySessionLengthMonthlySumList" parameterType="FingraphSearchParam" resultType="CountryData">
+    SELECT
+      IFNULL(c.short_name,'Unknown') country, a.country iso2, value
+    FROM
+      (
+        SELECT country, SUM(totaltime) value
+        FROM
+          (
+            SELECT year, month_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY year, month_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, month, country, totaltime
+            FROM cd_country_sessionlength_month
+            WHERE appkey=#{appkey}
+          ) a
+          ON d.year=a.year AND d.month_of_year=a.month
+        GROUP BY country
+        ORDER BY SUM(totaltime) DESC, country
+      ) a
+      LEFT OUTER JOIN
+      country c
+      ON a.country=c.iso2
+  </select>
+
+  <!-- Monthly : time series graph -->
+  <select id="getCountrySessionLengthMonthlyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="CountryTimeSeriesData">
+    SELECT year, month,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT d.year year, d.month_of_year month,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE country WHEN #{topN1} THEN totaltime ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (
+            SELECT year, month_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY year, month_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, month, country, totaltime
+            FROM cd_country_sessionlength_month
+            WHERE appkey=#{appkey}
+              AND country IN
+              <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                #{topN2}
+              </foreach>
+          ) a
+          ON d.year=a.year AND d.month_of_year=a.month
+        GROUP BY d.year, d.month_of_year, country
+      ) c
+    GROUP BY year, month
+  </select>
+
+  <!-- =============== Top Countries : Page Views =============== -->
+
+  <!-- Daily : map graph -->
+  <select id="getCountryPageViewsDailySumList" parameterType="FingraphSearchParam" resultType="CountryData">
+    SELECT
+      IFNULL(c.short_name,'Unknown') country, a.country iso2, a.pageview value
+    FROM
+      (
+        SELECT country, SUM(pageview) pageview
+        FROM cd_country_pageview_day
+        WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+        GROUP BY country
+        ORDER BY SUM(pageview) DESC, country
+      ) a
+      LEFT OUTER JOIN
+      country c
+      ON a.country=c.iso2
+  </select>
+
+  <!-- Daily : time series graph -->
+  <select id="getCountryPageViewsDailyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="CountryTimeSeriesData">
+    SELECT date,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT d.date date,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE country WHEN #{topN1} THEN pageview ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+          LEFT OUTER JOIN
+          (
+            SELECT date, IFNULL(country,'Unknown') country, pageview
+            FROM cd_country_pageview_day
+            WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+              AND country IN
+              <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                #{topN2}
+              </foreach>
+          ) a
+          ON d.date=a.date
+      ) a
+    GROUP BY date
+  </select>
+
+  <!-- Weekly : map graph -->
+  <select id="getCountryPageViewsWeeklySumList" parameterType="FingraphSearchParam" resultType="CountryData">
+    SELECT
+      IFNULL(c.short_name,'Unknown') country, a.country iso2, value
+    FROM
+      (
+        SELECT country, SUM(pageview) value
+        FROM
+          (
+            SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY week_year, week_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, week, fromDate, toDate, country, pageview
+            FROM cd_country_pageview_week
+            WHERE appkey=#{appkey}
+          ) a
+          ON d.week_year=a.year AND d.week_of_year=a.week
+        GROUP BY country
+        ORDER BY SUM(pageview) DESC, country
+      ) a
+      LEFT OUTER JOIN
+      country c
+      ON a.country=c.iso2
+  </select>
+
+  <!-- Weekly : time series graph -->
+  <select id="getCountryPageViewsWeeklyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="CountryTimeSeriesData">
+    SELECT
+      MAX(fromDate) fromDate, MAX(toDate) toDate, week_year, week_of_year,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT
+          IFNULL(a.fromdate,d.fromdate) fromDate, IFNULL(a.todate,d.todate) toDate, week_year, week_of_year,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE country WHEN #{topN1} THEN pageview ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (
+            SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY week_year, week_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, week, fromDate, toDate, country, pageview
+            FROM cd_country_pageview_week
+            WHERE appkey=#{appkey}
+              AND country IN
+              <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                #{topN2}
+              </foreach>
+          ) a
+          ON d.week_year=a.year AND d.week_of_year=a.week
+        GROUP BY week_year, week_of_year, country
+      ) c
+    GROUP BY week_year, week_of_year
+  </select>
+
+  <!-- Monthly : map graph -->
+  <select id="getCountryPageViewsMonthlySumList" parameterType="FingraphSearchParam" resultType="CountryData">
+    SELECT
+      IFNULL(c.short_name,'Unknown') country, a.country iso2, value
+    FROM
+      (
+        SELECT country, SUM(pageview) value
+        FROM
+          (
+            SELECT year, month_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY year, month_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, month, country, pageview
+            FROM cd_country_pageview_month
+            WHERE appkey=#{appkey}
+          ) a
+          ON d.year=a.year AND d.month_of_year=a.month
+        GROUP BY country
+        ORDER BY SUM(pageview) DESC, country
+      ) a
+      LEFT OUTER JOIN
+      country c
+      ON a.country=c.iso2
+  </select>
+
+  <!-- Monthly : time series graph -->
+  <select id="getCountryPageViewsMonthlyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="CountryTimeSeriesData">
+    SELECT year, month,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT d.year year, d.month_of_year month,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE country WHEN #{topN1} THEN pageview ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (
+            SELECT year, month_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY year, month_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, month, country, pageview
+            FROM cd_country_pageview_month
+            WHERE appkey=#{appkey}
+              AND country IN
+              <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                #{topN2}
+              </foreach>
+          ) a
+          ON d.year=a.year AND d.month_of_year=a.month
+        GROUP BY d.year,d.month_of_year,country
+      ) c
+    GROUP BY year, month
+  </select>
+
+  <!-- =============== Top Countries : Active Users =============== -->
+
+  <!-- Daily : map graph -->  
+  <select id="getCountryNewUsersDailySumList" parameterType="FingraphSearchParam" resultType="CountryData">
+    SELECT
+      IFNULL(c.short_name,'Unknown') country, a.country iso2, a.newuser value
+    FROM
+      (
+        SELECT country, SUM(newuser) newuser
+        FROM cd_country_newuser_day
+        WHERE appkey=#{appkey} AND DATE BETWEEN #{from} AND #{to}
+        GROUP BY country
+        ORDER BY SUM(newuser) DESC, country
+      ) a
+      LEFT OUTER JOIN
+      country c
+      ON a.country=c.iso2 
+  </select>
+
+  <!-- Daily : time series graph -->
+  <select id="getCountryNewUsersDailyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="CountryTimeSeriesData">
+    SELECT date,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT d.date date,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE country WHEN #{topN1} THEN newuser ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (SELECT date FROM dates_dimension WHERE date BETWEEN #{from} AND #{to}) d
+          LEFT OUTER JOIN
+          (
+            SELECT date, IFNULL(country,'Unknown') country, newuser
+            FROM cd_country_newuser_day
+            WHERE appkey=#{appkey} AND date BETWEEN #{from} AND #{to}
+              AND country IN
+              <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                #{topN2}
+              </foreach>
+          ) a
+          ON d.date=a.date
+      ) a
+    GROUP BY date       
+  </select>
+
+  <!-- Weekly : map graph --> 
+  <select id="getCountryNewUsersWeeklySumList" parameterType="FingraphSearchParam" resultType="CountryData">
+    SELECT
+      IFNULL(c.short_name,'Unknown') country, a.country iso2, value
+    FROM
+      (
+        SELECT country, SUM(newuser) value
+        FROM
+          (
+            SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY week_year, week_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+              SELECT year, week, fromDate, toDate, country, newuser
+              FROM cd_country_newuser_week
+              WHERE appkey=#{appkey}
+          ) a
+          ON d.week_year=a.year AND d.week_of_year=a.week
+        GROUP BY country
+        ORDER BY SUM(newuser) DESC, country
+      ) a
+      LEFT OUTER JOIN
+      country c
+      ON a.country=c.iso2
+  </select>
+
+  <!-- Weekly : time series graph -->
+  <select id="getCountryNewUsersWeeklyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="CountryTimeSeriesData">
+    SELECT
+      MAX(fromDate) fromDate, MAX(toDate) toDate, week_year, week_of_year,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT
+          IFNULL(a.fromdate,d.fromdate) fromDate, IFNULL(a.todate,d.todate) toDate, week_year, week_of_year,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE country WHEN #{topN1} THEN newuser ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (
+            SELECT MIN(date) fromdate, MAX(date) todate, week_year, week_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY week_year, week_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, week, fromDate, toDate, country, newuser
+            FROM cd_country_newuser_week
+            WHERE appkey=#{appkey}
+              AND country IN
+              <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                #{topN2}
+              </foreach>
+          ) a
+          ON d.week_year=a.year AND d.week_of_year=a.week
+        GROUP BY week_year, week_of_year, country
+      ) c
+    GROUP BY week_year, week_of_year    
+  </select>
+
+  <!-- Monthly : map graph -->    
+  <select id="getCountryNewUsersMonthlySumList" parameterType="FingraphSearchParam" resultType="CountryData">
+    SELECT
+      IFNULL(c.short_name,'Unknown') country, a.country iso2, value
+    FROM
+      (
+        SELECT country, SUM(newuser) value
+        FROM
+          (
+            SELECT year, month_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY year, month_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, month, country, newuser
+            FROM cd_country_newuser_month
+            WHERE appkey=#{appkey}
+          ) a
+          ON d.year=a.year AND d.month_of_year=a.month
+        GROUP BY country
+        ORDER BY SUM(newuser) DESC, country
+      ) a
+      LEFT OUTER JOIN
+      country c
+      ON a.country=c.iso2
+  </select>
+
+  <!-- Monthly : time series graph -->
+  <select id="getCountryNewUsersMonthlyTimeSeriesDataList" parameterType="FingraphSearchParam" resultType="CountryTimeSeriesData">
+    SELECT year, month,
+      <foreach item="topN0" index="index" collection="topNList" separator="," >
+        IFNULL(SUM(top${index}),0) top${index}
+      </foreach>
+    FROM
+      (
+        SELECT d.year year, d.month_of_year month,
+          <foreach item="topN1" index="index" collection="topNList" separator="," >
+            (CASE country WHEN #{topN1} THEN newuser ELSE 0 END) top${index}
+          </foreach>
+        FROM
+          (
+            SELECT year, month_of_year
+            FROM dates_dimension
+            WHERE date BETWEEN #{from} AND #{to}
+            GROUP BY year, month_of_year
+          ) d
+          LEFT OUTER JOIN
+          (
+            SELECT year, month, country, newuser
+            FROM cd_country_newuser_month
+            WHERE appkey=#{appkey}
+              AND country IN
+              <foreach item="topN2" index="index" collection="topNList" separator="," open="(" close=")" >
+                #{topN2}
+              </foreach>
+          ) a
+          ON d.year=a.year AND d.month_of_year=a.month
+        GROUP BY d.year,d.month_of_year,country
+      ) c
+    GROUP BY year, month    
+  </select>
+
+</mapper>
