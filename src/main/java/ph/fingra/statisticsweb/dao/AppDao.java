@@ -19,7 +19,6 @@ package ph.fingra.statisticsweb.dao;
 import java.util.List;
 
 import ph.fingra.statisticsweb.domain.App;
-import ph.fingra.statisticsweb.domain.AppCategory;
 import ph.fingra.statisticsweb.domain.AppInfo;
 import ph.fingra.statisticsweb.domain.DashBoardSearchParam;
 
@@ -34,8 +33,6 @@ public interface AppDao {
     public void updateAppStatus(App app);
     
     public void updateAppInfo(AppInfo appInfo);
-    
-    public List<AppCategory> findAllCategories();
     
     public List<App> getAppList(DashBoardSearchParam param);
     

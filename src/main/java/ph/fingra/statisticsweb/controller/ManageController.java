@@ -27,17 +27,73 @@ import ph.fingra.statisticsweb.security.FingraphUser;
 import ph.fingra.statisticsweb.service.MemberService;
 
 @Controller
+@RequestMapping({"/manage/*"})
 public class ManageController extends BaseController {
     
     @Autowired
     private MemberService memberService;
     
-    @RequestMapping(method = RequestMethod.GET, value = "/manage/member")
-    public String manageMember(@ActiveUser FingraphUser activeUser, Model model) {
+    //lookup list of general users
+    @RequestMapping(method = RequestMethod.GET, value = "/member")
+    public String member(@ActiveUser FingraphUser activeUser, Model model) {
         
         // TODO:
         
         return "manage/member";
+    }
+    
+    //show detail of general user
+    @RequestMapping(method = RequestMethod.GET, value = "/member/detail")
+    public String memberDetail(@ActiveUser FingraphUser activeUser, Model model) {
+    
+    	// TODO;
+    	
+    	return "manage/member/detail";
+    }
+    
+    //Password Reset Confirmation
+    @RequestMapping(method = RequestMethod.POST, value = "/member/resetConfirm")
+    public String memberResetConfirm(@ActiveUser FingraphUser activeUser, Model model){
+    	
+    	// TODO;
+    	
+    	return "manage/member/resetConfirm";
+    	
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/member/signupConfirm")
+    public String memberSignupConfirm(@ActiveUser FingraphUser activeUser, Model model) {
+    	
+    	// TODO;
+    	
+    	return "manage/member/signupConfirm";
+    	
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/member/deactivate")
+    public String memberDeactivate(@ActiveUser FingraphUser activeUser, Model model){
+    	
+    	// TODO;
+    	
+    	return "manage/member/deactivate";
+    	
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/member/create")
+    public String memberCreateForm(@ActiveUser FingraphUser activeUser, Model model){
+    	
+    	// TODO;
+    	
+    	return "manage/member/create";
+    	
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/member/create")
+    public String memberCreate(@ActiveUser FingraphUser activeUser, Model model) {
+    	
+    	// TODO;
+    	
+    	return "manage/member/create";
     }
     
 }

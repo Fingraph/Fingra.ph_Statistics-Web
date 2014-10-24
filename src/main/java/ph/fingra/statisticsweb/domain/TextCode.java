@@ -14,28 +14,16 @@
  * limitations under the License.
  */
 
-package ph.fingra.statisticsweb.service;
+package ph.fingra.statisticsweb.domain;
 
-import java.util.List;
+import java.io.Serializable;
 
-import ph.fingra.statisticsweb.domain.Member;
-
-public interface MemberService {
-    
-	public Member get(int memberid);
-	
-    public Member get(String userid);
-    
-    public void create(Member member);
-    
-    public void update(Member member);
-    
-    public void updateMemberLastLoginTime(Member member);
-    
-    public boolean duplicateUseridCheck(String userid);
-
-    public void resetPassword(String userid);
-    
-    public List<Member> getList();
-    
+public class TextCode implements Serializable{
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -57809281192803453L;
+	private String name;
+	private String value;
+	private String acc;
 }

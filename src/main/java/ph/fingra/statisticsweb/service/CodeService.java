@@ -18,24 +18,8 @@ package ph.fingra.statisticsweb.service;
 
 import java.util.List;
 
-import ph.fingra.statisticsweb.domain.Member;
+import ph.fingra.statisticsweb.domain.TextCode;
 
-public interface MemberService {
-    
-	public Member get(int memberid);
-	
-    public Member get(String userid);
-    
-    public void create(Member member);
-    
-    public void update(Member member);
-    
-    public void updateMemberLastLoginTime(Member member);
-    
-    public boolean duplicateUseridCheck(String userid);
-
-    public void resetPassword(String userid);
-    
-    public List<Member> getList();
-    
+public interface CodeService {
+    List<TextCode> getAllCountries();
 }

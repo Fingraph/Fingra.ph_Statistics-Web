@@ -1,4 +1,5 @@
-/**
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
  * Copyright 2014 tgrape Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,30 +13,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ -->
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-package ph.fingra.statisticsweb.service;
-
-import java.util.List;
-
-import ph.fingra.statisticsweb.domain.Member;
-
-public interface MemberService {
-    
-	public Member get(int memberid);
-	
-    public Member get(String userid);
-    
-    public void create(Member member);
-    
-    public void update(Member member);
-    
-    public void updateMemberLastLoginTime(Member member);
-    
-    public boolean duplicateUseridCheck(String userid);
-
-    public void resetPassword(String userid);
-    
-    public List<Member> getList();
-    
-}
+<mapper namespace="code">
+	<select id="findAllCountries" resultType="TextCode">
+		SELECT iso2 as value,short_name as name FROM country order by short_name
+	</select>
+</mapper>

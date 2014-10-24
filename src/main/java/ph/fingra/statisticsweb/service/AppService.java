@@ -18,24 +18,16 @@ package ph.fingra.statisticsweb.service;
 
 import java.util.List;
 
-import ph.fingra.statisticsweb.domain.Member;
+import ph.fingra.statisticsweb.domain.App;
+import ph.fingra.statisticsweb.domain.DashBoardSearchParam;
 
-public interface MemberService {
-    
-	public Member get(int memberid);
-	
-    public Member get(String userid);
-    
-    public void create(Member member);
-    
-    public void update(Member member);
-    
-    public void updateMemberLastLoginTime(Member member);
-    
-    public boolean duplicateUseridCheck(String userid);
+public interface AppService {
 
-    public void resetPassword(String userid);
-    
-    public List<Member> getList();
-    
+    App get(String appkey);
+
+    void create(App app);
+
+    List<App> getAppList(DashBoardSearchParam param);
+
+    void update(App app);
 }

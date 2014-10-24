@@ -18,24 +18,20 @@ package ph.fingra.statisticsweb.service;
 
 import java.util.List;
 
-import ph.fingra.statisticsweb.domain.Member;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public interface MemberService {
-    
-	public Member get(int memberid);
-	
-    public Member get(String userid);
-    
-    public void create(Member member);
-    
-    public void update(Member member);
-    
-    public void updateMemberLastLoginTime(Member member);
-    
-    public boolean duplicateUseridCheck(String userid);
+import ph.fingra.statisticsweb.dao.CodeDao;
+import ph.fingra.statisticsweb.domain.TextCode;
 
-    public void resetPassword(String userid);
-    
-    public List<Member> getList();
-    
+@Service
+public class CodeServiceImpl implements CodeService {
+	@Autowired
+	private CodeDao codeDao;
+
+	@Override
+	public List<TextCode> getAllCountries() {
+		return codeDao.findAllCountries();
+	}
+
 }

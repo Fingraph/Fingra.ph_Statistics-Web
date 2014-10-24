@@ -83,7 +83,7 @@ public class FingraphAnthenticationProvider
             logger.debug("Authentication failed: no credentials provided");
             
             throw new BadCredentialsException(
-                    messages.getMessage("Invalid email address or password. Please try again.", "Bad credentials"),
+                    messages.getMessage("Invalid user id or password. Please try again.", "Bad credentials"),
                     userDetails);
         }
         
@@ -93,7 +93,7 @@ public class FingraphAnthenticationProvider
             logger.debug("Authentication failed: password does not match stored value");
             
             throw new BadCredentialsException(
-                    messages.getMessage("Invalid email address or password. Please try again.", "Bad credentials"),
+                    messages.getMessage("Invalid user id or password. Please try again.", "Bad credentials"),
                     userDetails);
         }
         
@@ -128,7 +128,7 @@ public class FingraphAnthenticationProvider
             Member member = null;
             if (username.equals(adminEmail)) {
                 member = new Member();
-                member.setEmail(adminEmail);
+                member.setUserid(adminEmail);
                 member.setName(adminName);
                 member.setPassword(adminPassword);
                 member.setStatus(MemberStatus.ACTIVE.getValue());
@@ -139,7 +139,7 @@ public class FingraphAnthenticationProvider
                 member = memberService.get(username);
             }
             if (member == null) {
-                throw new UsernameNotFoundException("Not found user email");
+                throw new UsernameNotFoundException("Not found user id");
             }
             
             // lastlogin update

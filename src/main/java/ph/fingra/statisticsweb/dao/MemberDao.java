@@ -32,7 +32,7 @@ public interface MemberDao {
     
     public void updatePassword(Member member);
     
-    public void delete(String email);
+    public void delete(String userid);
     
     public void updateMemberLastLoginTime(Member member);
     
@@ -42,9 +42,9 @@ public interface MemberDao {
     
     public List<Member> getListByJoinstatus(int joinstatus);
     
-    public Member findByEmail(String email);
+    public Member findByUserid(String userid);
     
-    public int countByEmail(String email);
+    public int countByUserid(String userid);
     
     public Member findById(Integer memberid);
 }

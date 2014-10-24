@@ -50,8 +50,8 @@ public class MemberDaoImpl implements MemberDao {
         sqlSessionTemplate.update("member.updatePassword", member);
     }
     
-    public void delete(String email) {
-        sqlSessionTemplate.delete("member.delete", email);
+    public void delete(String userid) {
+        sqlSessionTemplate.delete("member.delete", userid);
     }
     
     public void updateMemberLastLoginTime(Member member) {
@@ -70,12 +70,12 @@ public class MemberDaoImpl implements MemberDao {
         return sqlSessionTemplate.selectList("member.getListByJoinstatus", joinstatus);
     }
     
-    public Member findByEmail(String email) {
-        return sqlSessionTemplate.selectOne("member.findByEmail", email);
+    public Member findByUserid(String userid) {
+        return sqlSessionTemplate.selectOne("member.findByUserid", userid);
     }
     
-    public int countByEmail(String email) {
-        return sqlSessionTemplate.selectOne("member.countByEmail", email);
+    public int countByUserid(String userid) {
+        return sqlSessionTemplate.selectOne("member.countByUserid", userid);
     }
     
     public Member findById(Integer memberid) {

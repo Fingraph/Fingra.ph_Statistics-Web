@@ -18,7 +18,7 @@ package ph.fingra.statisticsweb.common;
 
 public enum MemberStatus {
     
-    ACTIVE(1), DELETE(9);
+    ACTIVE(1), RESET_REQUESTED(8), DELETE(9);
     
     private final int value;
     
@@ -34,6 +34,8 @@ public enum MemberStatus {
         switch (value) {
         case 1:
             return ACTIVE;
+        case 8:
+        	return RESET_REQUESTED;
         case 9:
             return DELETE;
         default:

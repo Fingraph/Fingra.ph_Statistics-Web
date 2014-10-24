@@ -19,25 +19,79 @@ package ph.fingra.statisticsweb.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import ph.fingra.statisticsweb.common.MemberRole;
+import ph.fingra.statisticsweb.domain.App;
+import ph.fingra.statisticsweb.domain.DashBoardSearchParam;
 import ph.fingra.statisticsweb.security.ActiveUser;
 import ph.fingra.statisticsweb.security.FingraphUser;
-import ph.fingra.statisticsweb.service.MemberService;
+import ph.fingra.statisticsweb.service.AppService;
 
 @Controller
 public class AppController extends BaseController {
     
     @Autowired
-    private MemberService memberService;
+    private AppService appService;
     
     @RequestMapping(method = RequestMethod.GET, value = "/app/list")
     public String appList(@ActiveUser FingraphUser activeUser, Model model) {
         
-        // TODO:
+        DashBoardSearchParam param = new DashBoardSearchParam();
+        model.addAttribute("list", appService.getAppList(param));
         
         return "app/list";
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "app/regist")
+    public String registForm(@ModelAttribute("app") App app, @ActiveUser FingraphUser activeUser) {
+    	
+    	if (activeUser.getRole() != MemberRole.ROLE_ADMIN.getValue()) {
+    		return "redirect:/common/error/permission";
+    	}
+    	 
+    	return "app/form";
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/app/regist") 
+    public String regist(@ActiveUser FingraphUser activeUser, App app){
+    	
+    	if (activeUser.getRole() != MemberRole.ROLE_ADMIN.getValue()) {
+    		return "redirect:/common/error/permission";
+    	}
+    	
+    	appService.create(app);
+    	
+    	return "redirect:/app/list";    	
+    }
+    
+    
+    @RequestMapping(method = RequestMethod.GET, value = "app/edit")
+    public String editForm(@RequestParam("appkey") String appkey, Model model, @ActiveUser FingraphUser activeUser) {
+
+    	if (activeUser.getRole() != MemberRole.ROLE_ADMIN.getValue()) {
+    		return "redirect:/common/error/permission";
+    	}
+
+    	App app = appService.get(appkey);
+    	model.addAttribute("app", app);
+    	return "app/edit";
+    	
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/app/edit")
+    public String edit(@ActiveUser FingraphUser activeUser, App app) { 
+    	
+    	if (activeUser.getRole() != MemberRole.ROLE_ADMIN.getValue()) {
+    		return "redirect:/common/error/permission";
+    	}
+    	
+    	appService.update(app);
+
+    	return "redirect:/app/list";
     }
     
 }

@@ -22,9 +22,9 @@
 
   <insert id="insert" useGeneratedKeys="true" keyProperty="memberid">
     INSERT INTO member
-      (memberid,email,name,password,department,phone,status,joinstatus,created)
+      (memberid,userid,name,password,department,phone,status,joinstatus,created)
     VALUES
-      (#{memberid},#{email},#{name},#{password},#{department},#{phone},#{status},#{joinstatus},now())
+      (#{memberid},#{userid},#{name},#{password},#{department},#{phone},#{status},#{joinstatus},now())
   </insert>
 
   <update id="update">
@@ -43,14 +43,14 @@
     UPDATE member SET
       status=#{status},
       modified=now()
-    WHERE email=#{email}
+    WHERE userid=#{userid}
   </update>
 
   <update id="updateJoinstatus">
     UPDATE member SET
       joinstatus=#{joinstatus},
       modified=now()
-    WHERE email=#{email}
+    WHERE userid=#{userid}
   </update>
 
   <update id="updatePassword">
@@ -61,7 +61,7 @@
   </update>
 
   <delete id="delete">
-    DELETE FROM member WHERE email=#{value}
+    DELETE FROM member WHERE userid=#{value}
   </delete>
 
   <update id="updateMemberLastLoginTime">
@@ -82,12 +82,12 @@
     SELECT *, 0 AS role FROM member WHERE joinstatus=#{value}
   </select>
 
-  <select id="findByEmail" resultType="Member">
-    SELECT *, 0 AS role FROM member WHERE email=#{email}
+  <select id="findByUserid" resultType="Member">
+    SELECT *, 0 AS role FROM member WHERE userid=#{userid}
   </select>
 
-  <select id="countByEmail" resultType="int">
-    SELECT count(*) FROM member WHERE email=#{value}
+  <select id="countByUserid" resultType="int">
+    SELECT count(*) FROM member WHERE userid=#{value}
   </select>
 
   <select id="findById" resultType="Member">

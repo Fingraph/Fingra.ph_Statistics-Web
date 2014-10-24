@@ -126,7 +126,12 @@
 			</exclusions>
 			<scope>compile</scope>
 		</dependency>
-
+		<!-- JSR-303 Bean Validation -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>5.0.0.Final</version>
+		</dependency>
 		<!-- @Inject -->
 		<dependency>
 			<groupId>javax.inject</groupId>
