@@ -1,0 +1,212 @@
+﻿
+/* 8월 5일 min-width추가 됨 */
+.setting-wrap {
+	min-height:100%;
+	width:100%;
+	margin:-60px auto -50px auto;
+	background-color:#f4f7f8;
+	min-width:1000px;
+	}
+
+/* 8월 5일 min-width추가 됨 */
+.setting-cont {
+	text-align:center;
+	max-width:1280px;
+	min-width:1000px;
+	margin:0 auto;
+	padding:160px 0;
+	}
+
+
+.signin-form { width:450px; margin:0 auto; background:#2f343f; text-align:left; box-shadow:0 1px 2px #aab0b0;}
+.signin-form .title { width:350px; color:#0079c1; font-size:28px; padding:20px 50px 15px 50px; border-bottom:1px solid #424650; background:#fff; letter-spacing:-1px; font-family:tahoma; font-weight:normal;}
+.signin-form .idpw-wrap { padding:60px 50px 50px 50px; width:350px;}
+.signin-form .idpw-wrap .idpw { padding-bottom:5px;}
+.icon-sign-user { background:url(../img/icon_sign_user.png) no-repeat; width:38px; height:38px; padding-right:10px; vertical-align:top;}
+.icon-sign-pass { background:url(../img/icon_sign_pass.png) no-repeat; width:38px; height:38px; padding-right:10px;vertical-align:top;}
+.signin-txt { font-size:14px; padding:15px 0 0 0; line-height:16px; color:#8e93a5;}
+.signin-txt2 { font-size:14px; padding:0 0 15px 0; line-height:16px; color:#8e93a5;}
+
+.signup-form { width:960px; margin:0 auto; background:#2f343f; text-align:left; box-shadow:0 1px 2px #aab0b0;}
+.signup-form .title{ width:860px; color:#0079c1; font-size:32px; padding:20px 50px 15px 50px; border-bottom:1px solid #38393c; background:#fff; letter-spacing:-1px; font-family:tahoma; font-weight:normal;}
+.signup-form .signup-cont { padding:80px 120px 80px 120px; width:720px; color:#8e93a5;}
+.signup-cont h2 { border-bottom:2px solid #434b5e; padding-bottom:10px; color:#fff;}
+.signup-cont .comp { padding:20px 0 10px 0;}
+.signup-cont .comp h3 { font-size:18px; line-height:24px; font-weight:normal; padding-bottom:10px;}
+.signup-cont .comp .imp { font-size:24px; color:#F00; padding-left:5px;}
+
+.signup-finish { text-align:center; padding:50px 0;}
+.signup-finish .finish-title {font-size:60px; line-height:64px; color:#fff;}
+.signup-finish .finish-sub{ font-size:18px; line-height:24px; padding:30px 0;}
+.signup-finish .finish-title2 {font-size:32px; line-height:36px; color:#fff; padding-top:30px;}
+
+
+
+/* 8월 5일 min-width추가 됨 */
+.wrap-setting {min-height:100%; max-width:1280px; min-width:1000px; margin:-60px auto -50px auto; background-color:#f4f7f8; border-left:1px solid #ced7df; border-right:1px solid #ced7df;}
+
+.setting-body {width:100%; margin:60px auto 50px auto; clear:both;}
+.setting-body .cont-wrap {	padding:60px 0 0 0; width:980px; margin:0 auto;}
+
+h1.setting-title {}
+
+.setting-cont-body{ margin:20px 0 40px 0; overflow:auto; background:#fff; border:1px solid #c4d3e2;}
+
+.setting-tab-wrap { background:#2f343f; padding:25px 0 0 40px;}
+
+.setting-tab-wrap .nav-tabs {
+	border-bottom:1px solid #2f343f;
+	}
+
+.setting-tab-wrap .nav-tabs > li > a {
+	padding:12px 20px;
+    line-height: 30px;
+	color:#fff;
+	background:#000;
+	}
+
+.setting-tab-wrap  .nav-tabs > li > a:hover {
+  border-color: #eeeeee #eeeeee #fff;
+  background:#eee;
+  color:#0079c1;
+}
+
+.setting-tab-wrap .nav-tabs > .active > a,
+.setting-tab-wrap .nav-tabs > .active > a:hover {
+  color: #0079c1;
+  cursor: default;
+  background-color: #ffffff;
+  border: 1px solid #fff;
+}
+
+
+.setting-tab { font-size:24px; font-weight:bold;}
+
+.account-cont { overflow:auto; padding:40px;}
+
+.setting-cont-body .title { padding-bottom:20px;}
+.setting-cont-body .tbl-wrap {width:100%;}
+
+/* tbl1는 기본 2컬럼의 테이블에 사용 합니다.
+
+제목 ㅣ 제목
+제목 ㅣ 제목
+내용 ㅣ 내용
+제목 ㅣ 내용
+
+ */
+.setting-cont-body .tbl1 { border-top:2px solid #c4d3e2;}
+.setting-cont-body .tbl1 input{ margin-bottom:0;}
+.setting-cont-body .tbl1 th{ width:180px; font-size:14px; font-weight:normal; padding:10px 0 10px 25px;  text-align:left; color:#333; background:#f4f7f8; border-bottom:1px dotted #c4d3e2;}
+.setting-cont-body .tbl1 td{ padding:20px 0 20px 20px; border-bottom:1px dotted #c4d3e2;}
+
+/*7월 10일 tbl2 추가 됨 */
+/*
+tbl2는 제목과 내용이 2컬럼 이상일 때 사용 합니다.
+아래와 같이 나올 경우 사용해 주세요
+
+제목 ㅣ 내용 ㅣ 제목 ㅣ 내용
+제목 ㅣ 내용 ㅣ 제목 ㅣ 내용
+
+ */
+.setting-cont-body .tbl2 { border-top:2px solid #c4d3e2;}
+.setting-cont-body .tbl2 input{ margin-bottom:0;}
+.setting-cont-body .tbl2 th{ text-align:left; font-size:14px; font-weight:normal; padding:15px 0 15px 25px; color:#333; background:#f4f7f8; border-bottom:1px dotted #c4d3e2;}
+.setting-cont-body .tbl2 td{ padding:15px 0 15px 20px; border-bottom:1px dotted #c4d3e2;}
+
+
+/* tbl1h는 1줄로 된 간략한 테이블에 사용 합니다.
+
+제목 ㅣ 제목 ㅣ 제목 ㅣ 제목
+내용 ㅣ 내용 ㅣ 내용 ㅣ 내용
+ */
+.tbl1h { border-top:2px solid #c4d3e2; margin:10px 0 40px 0;}
+.tbl1h input{ margin-bottom:0;}
+.tbl1h th{font-size:16px; padding:15px; color:#333; background:#f4f7f8; border-bottom:1px dotted #c4d3e2;}
+.tbl1h td{ padding:15px; border-bottom:1px dotted #c4d3e2; text-align:center; font-size:16px;}
+
+
+.checkout-wrap { padding:0 0 30px 0;}
+
+.checkout-wrap h3 { padding-bottom:10px;}
+.checkout-wrap h4 { padding-bottom:5px;}
+
+.order-wrap { padding:50px; background:#f4f7f8; overflow:auto; border-top:2px solid #c4d3e2;}
+.order-wrap .order-list { border-top:3px solid #333;}
+.order-list li { border-bottom:1px solid #c4d3e2; padding:10px 0 5px 0; height:46px; background:#fff;}
+.order-list .purchase { float:left; font-size:16px; line-height:44px; padding-left:20px;}
+.order-list .select { float:right; padding:5px 20px 0 0;}
+.order-list .txt { line-height:39px; font-weight:bold;}
+.order-list .select select{ width:80px;}
+.purchase-txt {font-size:14px; line-height:24px; padding:15px 0 0 20px;}
+
+
+.btn-buy-wrap { text-align:right; padding:20px 0;}
+
+.buy-table { border-bottom:2px solid #333;}
+.buy-table th{ background:#333; color:#fff; padding:15px; font-size:16px;}
+.buy-table td { padding:15px; border-bottom:1px dotted #c4d3e2; background:#fff; font-size:16px; color:#000;}
+.tx-left { text-align:left;}
+.tx-right { text-align:right;}
+.tx-center { text-align:center;}
+.order-wrap .price { text-align:right; font-size:18px; font-weight:bold; padding:20px 15px 20px 0; color:#000;}
+
+.pricing { padding-right:20px; font-size:16px; text-decoration:underline; color:#0079c1;}
+.pricing:hover, pricing:active, pricing:focus { color:#005487; text-decoration:underline;}
+
+.price-table { font-size:16px;}
+.price-table th { background:#5381ae; padding:15px; color:#fff;}
+.price-table td { background:#fff; border-left:1px solid #c4d3e2; border-bottom:1px solid #c4d3e2; padding:15px; text-align:center;}
+.price-table tr.br2{ border-top:2px solid #c4d3e2;}
+.price-table td:first-child { border-left:none;}
+.price-table-info { padding:10px; line-height:24px;}
+
+.upgrade-wrap { background:#333; padding:25px 20px; font-size:20px; color:#fff;}
+.upgrade-wrap .total-price { float:right; font-size:30px; font-weight:bold; color:#fff;}
+
+.bill-tab-wrap { background:#fff; padding:15px 0 0 0;}
+
+.bill-tab-wrap .nav-tabs {
+	border-bottom:none;
+	font-size:18px;
+	}
+.bill-tab-wrap ul { margin-bottom:0;}
+.bill-tab-wrap .nav-tabs > li > a {
+	padding:10px 30px;
+    line-height: 30px;
+	background:#eee;
+	color:#999;
+  	border-bottom: 1px solid #c4d3e2;
+	}
+
+.bill-tab-wrap  .nav-tabs > li > a:hover {
+  border-color: #c4d3e2 #c4d3e2 #c4d3e2;
+  color:#0079c1;
+}
+
+.bill-tab-wrap .nav-tabs > .active > a,
+.bill-tab-wrap .nav-tabs > .active > a:hover {
+  color: #333;
+  cursor: default;
+  background-color: #ffffff;
+  border: 1px solid #c4d3e2;
+  font-weight:bold;
+  color:#0079c1;
+}
+
+
+.bill-tab { font-size:24px; font-weight:bold;}
+
+.payment-wrap { padding:20px 0; overflow:auto;}
+.payment-wrap .paypal{ float:left;}
+.payment-wrap .inicis{ float:right;}
+
+
+.reedeem { padding:30px 50px; background:#fff; border:4px solid #5381ae; margin-top:20px;}
+.reedeem input { margin-bottom:0; font-weight:bold;}
+.reedeem input:disabled { color: #282828;}
+.reedeem .reedeem-date { padding-top:10px; font-size:16px;}
+.reedeem .cost { font-size:50px; font-weight:bold; text-align:right; float:right;}
+.reedeem span { font-weight:bold; font-size:20px; padding-right:20px; line-height:40px;}
+
+.price-detail { padding:30px 40px; margin-top:30px; background:#fff;}

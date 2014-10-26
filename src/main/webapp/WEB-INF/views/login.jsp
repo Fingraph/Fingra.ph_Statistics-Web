@@ -19,7 +19,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Fingra.ph Login</title>
+<title><spring:message code="login.title"/></title>
 <script type="text/javascript">
 $(function(){
 	$('input[name=email]').focus();
@@ -39,16 +39,16 @@ $(function(){
 </head>
 <body>
     	<div class="signin-form">
-        	<h1 class="title">Fingra.ph Login</h1>
+        	<h1 class="title"><spring:message code="login.title"/></h1>
             <c:if test="${param.error != null}">
                 <div class="alert alert-error">
-                    Failed to login. Bad credentials.
+                    <spring:message code="login.msg.error"/>
                 </div>
             </c:if>
             <div class="idpw-wrap"><form action="<c:url value="/login"/>" method="post">
-            	<div class="idpw">email: <input name="email" type="email" class="span4" ></div>
-            	<div class="idpw">pass: <input name="password" type="password" class="span4" min="8"/></div>
-                <div class="idpw"><button type="submit" class="btn btn-large btn-block btn-info">enter</button></div></form>
+                <div class="idpw"><i class="icon-sign-user"></i><input name="email" type="email" class="span4" placeholder="<spring:message code="input.email"/>" ></div>
+                <div class="idpw"><i class="icon-sign-pass"></i><input name="password" type="password" class="span4" placeholder="<spring:message code="input.pwd"/>"  min="8"/></div>
+                <div class="idpw"><button type="submit" class="btn btn-large btn-block btn-info"><spring:message code="btn.enter.text"/></button></div></form>
             </div>
         </div>
 </body>

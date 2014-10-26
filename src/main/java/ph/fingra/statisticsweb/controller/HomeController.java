@@ -55,8 +55,8 @@ public class HomeController {
     /**
      * Simply selects the home view to render by returning its name.
      */
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String home(Locale locale, Model model) {
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public String test(Locale locale, Model model) {
         logger.info("Welcome home! The client locale is {}.", locale);
         
         Date date = new Date();
@@ -77,7 +77,12 @@ public class HomeController {
         admin.setRole(MemberRole.ROLE_ADMIN.getValue());
         model.addAttribute("admin", admin);
         
-        return "home";
+        return "test";
     }
     
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String home(Locale locale, Model model) {
+        
+        return "home";
+    }
 }
