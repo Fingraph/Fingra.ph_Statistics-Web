@@ -19,12 +19,14 @@ package ph.fingra.statisticsweb.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import ph.fingra.statisticsweb.dao.AppDao;
 import ph.fingra.statisticsweb.domain.App;
 import ph.fingra.statisticsweb.domain.DashBoardSearchParam;
 
+@Service
 public class AppServiceImpl  implements AppService{
 
 	@Autowired

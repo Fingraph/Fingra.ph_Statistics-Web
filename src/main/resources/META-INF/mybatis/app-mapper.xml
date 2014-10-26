@@ -62,9 +62,9 @@
       smallicon=#{smallicon}, updated=now()
   </update>
 
-  <select id="findAllCategories" resultType="AppCategory">
+  <!-- <select id="findAllCategories" resultType="AppCategory">
     SELECT * FROM category
-  </select>
+  </select> -->
 
   <select id="getAppList" parameterType="DashBoardSearchParam" resultType="App">
     SELECT

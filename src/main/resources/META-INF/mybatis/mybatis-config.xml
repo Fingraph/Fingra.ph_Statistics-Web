@@ -33,7 +33,7 @@
     <!-- app -->
     <typeAlias type="ph.fingra.statisticsweb.domain.App" alias="App"/>
     <typeAlias type="ph.fingra.statisticsweb.domain.AppInfo" alias="AppInfo"/>
-    <typeAlias type="ph.fingra.statisticsweb.domain.AppCategory" alias="AppCategory"/>
+    <!-- <typeAlias type="ph.fingra.statisticsweb.domain.AppCategory" alias="AppCategory"/> -->
     <!-- dashboard -->
     <typeAlias type="ph.fingra.statisticsweb.domain.CurrPrevNumericValue" alias="CurrPrevNumericValue"/>
     <typeAlias type="ph.fingra.statisticsweb.domain.CurrPrevTextValue" alias="CurrPrevTextValue"/>
