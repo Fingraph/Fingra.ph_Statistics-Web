@@ -22,7 +22,7 @@
 <title><spring:message code="login.title"/></title>
 <script type="text/javascript">
 $(function(){
-	$('input[name=email]').focus();
+	$('input[name=userid]').focus();
 	$('button[type=submit]').click(function(event){
 	    event.preventDefault();
 		$('form').submit();
@@ -46,7 +46,7 @@ $(function(){
                 </div>
             </c:if>
             <div class="idpw-wrap"><form action="<c:url value="/login"/>" method="post">
-                <div class="idpw"><i class="icon-sign-user"></i><input name="email" type="email" class="span4" placeholder="<spring:message code="input.email"/>" ></div>
+                <div class="idpw"><i class="icon-sign-user"></i><input name="userid" type="text" class="span4" placeholder="<spring:message code="input.userid"/>" ></div>
                 <div class="idpw"><i class="icon-sign-pass"></i><input name="password" type="password" class="span4" placeholder="<spring:message code="input.pwd"/>"  min="8"/></div>
                 <div class="idpw"><button type="submit" class="btn btn-large btn-block btn-info"><spring:message code="btn.enter.text"/></button></div></form>
             </div>

@@ -43,7 +43,7 @@
         <intercept-url pattern="/today/*" access="hasRole('ROLE_USER')" />
         <intercept-url pattern="/include/*" access="hasRole('ROLE_USER')" />
         <form-login login-page="/login/form" login-processing-url="/login"
-            username-parameter="email" password-parameter="password"
+            username-parameter="userid" password-parameter="password"
             authentication-failure-url="/login/form?error"
             authentication-failure-handler-ref="loginFailureHandler"
             authentication-success-handler-ref="loginSuccessHandler" />
