@@ -31,6 +31,7 @@
 <link rel="stylesheet" href="<c:url value="/resources/css/setting.css"/>" />
 <script type="text/javascript" src="<c:url value="/resources/js/jquery-1.8.2.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/resources/js/bootstrap.min.js"/>"></script>
+<script type="text/javascript">var context = '<c:url value="/"/>';</script>
 <script type="text/javascript" src="<c:url value="/resources/js/fingraph-settings.js"/>"></script>
 <script type="text/javascript">
     //language setting
@@ -40,15 +41,30 @@
     var eng = '<li class="lang_li" data-block="en"><a><spring:message code="comm.footer.lang.eng"/></a></li>';
     var jpn = '<li class="lang_li" data-block="ja"><a><spring:message code="comm.footer.lang.jpn"/></a></li>';
     $(function(){
+    	
         setLanguage();
+        
+        $("#lang_menu").on("click", ".lang_li", function() {
+            var lang = "" + $(this).data("block");
+            $.ajax({
+                url : '<c:url value="/common/changeLocaleByAjax"/>',
+                data : ({
+                    lang : lang
+                }),
+                type : 'POST',
+                dataType : 'text',
+                success : function(data) {
+                    location.reload();
+                }
+            });
+        });
     });
     function setLanguage() {
-//         $.ajax({
-//             url : '<c:url value="/common/getLocaleByAjax"/>',
-//             type : 'POST',
-//             dataType : 'text',
-//             success : function(data) {
-var data='KOR';
+         $.ajax({
+             url : '<c:url value="/common/getLocaleByAjax"/>',
+             type : 'POST',
+             dataType : 'text',
+             success : function(data) {
                 var langHtml = '';
                 if (data == 'CHN') {
                     $('#selectLang').text(
@@ -81,8 +97,8 @@ var data='KOR';
                     $('.footer-txt').hide();
                 }
                 $('#lang_menu').html(langHtml);
-//             }
-//         });
+             }
+         });
     }
 </script>
 <sitemesh:write property="head"/>

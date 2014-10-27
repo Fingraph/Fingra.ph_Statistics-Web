@@ -23,6 +23,7 @@
     <mapping path="/login*" decorator="/WEB-INF/decorator/signinup_layout.jsp" />
     <mapping path="/app/*" decorator="/WEB-INF/decorator/decorator.jsp" />
     <mapping path="/manage/*" decorator="/WEB-INF/decorator/decorator.jsp" />
+    <mapping path="/dashboard*" decorator="/WEB-INF/decorator/dashboard_layout.jsp" />
     <mapping path="/referer*" exclue="true" />
     <mapping path="*Ajax*" exclue="true" />
     <mapping path="*.json" exclue="true" />

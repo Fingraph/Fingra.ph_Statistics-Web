@@ -55,7 +55,7 @@
     </authentication-manager>
 
     <beans:bean id="loginSuccessHandler" class="ph.fingra.statisticsweb.security.FingraphAuthenticationSuccessHandler">
-        <beans:property name="adminTargetUrl" value="/manage/member"/>
+        <beans:property name="adminTargetUrl" value="/app/list"/>
         <beans:property name="userTargetUrl" value="/app/list"/>
     </beans:bean>
 

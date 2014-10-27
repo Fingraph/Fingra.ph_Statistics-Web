@@ -1,10 +1,7 @@
 $(function() {
 	$('.dropdown-toggle').dropdown();
 	$('#signOutBtn').click(function(){
-		 var expireDate = new Date();
-		  expireDate.setDate( expireDate.getDate() - 1 );
-		  document.cookie = "fingraphPeriod= " + "; expires=" + expireDate.toGMTString() + "; path=/";
-   		  location.href=context+'logout';
+		location.href=context+'logout';
 	});
 	$('#settingBtn').click(function(){
 		location.href=context+'account/edit';
