@@ -428,22 +428,9 @@ public class ComponentsController {
 		return "components/manage";
 	}
 
-	/** add Ajax - old
-	 * @param event
-	 * @param activeUser
-	 * @return
-	 */
-	@RequestMapping(value = "/addAjax", method = RequestMethod.POST,produces="text/plain;charset=UTF-8")
-    public @ResponseBody String addAjax(@ModelAttribute("Event") Component event,@ActiveUser FingraphUser activeUser) {
-		
-		String eventkey = componentsService.addComponent(event);
-
-		return (new Gson()).toJson(eventkey);
-	}
-
 	@RequestMapping(value = "/addHtmlAjax", method = RequestMethod.POST,produces="text/plain;charset=UTF-8")
     public String addHtmlAjax(Model model,
-    						@ModelAttribute("Event") Component event,
+    						@ModelAttribute("event") Component event,
     						@ActiveUser FingraphUser activeUser) {
 		
 		Component newEvent = componentsService.addComponentWithGroup(event);
@@ -479,7 +466,7 @@ public class ComponentsController {
 	 * @return
 	 */
 	@RequestMapping(value = "/removeAjax", method = RequestMethod.POST,produces="text/plain;charset=UTF-8")
-    public @ResponseBody String removeAjax(@ModelAttribute("Component") Component event,@ActiveUser FingraphUser activeUser) {
+    public @ResponseBody String removeAjax(@ModelAttribute("event") Component event,@ActiveUser FingraphUser activeUser) {
 		
 		String eventkey ="";
 		if(!"".equals(event.getComponentkey())){
@@ -499,7 +486,7 @@ public class ComponentsController {
 		
 		HashMap map = new HashMap();
 		map.put("appkey", appkey);
-		map.put("ieventkey", ieventkey);
+		map.put("icomponentkey", ieventkey);
 		componentsService.removeArrayComponent(map);
 		return (new Gson()).toJson(true);
 		
@@ -521,7 +508,7 @@ public class ComponentsController {
 			HashMap map = new HashMap();
 			map.put("appkey", appkey);
 			map.put("groupkey", groupkey);
-			map.put("ieventkey", ieventkey);
+			map.put("icomponentkey", ieventkey);
 			componentsService.moveArrayComponent(map);
 			return (new Gson()).toJson(true);
 		} else {
