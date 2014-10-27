@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import ph.fingra.statisticsweb.domain.App;
+import ph.fingra.statisticsweb.domain.AppCategory;
 import ph.fingra.statisticsweb.domain.AppInfo;
 import ph.fingra.statisticsweb.domain.DashBoardSearchParam;
 
@@ -31,6 +32,11 @@ public class AppDaoImpl implements AppDao {
     
     @Autowired
     private SqlSessionTemplate sqlSessionTemplate;
+
+    @Override
+    public List<AppCategory> findAllCategories() {
+    	return sqlSessionTemplate.selectList("app.findAllCategories");
+    }
     
     @Override
     public void insert(App app) {
