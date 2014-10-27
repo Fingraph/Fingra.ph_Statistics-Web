@@ -88,27 +88,27 @@ function makeComponetsSnapshot(result){
 	if(result.newUsersList.length>0){
 		var newUserList = result.newUsersList;
 		for(var i=0;i<newUserList.length;i++){
-			$('#components div.com_newUsersList table tr:eq('+i+') th').text(newUserList[i].shortName);
+			$('#components div.com_newUsersList table tr:eq('+i+') th').text(newUserList[i].shortname);
 			$('#components div.com_newUsersList table tr:eq('+i+') td').text(newUserList[i].strIntValue);
 		}
 		var activeUsersList = result.activeUsersList;
 		for(var i=0;i<activeUsersList.length;i++){
-			$('#components div.com_activeUsersList table tr:eq('+i+') th').text(activeUsersList[i].shortName);
+			$('#components div.com_activeUsersList table tr:eq('+i+') th').text(activeUsersList[i].shortname);
 			$('#components div.com_activeUsersList table tr:eq('+i+') td').text(activeUsersList[i].strIntValue);
 		}
 		var pageViewsList = result.pageViewsList;
 		for(var i=0;i<pageViewsList.length;i++){
-			$('#components div.com_pageViewsList table tr:eq('+i+') th').text(pageViewsList[i].shortName);
+			$('#components div.com_pageViewsList table tr:eq('+i+') th').text(pageViewsList[i].shortname);
 			$('#components div.com_pageViewsList table tr:eq('+i+') td').text(pageViewsList[i].strIntValue);
 		}
 		var timeOfDayList = result.timeOfDayList;
 		for(var i=0;i<timeOfDayList.length;i++){
-			$('#components div.com_timeOfDayList table tr:eq('+i+') th').text(timeOfDayList[i].shortName);
+			$('#components div.com_timeOfDayList table tr:eq('+i+') th').text(timeOfDayList[i].shortname);
 			$('#components div.com_timeOfDayList table tr:eq('+i+') td').text(timeOfDayList[i].strValue);
 		}
 		var topCountriesList = result.topCountriesList;
 		for(var i=0;i<topCountriesList.length;i++){
-			$('#components div.com_topCountriesList table tr:eq('+i+') th').text(topCountriesList[i].shortName);
+			$('#components div.com_topCountriesList table tr:eq('+i+') th').text(topCountriesList[i].shortname);
 			$('#components div.com_topCountriesList table tr:eq('+i+') td').text(topCountriesList[i].country3);
 		}
 	}
