@@ -101,7 +101,7 @@ public class DashBoardController extends BaseController {
 	 * @param param
 	 * @return
 	 */
-	@RequestMapping(value = "/dashboard/getComponetsSnapshotAjax", method = RequestMethod.POST,produces="text/plain;charset=UTF-8")
+	@RequestMapping(value = "/getComponetsSnapshotAjax", method = RequestMethod.POST,produces="text/plain;charset=UTF-8")
     public @ResponseBody String getComponetsSnapshotAjax(@RequestParam(required=false,defaultValue="1w",value="period") String period,
     													DashBoardSearchParam param) {
 		
