@@ -118,7 +118,7 @@ var data='KOR';
                                 </div>
                                 <div class="pop-account dropdown-menu">
                                     <div class="name">
-                                        <sec:authentication property="principal.userid" />
+                                        <sec:authentication property="principal.email" />
                                     </div>
                                     <hr class="account-hr" />
                                     <div class="account-btn-wrap">

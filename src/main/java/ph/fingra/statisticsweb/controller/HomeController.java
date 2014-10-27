@@ -71,7 +71,7 @@ public class HomeController {
         
         // admin.properties test
         Member admin = new Member();
-        admin.setUserid(adminEmail);
+        admin.setEmail(adminEmail);
         admin.setName(adminName);
         admin.setPassword(adminPassword);
         admin.setRole(MemberRole.ROLE_ADMIN.getValue());

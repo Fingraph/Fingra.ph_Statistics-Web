@@ -128,7 +128,7 @@ public class FingraphAnthenticationProvider
             Member member = null;
             if (username.equals(adminEmail)) {
                 member = new Member();
-                member.setUserid(adminEmail);
+                member.setEmail(adminEmail);
                 member.setName(adminName);
                 member.setPassword(adminPassword);
                 member.setStatus(MemberStatus.ACTIVE.getValue());

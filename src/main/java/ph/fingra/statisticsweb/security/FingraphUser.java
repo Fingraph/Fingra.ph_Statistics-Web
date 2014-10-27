@@ -39,7 +39,7 @@ public class FingraphUser extends Member implements UserDetails {
     
     public FingraphUser(Member member) {
         setMemberid(member.getMemberid());
-        setUserid(member.getUserid());
+        setEmail(member.getEmail());
         setName(member.getName());
         setPassword(member.getPassword());
         setDepartment(member.getDepartment());
@@ -59,7 +59,7 @@ public class FingraphUser extends Member implements UserDetails {
     }
     public FingraphUser(Member member, PasswordEncoder passwordEncoder) {
         setMemberid(member.getMemberid());
-        setUserid(member.getUserid());
+        setEmail(member.getEmail());
         setName(member.getName());
         // encode password
         member.setPassword(passwordEncoder.encode(member.getPassword()));
@@ -86,7 +86,7 @@ public class FingraphUser extends Member implements UserDetails {
     
     @Override
     public String getUsername() {
-        return getUserid();
+        return getEmail();
     }
     
     public boolean isAccountNonExpired() {

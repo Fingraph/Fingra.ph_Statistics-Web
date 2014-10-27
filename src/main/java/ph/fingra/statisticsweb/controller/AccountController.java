@@ -69,13 +69,13 @@ public class AccountController extends BaseController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/resetPassword")
-	public String resetPassword(@RequestParam("userid") String userid, RedirectAttributes ra) {
+	public String resetPassword(@RequestParam("email") String email, RedirectAttributes ra) {
 		
-		if (!memberService.duplicateUseridCheck(userid)) {
-			return "redirect:/account/resetPassword?error=" + userid;
+		if (!memberService.duplicateEmailCheck(email)) {
+			return "redirect:/account/resetPassword?error=" + email;
 		}
-		memberService.resetPassword(userid);
-		ra.addFlashAttribute("email", userid);
+		memberService.resetPassword(email);
+		ra.addFlashAttribute("email", email);
 		return "redirect:/account/resetPasswordResult";
 	}
 	
@@ -101,7 +101,7 @@ public class AccountController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/signup/result")
 	public String signupResult(Member member){
 		
-		if (member == null || member.getUserid() == null) {
+		if (member == null || member.getEmail() == null) {
 			logger.debug("Reloaded! not suppport flash attribute member");
 			return "redirect:/";
 		}

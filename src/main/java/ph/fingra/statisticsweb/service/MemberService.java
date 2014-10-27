@@ -24,7 +24,7 @@ public interface MemberService {
     
 	public Member get(int memberid);
 	
-    public Member get(String userid);
+    public Member get(String email);
     
     public void create(Member member);
     
@@ -32,9 +32,9 @@ public interface MemberService {
     
     public void updateMemberLastLoginTime(Member member);
     
-    public boolean duplicateUseridCheck(String userid);
+    public boolean duplicateEmailCheck(String email);
 
-    public void resetPassword(String userid);
+    public void resetPassword(String email);
     
     public List<Member> getList();
     

@@ -26,7 +26,7 @@ public class Member extends BaseDomain implements Serializable {
     private static final long serialVersionUID = -7576987369322031199L;
     
     private Integer memberid;
-    private String userid;
+    private String email;
     private String name;
     private String password;
     private String department;
@@ -43,11 +43,11 @@ public class Member extends BaseDomain implements Serializable {
     public void setMemberid(Integer memberid) {
         this.memberid = memberid;
     }
-    public String getUserid() {
-        return userid;
+    public String getEmail() {
+        return email;
     }
-    public void setUserid(String userid) {
-        this.userid = userid;
+    public void setEmail(String email) {
+        this.email = email;
     }
     public String getName() {
         return name;

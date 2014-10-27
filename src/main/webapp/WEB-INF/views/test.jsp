@@ -98,7 +98,7 @@ $(function() {
     </tr>
 	<c:forEach items="${memberlist}" var="list">
     <tr>
-        <td>${list.userid}</td>
+        <td>${list.email}</td>
         <td>${list.name}</td>
         <td>${list.department}</td>
         <td>${list.created}</td>
@@ -114,7 +114,7 @@ $(function() {
 </h1>
 
 name : ${admin.name}<br/>
-userid : ${admin.userid}<br/>
+email : ${admin.email}<br/>
 password : ${admin.password}<br/>
 role : ${admin.role}<br/>
 

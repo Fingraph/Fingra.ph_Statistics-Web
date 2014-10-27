@@ -47,8 +47,8 @@ public class MemberServiceImpl implements MemberService {
     	return memberDao.findById(memberid);
     }
     
-    public Member get(String userid) {
-        return memberDao.findByUserid(userid);
+    public Member get(String email) {
+        return memberDao.findByEmail(email);
     }
     
     public void create(Member member) {
@@ -76,12 +76,12 @@ public class MemberServiceImpl implements MemberService {
         memberDao.updateMemberLastLoginTime(member);
     }
     
-    public boolean duplicateUseridCheck(String userid) {
-    	return memberDao.countByUserid(userid) == 0? false : true;
+    public boolean duplicateEmailCheck(String email) {
+    	return memberDao.countByEmail(email) == 0? false : true;
     }
     
-    public void resetPassword(String userid) {
-    	Member member = get(userid);
+    public void resetPassword(String email) {
+    	Member member = get(email);
     	member.setStatus(MemberStatus.RESET_REQUESTED.getValue());
     	memberDao.updateStatus(member);
     }
