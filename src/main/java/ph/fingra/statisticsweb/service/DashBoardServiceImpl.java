@@ -27,6 +27,7 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.JsonArray;
@@ -46,6 +47,7 @@ import ph.fingra.statisticsweb.domain.DashBoard;
 import ph.fingra.statisticsweb.domain.DashBoardSearchParam;
 import ph.fingra.statisticsweb.exception.UnauthorizedAccessException;
 
+@Service
 public class DashBoardServiceImpl implements DashBoardService {
 
 	@Autowired
