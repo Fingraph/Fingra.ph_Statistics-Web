@@ -30,6 +30,7 @@ public class App extends BaseDomain implements Serializable {
     private String appid;
     private String marketid;
     private Integer categoryid;
+    private int groupkey;
     private int status;
     private int apptype;
     
@@ -123,4 +124,12 @@ public class App extends BaseDomain implements Serializable {
     public void setDashBoard(DashBoard dashBoard) {
         this.dashBoard = dashBoard;
     }
+
+	public int getGroupkey() {
+		return groupkey;
+	}
+
+	public void setGroupkey(int groupkey) {
+		this.groupkey = groupkey;
+	}
 }
