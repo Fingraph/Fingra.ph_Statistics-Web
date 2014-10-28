@@ -40,7 +40,8 @@
         <intercept-url pattern="/dashboard/*" access="hasRole('ROLE_USER')" />
         <intercept-url pattern="/performance/*" access="hasRole('ROLE_USER')" />
         <intercept-url pattern="/distribution/*" access="hasRole('ROLE_USER')" />
-        <intercept-url pattern="/component/*" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/components/manage/*" access="hasRole('ROLE_ADMIN')" />
+        <intercept-url pattern="/components/*" access="hasRole('ROLE_USER')" />
         <intercept-url pattern="/today/*" access="hasRole('ROLE_USER')" />
         <intercept-url pattern="/include/*" access="hasRole('ROLE_USER')" />
         <form-login login-page="/login/form" login-processing-url="/login"
