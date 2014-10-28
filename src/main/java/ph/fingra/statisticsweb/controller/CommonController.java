@@ -86,6 +86,11 @@ public class CommonController extends BaseController{
 		return lang.trim();
     }
 
+    @RequestMapping(value = "/error/403")
+    public String error403(Model model) {
+    	return "error/403Error";
+    }
+    
     @RequestMapping(value = "/error/404")
     public String error404(Model model) {
     	return "error/404Error";

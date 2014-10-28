@@ -17,8 +17,8 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
-	response.setStatus(500);
-%>    
+	response.setStatus(403);
+%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 	<head>
@@ -48,14 +48,14 @@
 				</div>
 			</div>
 		</div>
-		<div class="error-wrap">
+		 <div class="error-wrap">
 			<div class="error-cont">
 		    	<img src="<c:url value="/resources/img/sorry.png"/>" alt="SORRY" />
-		        <P class="error-title">500 ERROR</P>
-        		<p class="error-txt">As you know, It means there's unexpected internal maintaining.<br />
-        		It might be temporary, please try refreshing this page in a few minutes.<br />
-        		If the error persist, please contact us.
-        		</p>
+		        <P class="error-title">You cannot get in</P>
+		        <p class="error-txt">It means the page you’ve tried to get in requires permission.<br />
+		        Please check the account you’ve signed in.<br />
+		        If you think you are supposed to get in, please contact us.
+		        </p>
 		        <div class="error-btn-wrap">
 		        	<a href="<c:url value="/"/>" class="btn btn-large btn-primary span2">Go to Main</a>
 		        </div>
