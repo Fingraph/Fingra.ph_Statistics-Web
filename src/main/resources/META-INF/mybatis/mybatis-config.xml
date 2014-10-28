@@ -80,6 +80,7 @@
     <!-- component -->
     <mapper resource="META-INF/mybatis/components-mapper.xml" />
     <!-- today -->
+    <mapper resource="META-INF/mybatis/today-mapper.xml" />
   </mappers>
 
 </configuration>
