@@ -26,6 +26,7 @@
     <mapping path="/manage/*" decorator="/WEB-INF/decorator/decorator.jsp" />
     <mapping path="/dashboard*" decorator="/WEB-INF/decorator/dashboard_layout.jsp" />
 	<mapping path="/today*" decorator="/WEB-INF/decorator/dashboard_layout.jsp" />
+	<mapping path="/performance*" decorator="/WEB-INF/decorator/dashboard_layout.jsp" />
     <mapping path="/manage/member/detail*" decorator="/WEB-INF/decorator/setting_layout.jsp" />
     <mapping path="/manage/member/form*" decorator="/WEB-INF/decorator/setting_layout.jsp" />
     <mapping path="/account/form*" decorator="/WEB-INF/decorator/setting_layout.jsp" />
