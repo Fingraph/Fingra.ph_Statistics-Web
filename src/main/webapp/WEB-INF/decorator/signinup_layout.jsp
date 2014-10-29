@@ -136,6 +136,7 @@
                         <li class="foot-menu"><a href=mailto:support@fingra.ph>support@fingra.ph</a></li>
                     </ul>
                 </div>
+                <div class="company-name">Fingra.ph Opensource Software © 2014</div>
             </div>
         </div>
     </div>

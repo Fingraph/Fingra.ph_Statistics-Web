@@ -50,20 +50,24 @@ $(function() {
             <c:forEach items="${list}" var="list">
                 <div class="item appkey" id="${list.appkey}">
                     <div class="inner <c:choose><c:when test="${list.platform eq 1}">ios</c:when><c:when test="${list.platform eq 2}">android</c:when></c:choose>">
-                    <div class="pannel-name basic">&nbsp;</div>
+                    <div class="pannel-name basic"></div>
                     <div class="pannel-inner">
                            <p class="tx-platform"><c:choose><c:when test="${list.platform eq 1}"><i class="icon-ios"></i>iOS</c:when><c:when test="${list.platform eq 2}"><i class="icon-android"></i>ANDROID</c:when></c:choose></p>
                            <p class="tx-app-name" id="appName" style="cursor: pointer;"><span class="app_name">${list.appname}</span><br/><span class="tx-app-key">APPKEY : ${list.appkey}</span></p>
-                           <div class="pannel-btn">
-                               <a class="edit" href="<c:url value="/app/edit?appkey=${list.appkey}"/>"><img src="<c:url value="/resources/img/btn_app_edit.png"/>" alt="<spring:message code="btn.appedit.text"/>" title="app edit"/></a>
-                           </div>
+                           <sec:authorize ifAnyGranted="ROLE_ADMIN">
+                               <div class="pannel-btn">
+                                   <a class="edit" href="<c:url value="/app/edit?appkey=${list.appkey}"/>"><img src="<c:url value="/resources/img/btn_app_edit.png"/>" alt="<spring:message code="btn.appedit.text"/>" title="app edit"/></a>
+                               </div>
+                           </sec:authorize>
                        </div>
                    </div>
                </div>
             </c:forEach>
-            <div class="item">
-                   <div class="inner flat"><img src="${pageContext.request.contextPath}<spring:message code="img.applist.newapp"/>" style="cursor: pointer;" id="addApp"/></div>
-            </div>
+            <sec:authorize ifAnyGranted="ROLE_ADMIN">
+                <div class="item">
+                    <div class="inner flat"><img src="${pageContext.request.contextPath}<spring:message code="img.applist.newapp"/>" style="cursor: pointer;" id="addApp"/></div>
+                </div>
+            </sec:authorize>
         </div>
    </div>
 </body>

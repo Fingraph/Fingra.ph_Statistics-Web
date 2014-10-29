@@ -16,7 +16,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<!DOCTYPE html>
 <html>
 <head>
 <title><spring:message code="login.title"/></title>
@@ -48,7 +47,8 @@ $(function(){
             <div class="idpw-wrap"><form action="<c:url value="/login"/>" method="post">
                 <div class="idpw"><i class="icon-sign-user"></i><input name="email" type="text" class="span4" placeholder="<spring:message code="input.email"/>" ></div>
                 <div class="idpw"><i class="icon-sign-pass"></i><input name="password" type="password" class="span4" placeholder="<spring:message code="input.pwd"/>"  min="8"/></div>
-                <div class="idpw"><button type="submit" class="btn btn-large btn-block btn-info"><spring:message code="btn.enter.text"/></button></div></form>
+                <div class="idpw"><button type="submit" class="btn btn-large btn-block btn-info"><spring:message code="btn.enter.text"/></button></div>
+                <P class="signin-txt"><spring:message code="login.text.signup"/>&nbsp; <a href="<c:url value="/signup/form"/>"><spring:message code="login.text.signup.now"/></a></P></form>
             </div>
         </div>
 </body>

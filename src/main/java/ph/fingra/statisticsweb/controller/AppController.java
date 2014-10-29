@@ -46,13 +46,14 @@ public class AppController extends BaseController {
         return "app/list";
     }
     
-    @RequestMapping(method = RequestMethod.GET, value = "app/regist")
+    @RequestMapping(method = RequestMethod.GET, value = "app/form")
     public String registForm(@ModelAttribute("app") App app, @ActiveUser FingraphUser activeUser) {
     	
     	if (activeUser.getRole() != MemberRole.ROLE_ADMIN.getValue()) {
     		return "redirect:/common/error/permission";
     	}
-    	 
+    	
+    	
     	return "app/form";
     }
     
@@ -67,7 +68,6 @@ public class AppController extends BaseController {
     	
     	return "redirect:/app/list";    	
     }
-    
     
     @RequestMapping(method = RequestMethod.GET, value = "app/edit")
     public String editForm(@RequestParam("appkey") String appkey, Model model, @ActiveUser FingraphUser activeUser) {

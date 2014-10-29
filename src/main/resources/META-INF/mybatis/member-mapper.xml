@@ -39,18 +39,32 @@
     WHERE memberid=#{memberid}
   </update>
 
+  <update id="updateByAdmin">
+    UPDATE member SET
+      name=#{name},
+      <if test="@ph.fingra.statisticsweb.common.util.ComparatorUtil@isNotEmpty(password)">
+        password=#{password},
+      </if>
+      department=#{department},
+      phone=#{phone},
+      status=#{status},
+      joinstatus=#{joinstatus},
+      modified=now()
+    WHERE memberid=#{memberid}
+  </update>
+
   <update id="updateStatus">
     UPDATE member SET
       status=#{status},
       modified=now()
-    WHERE email=#{email}
+    WHERE memberid=#{memberid}
   </update>
 
   <update id="updateJoinstatus">
     UPDATE member SET
       joinstatus=#{joinstatus},
       modified=now()
-    WHERE email=#{email}
+    WHERE memberid=#{memberid}
   </update>
 
   <update id="updatePassword">

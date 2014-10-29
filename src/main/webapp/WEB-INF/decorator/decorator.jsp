@@ -120,7 +120,12 @@ function setLanguage() {
                                 <ul>
                                     <li class="name"><sec:authentication property="principal.email" /></li>
                                     <li class="account-hr"></li>
-                                    <li class="account-button" id="settingBtn"><i class="icon-cog"></i><spring:message code="comm.header.setting"/></li>
+                                    <sec:authorize ifAnyGranted="ROLE_ADMIN">
+                                        <li class="account-button" id="manageAccountBtn"><i class="icon-user icon-white" style="padding-right:10px;"></i><spring:message code="comm.header.manageaccount"/></li>
+                                    </sec:authorize>
+                                    <sec:authorize ifNotGranted="ROLE_ADMIN">
+                                        <li class="account-button" id="settingBtn"><i class="icon-cog"></i><spring:message code="comm.header.setting"/></li>
+                                    </sec:authorize>
                                     <li class="account-button" id="signOutBtn"><i class="icon-logout"></i><spring:message code="comm.header.signout"/></li>
                                 </ul>
                             </div>
@@ -162,6 +167,7 @@ function setLanguage() {
                         <li class="foot-menu"><a href=mailto:support@fingra.ph>support@fingra.ph</a></li>
                     </ul>
                 </div>
+                <div class="company-name">Fingra.ph Opensource Software © 2014</div>
             </div>
         </div>
     </div>

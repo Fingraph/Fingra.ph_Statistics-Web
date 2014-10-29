@@ -4,10 +4,10 @@ $(function() {
 		location.href=context+'logout';
 	});
 	$('#settingBtn').click(function(){
-		location.href=context+'account/edit';
+		location.href=context+'account/form';
 	});
-	$('#subscriptionBtn').click(function(){
-		location.href=context+'account/subscription';
+	$('#manageAccountBtn').click(function(){
+		location.href=context+'manage/member';
 	});
 
 	$('body').on('click','.status-close',function(e){

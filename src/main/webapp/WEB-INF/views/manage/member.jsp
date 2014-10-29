@@ -19,13 +19,78 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <html>
 <head>
-<title>Fingra.ph - member</title>
+<title>Fingra.ph Opensource - <spring:message code="comm.header.manageaccount"/></title>
+<script type="text/javascript">
+$(function() {
+    $('.dropdown-toggle').dropdown();
+    $('#memberlistDiv').on('click','.editBtn',function(e){
+    	e.preventDefault();
+    	var id = $(this).attr('id').replace('edit_','');
+    	location.href='<c:url value="/manage/member/form?memberid='+id+'"/>';
+    });
+    $('#memberlistDiv').on('click','.approvalBtn',function(e){
+        e.preventDefault();
+        var id = $(this).attr('id').replace('approval_','');
+        location.href='<c:url value="/manage/member/approval?memberid='+id+'"/>';
+    });
+    $('#memberlistDiv').on('click','.refuseBtn',function(e){
+        e.preventDefault();
+        var id = $(this).attr('id').replace('refuse_','');
+        location.href='<c:url value="/manage/member/refuse?memberid='+id+'"/>';
+    });
+});
+</script>
 </head>
 <body>
-
-<h1>
-    Manage Member
-</h1>
-
+    <div id="applist-body">
+        <div class="app-list-wrap">
+            <div class="list-title">
+                <h1><spring:message code="comm.header.manageaccount"/></h1>
+            </div>
+            <div class="new-app-wrap">
+                <div class="new-app-info" id="memberlistDiv">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Email</th>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th>Status</th>
+                                <th>Join Status</th>
+                                <th>Manage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <c:forEach var="list" items="${list}" varStatus="status">
+                            <tr>
+                                <td valign="middle">${status.count}</td>
+                                <td valign="middle"><a href="<c:url value="/manage/member/detail?memberid=${list.memberid}"/>">${list.email}</a></td>
+                                <td valign="middle">${list.name}</td>
+                                <td valign="middle">${list.department}</td>
+                                <td valign="middle"><c:choose>
+                                <c:when test="${list.status eq 1 }">Active</c:when>
+                                <c:when test="${list.status eq 9 }">Delete</c:when>
+                                </c:choose></td>
+                                <td valign="middle"><c:choose>
+                                <c:when test="${list.joinstatus eq 0 }">Wait</c:when>
+                                <c:when test="${list.joinstatus eq 1 }">Approval</c:when>
+                                <c:when test="${list.joinstatus eq 9 }">Refuse</c:when>
+                                </c:choose></td>
+                                <td>
+                                    <span class="btn btn-small btn-primary editBtn" id="edit_${list.memberid}"><spring:message code="btn.edit.text"/></span>
+                                    <c:if test="${list.joinstatus eq 0 }">
+                                        <span class="btn btn-small btn-warning approvalBtn" id="approval_${list.memberid}">승인</span>
+                                        <span class="btn btn-small btn-danger refuseBtn" id="refuse_${list.memberid}">거부</span>
+                                    </c:if>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+   </div>
 </body>
 </html>

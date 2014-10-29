@@ -72,6 +72,21 @@ public class MemberServiceImpl implements MemberService {
     	SecurityContextHolder.getContext().setAuthentication(newAuth);
     }
     
+    public void updateByAdmin(Member member) {
+        if (!StringUtils.isEmpty(member.getPassword())) {
+            member.setPassword(passwordEncoder.encode(member.getPassword()));
+        }
+        memberDao.updateByAdmin(member);
+    }
+    
+    public void updateStatus(Member member) {
+        memberDao.updateStatus(member);
+    }
+    
+    public void updateJoinstatus(Member member) {
+        memberDao.updateJoinstatus(member);
+    }
+    
     public void updateMemberLastLoginTime(Member member) {
         memberDao.updateMemberLastLoginTime(member);
     }

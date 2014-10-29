@@ -35,6 +35,7 @@
         <intercept-url pattern="/login/form" access="permitAll"/>
         <intercept-url pattern="/error/*" access="permitAll"/>
         <intercept-url pattern="/manage/*" access="hasRole('ROLE_ADMIN')" />
+        <intercept-url pattern="/account/*" access="hasRole('ROLE_USER')" />
         <intercept-url pattern="/app/*" access="hasRole('ROLE_USER')" />
         <intercept-url pattern="/dashboard/*" access="hasRole('ROLE_USER')" />
         <intercept-url pattern="/performance/*" access="hasRole('ROLE_USER')" />

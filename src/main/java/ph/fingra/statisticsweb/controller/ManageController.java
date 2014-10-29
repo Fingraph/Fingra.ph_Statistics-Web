@@ -19,9 +19,15 @@ package ph.fingra.statisticsweb.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import ph.fingra.statisticsweb.common.MemberJoinstatus;
+import ph.fingra.statisticsweb.common.MemberRole;
+import ph.fingra.statisticsweb.common.MemberStatus;
+import ph.fingra.statisticsweb.domain.Member;
 import ph.fingra.statisticsweb.security.ActiveUser;
 import ph.fingra.statisticsweb.security.FingraphUser;
 import ph.fingra.statisticsweb.service.MemberService;
@@ -37,63 +43,101 @@ public class ManageController extends BaseController {
     @RequestMapping(method = RequestMethod.GET, value = "/member")
     public String member(@ActiveUser FingraphUser activeUser, Model model) {
         
-        // TODO:
+        if (activeUser.getRole() != MemberRole.ROLE_ADMIN.getValue()) {
+            return "redirect:/common/error/permission";
+        }
+        
+        model.addAttribute("list", memberService.getList());
         
         return "manage/member";
     }
     
     //show detail of general user
     @RequestMapping(method = RequestMethod.GET, value = "/member/detail")
-    public String memberDetail(@ActiveUser FingraphUser activeUser, Model model) {
-    
-    	// TODO;
+    public String memberDetail(@RequestParam("memberid") Integer memberid,
+            @ActiveUser FingraphUser activeUser, Model model) {
+        
+        if (activeUser.getRole() != MemberRole.ROLE_ADMIN.getValue()) {
+            return "redirect:/common/error/permission";
+        }
     	
-    	return "manage/member/detail";
+        model.addAttribute("member", memberService.get(memberid));
+        
+    	return "manage/memberDetail";
     }
     
-    //Password Reset Confirmation
-    @RequestMapping(method = RequestMethod.POST, value = "/member/resetConfirm")
-    public String memberResetConfirm(@ActiveUser FingraphUser activeUser, Model model){
-    	
-    	// TODO;
-    	
-    	return "manage/member/resetConfirm";
-    	
+    @RequestMapping(method = RequestMethod.GET, value = "/member/form")
+    public String memberForm(@RequestParam("memberid") Integer memberid,
+            @ActiveUser FingraphUser activeUser, Model model) {
+        
+        if (activeUser.getRole() != MemberRole.ROLE_ADMIN.getValue()) {
+            return "redirect:/common/error/permission";
+        }
+        
+        model.addAttribute("member", memberService.get(memberid));
+        
+        return "manage/memberForm";
     }
     
-    @RequestMapping(method = RequestMethod.POST, value = "/member/signupConfirm")
-    public String memberSignupConfirm(@ActiveUser FingraphUser activeUser, Model model) {
-    	
-    	// TODO;
-    	
-    	return "manage/member/signupConfirm";
-    	
+    @RequestMapping(method = RequestMethod.POST, value = "/member/edit")
+    public String memberEdit(@ModelAttribute("member") Member member,
+            @ActiveUser FingraphUser activeUser, Model model) {
+        
+        if (activeUser.getRole() != MemberRole.ROLE_ADMIN.getValue()) {
+            return "redirect:/common/error/permission";
+        }
+        
+        memberService.updateByAdmin(member);
+        
+        return "redirect:/manage/member";
     }
     
-    @RequestMapping(method = RequestMethod.POST, value = "/member/deactivate")
-    public String memberDeactivate(@ActiveUser FingraphUser activeUser, Model model){
-    	
-    	// TODO;
-    	
-    	return "manage/member/deactivate";
-    	
+    @RequestMapping(method = RequestMethod.GET, value = "/member/inactivate")
+    public String memberDeactivate(@RequestParam("memberid") Integer memberid,
+            @ActiveUser FingraphUser activeUser, Model model){
+        
+        if (activeUser.getRole() != MemberRole.ROLE_ADMIN.getValue()) {
+            return "redirect:/common/error/permission";
+        }
+        
+        Member member = new Member();
+        member.setMemberid(memberid);
+        member.setStatus(MemberStatus.DELETE.getValue());
+        memberService.updateStatus(member);
+        
+        return "redirect:/manage/member";
     }
     
-    @RequestMapping(method = RequestMethod.GET, value = "/member/create")
-    public String memberCreateForm(@ActiveUser FingraphUser activeUser, Model model){
+    @RequestMapping(method = RequestMethod.GET, value = "/member/approval")
+    public String memberApproval(@RequestParam("memberid") Integer memberid,
+            @ActiveUser FingraphUser activeUser, Model model) {
     	
-    	// TODO;
+        if (activeUser.getRole() != MemberRole.ROLE_ADMIN.getValue()) {
+            return "redirect:/common/error/permission";
+        }
     	
-    	return "manage/member/create";
-    	
+        Member member = new Member();
+        member.setMemberid(memberid);
+        member.setJoinstatus(MemberJoinstatus.APPROVAL.getValue());
+        memberService.updateJoinstatus(member);
+        
+        return "redirect:/manage/member";
     }
     
-    @RequestMapping(method = RequestMethod.POST, value = "/member/create")
-    public String memberCreate(@ActiveUser FingraphUser activeUser, Model model) {
-    	
-    	// TODO;
-    	
-    	return "manage/member/create";
+    @RequestMapping(method = RequestMethod.GET, value = "/member/refuse")
+    public String memberRefuse(@RequestParam("memberid") Integer memberid,
+            @ActiveUser FingraphUser activeUser, Model model) {
+        
+        if (activeUser.getRole() != MemberRole.ROLE_ADMIN.getValue()) {
+            return "redirect:/common/error/permission";
+        }
+        
+        Member member = new Member();
+        member.setMemberid(memberid);
+        member.setJoinstatus(MemberJoinstatus.REFUSE.getValue());
+        memberService.updateJoinstatus(member);
+        
+        return "redirect:/manage/member";
     }
     
 }
