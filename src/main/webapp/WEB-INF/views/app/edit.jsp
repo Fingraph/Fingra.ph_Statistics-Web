@@ -19,7 +19,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <html>
 <head>
-<title>Fingra.ph - <spring:message code="app.modify.title"/></title>
+<title>Fingra.ph Opensource - <spring:message code="app.modify.title"/></title>
 <style type="text/css">
 div.help-inline{
     margin-left:10px;
@@ -144,7 +144,7 @@ function textChange(val){
                 </div>
                 <div class="new-app-btn">
                     <a href="<c:url value="/app/list"/>" class="btn btn-large bottom-button span2"><spring:message code="btn.applist.text"/></a>
-                    <button type="submit" class="btn btn-large btn-primary bottom-button span2"><spring:message code="btn.submit.text"/></button>
+                    <button type="submit" class="btn btn-large btn-primary bottom-button span2"><spring:message code="btn.submit.text"/></button>&nbsp;&nbsp;
                 </div>
                 </form>
             </div>

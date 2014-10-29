@@ -19,10 +19,13 @@ package ph.fingra.statisticsweb.service;
 import java.util.List;
 
 import ph.fingra.statisticsweb.domain.App;
+import ph.fingra.statisticsweb.domain.AppCategory;
 import ph.fingra.statisticsweb.domain.DashBoardSearchParam;
 
 public interface AppService {
-
+    
+    List<AppCategory> findAllCategories();
+    
     App get(String appkey);
 
     void create(App app);
@@ -30,4 +33,6 @@ public interface AppService {
     List<App> getAppList(DashBoardSearchParam param);
 
     void update(App app);
+    
+    void delete(App app);
 }

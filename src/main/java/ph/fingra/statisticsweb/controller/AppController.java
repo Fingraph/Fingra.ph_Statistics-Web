@@ -47,23 +47,26 @@ public class AppController extends BaseController {
     }
     
     @RequestMapping(method = RequestMethod.GET, value = "app/form")
-    public String registForm(@ModelAttribute("app") App app, @ActiveUser FingraphUser activeUser) {
+    public String registForm(@ActiveUser FingraphUser activeUser, Model model) {
     	
     	if (activeUser.getRole() != MemberRole.ROLE_ADMIN.getValue()) {
     		return "redirect:/common/error/permission";
     	}
     	
+    	model.addAttribute("categories", appService.findAllCategories());
     	
     	return "app/form";
     }
     
     @RequestMapping(method = RequestMethod.POST, value = "/app/regist") 
-    public String regist(@ActiveUser FingraphUser activeUser, App app){
+    public String regist(@ModelAttribute("app") App app, @ActiveUser FingraphUser activeUser) {
     	
     	if (activeUser.getRole() != MemberRole.ROLE_ADMIN.getValue()) {
     		return "redirect:/common/error/permission";
     	}
     	
+    	app.setStatus(1);
+    	app.setApptype(1);
     	appService.create(app);
     	
     	return "redirect:/app/list";    	
@@ -71,27 +74,42 @@ public class AppController extends BaseController {
     
     @RequestMapping(method = RequestMethod.GET, value = "app/edit")
     public String editForm(@RequestParam("appkey") String appkey, Model model, @ActiveUser FingraphUser activeUser) {
-
-    	if (activeUser.getRole() != MemberRole.ROLE_ADMIN.getValue()) {
-    		return "redirect:/common/error/permission";
-    	}
-
-    	App app = appService.get(appkey);
-    	model.addAttribute("app", app);
-    	return "app/edit";
-    	
+        
+        if (activeUser.getRole() != MemberRole.ROLE_ADMIN.getValue()) {
+            return "redirect:/common/error/permission";
+        }
+        
+        App app = appService.get(appkey);
+        model.addAttribute("app", app);
+        model.addAttribute("categories", appService.findAllCategories());
+        
+        return "app/edit";
     }
-
-    @RequestMapping(method = RequestMethod.POST, value = "/app/edit")
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/app/update")
     public String edit(@ActiveUser FingraphUser activeUser, App app) { 
-    	
-    	if (activeUser.getRole() != MemberRole.ROLE_ADMIN.getValue()) {
-    		return "redirect:/common/error/permission";
-    	}
-    	
-    	appService.update(app);
-
-    	return "redirect:/app/list";
+        
+        if (activeUser.getRole() != MemberRole.ROLE_ADMIN.getValue()) {
+            return "redirect:/common/error/permission";
+        }
+        
+        appService.update(app);
+        
+        return "redirect:/app/list";
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/app/delete")
+    public String delete(@RequestParam("appkey") String appkey, @ActiveUser FingraphUser activeUser) { 
+        
+        if (activeUser.getRole() != MemberRole.ROLE_ADMIN.getValue()) {
+            return "redirect:/common/error/permission";
+        }
+        
+        App app = new App();
+        app.setAppkey(appkey);
+        appService.delete(app);
+        
+        return "redirect:/app/list";
     }
     
 }

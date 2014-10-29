@@ -19,7 +19,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <html>
 <head>
-<title>Fingra.ph - <spring:message code="app.list.title"/></title>
+<title>Fingra.ph Opensource - <spring:message code="app.list.title"/></title>
 <script type="text/javascript">
 $(function() {
     $('.dropdown-toggle').dropdown();
@@ -35,6 +35,17 @@ $(function() {
         if($(this).text().length>40){
             $(this).addClass('fontSize18');
         }
+    });
+    $('.deleteBtn').click(function(){
+        var id = $(this).attr('id').replace('delete_','');
+        var heading='Delete App';
+        var question='Are you sure to delete this app?';
+        var cancelButtonTxt = '<spring:message code="btn.cancel.text"/>';
+        var okButtonTxt = '<spring:message code="btn.ok.text"/>';
+        var callback = function() {
+        	location.href='<c:url value="/app/delete?appkey='+id+'"/>';
+        };
+        confirm(heading, question, cancelButtonTxt, okButtonTxt, callback);
     });
 });
 </script>
@@ -56,6 +67,7 @@ $(function() {
                            <p class="tx-app-name" id="appName" style="cursor: pointer;"><span class="app_name">${list.appname}</span><br/><span class="tx-app-key">APPKEY : ${list.appkey}</span></p>
                            <sec:authorize ifAnyGranted="ROLE_ADMIN">
                                <div class="pannel-btn">
+                                   <img class="del deleteBtn" id="delete_${list.appkey}" src="<c:url value="/resources/img/btn_app_del.png"/>" alt="app delete" title="app delete" style="cursor: pointer;"/>
                                    <a class="edit" href="<c:url value="/app/edit?appkey=${list.appkey}"/>"><img src="<c:url value="/resources/img/btn_app_edit.png"/>" alt="<spring:message code="btn.appedit.text"/>" title="app edit"/></a>
                                </div>
                            </sec:authorize>

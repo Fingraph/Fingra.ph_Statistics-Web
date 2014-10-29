@@ -18,39 +18,37 @@ package ph.fingra.statisticsweb.domain;
 
 import java.io.Serializable;
 
-public class AppCategory implements Serializable{
-    /**
-	 *
-	 */
-	private static final long serialVersionUID = 1599563035002114518L;
-	private int categoryId;
-    private String categoryName;
-    private String appStoreCategory;
-    private String goolePlayCategory;
+public class AppCategory extends BaseDomain implements Serializable {
     
-    public int getCategoryId() {
-		return categoryId;
-	}
-	public void setCategoryId(int categoryId) {
-		this.categoryId = categoryId;
-	}
-	public String getCategoryName() {
-		return categoryName;
-	}
-	public void setCategoryName(String categoryName) {
-		this.categoryName = categoryName;
-	}
-	public String getGoolePlayCategory() {
-		return goolePlayCategory;
-	}
-	public void setGoolePlayCategory(String goolePlayCategory) {
-		this.goolePlayCategory = goolePlayCategory;
-	}
-	public String getAppStoreCategory() {
-		return appStoreCategory;
-	}
-	public void setAppStoreCategory(String appStoreCategory) {
-		this.appStoreCategory = appStoreCategory;
-	}
-
+	private static final long serialVersionUID = 1599563035002114518L;
+	
+	private int categoryid;
+    private String categoryname;
+    private String appstorecategory;
+    private String googleplaycategory;
+    
+    public int getCategoryid() {
+        return categoryid;
+    }
+    public void setCategoryid(int categoryid) {
+        this.categoryid = categoryid;
+    }
+    public String getCategoryname() {
+        return categoryname;
+    }
+    public void setCategoryname(String categoryname) {
+        this.categoryname = categoryname;
+    }
+    public String getAppstorecategory() {
+        return appstorecategory;
+    }
+    public void setAppstorecategory(String appstorecategory) {
+        this.appstorecategory = appstorecategory;
+    }
+    public String getGoogleplaycategory() {
+        return googleplaycategory;
+    }
+    public void setGoogleplaycategory(String googleplaycategory) {
+        this.googleplaycategory = googleplaycategory;
+    }
 }

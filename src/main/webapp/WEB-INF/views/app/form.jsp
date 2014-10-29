@@ -19,7 +19,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <html>
 <head>
-<title>Fingra.ph - <spring:message code="app.reg.title"/></title>
+<title>Fingra.ph Opensource - <spring:message code="app.reg.title"/></title>
 <style type="text/css">
 div.help-inline{
     margin-left:10px;
