@@ -16,6 +16,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <html>
 <head>
@@ -52,30 +53,26 @@ $(function() {
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Email</th>
-                                <th>Name</th>
+                                <th>Username</th>
+                                <th>Accountname</th>
                                 <th>Department</th>
+                                <th>Contact</th>
+                                <th>Registered</th>
                                 <th>Status</th>
-                                <th>Join Status</th>
-                                <th>Manage</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                         <c:forEach var="list" items="${list}" varStatus="status">
                             <tr>
-                                <td valign="middle">${status.count}</td>
-                                <td valign="middle"><a href="<c:url value="/manage/member/detail?memberid=${list.memberid}"/>">${list.email}</a></td>
                                 <td valign="middle">${list.name}</td>
+                                <td valign="middle"><a href="<c:url value="/manage/member/detail?memberid=${list.memberid}"/>">${list.email}</a></td>
                                 <td valign="middle">${list.department}</td>
+                                <td valign="middle">${list.phone}</td>
+                                <td valign="middle"><fmt:formatDate value="${list.created}" pattern="yyyy-MM-dd"/></td>
                                 <td valign="middle"><c:choose>
                                 <c:when test="${list.status eq 1 }">Active</c:when>
                                 <c:when test="${list.status eq 9 }">Delete</c:when>
-                                </c:choose></td>
-                                <td valign="middle"><c:choose>
-                                <c:when test="${list.joinstatus eq 0 }">Wait</c:when>
-                                <c:when test="${list.joinstatus eq 1 }">Approval</c:when>
-                                <c:when test="${list.joinstatus eq 9 }">Refuse</c:when>
                                 </c:choose></td>
                                 <td>
                                     <span class="btn btn-small btn-primary editBtn" id="edit_${list.memberid}"><spring:message code="btn.edit.text"/></span>

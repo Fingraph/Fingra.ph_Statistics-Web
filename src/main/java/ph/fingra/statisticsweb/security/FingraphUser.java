@@ -52,10 +52,11 @@ public class FingraphUser extends Member implements UserDetails {
             this.accountNonLocked = false;
             this.enabled = false;
         }
-        if (MemberJoinstatus.valueOf(member.getJoinstatus()) != MemberJoinstatus.APPROVAL) {
-            this.accountNonLocked = false;
-            this.enabled = false;
-        }
+        // controlled by FingraphAnthenticationProvider.additionalAuthenticationChecks
+        //if (MemberJoinstatus.valueOf(member.getJoinstatus()) != MemberJoinstatus.APPROVAL) {
+        //    this.accountNonLocked = false;
+        //    this.enabled = false;
+        //}
     }
     public FingraphUser(Member member, PasswordEncoder passwordEncoder) {
         setMemberid(member.getMemberid());
@@ -74,10 +75,11 @@ public class FingraphUser extends Member implements UserDetails {
             this.accountNonLocked = false;
             this.enabled = false;
         }
-        if (MemberJoinstatus.valueOf(member.getJoinstatus()) != MemberJoinstatus.APPROVAL) {
-            this.accountNonLocked = false;
-            this.enabled = false;
-        }
+        // controlled by FingraphAnthenticationProvider.additionalAuthenticationChecks
+        //if (MemberJoinstatus.valueOf(member.getJoinstatus()) != MemberJoinstatus.APPROVAL) {
+        //    this.accountNonLocked = false;
+        //    this.enabled = false;
+        //}
     }
     
     public Collection<? extends GrantedAuthority> getAuthorities() {

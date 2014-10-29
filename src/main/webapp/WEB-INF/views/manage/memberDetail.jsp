@@ -16,6 +16,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <html>
 <head>
@@ -27,7 +28,14 @@ $(function() {
         location.href='<c:url value="/manage/member/form?memberid=${member.memberid}"/>';
     });
     $('.deactivateBtn').click(function(){
-        location.href='<c:url value="/manage/member/inactivate?memberid=${member.memberid}"/>';
+        var heading='계정 비활성화';
+        var question='계정을 비활성화하고 계정 리스트 화면으로 돌아갑니다.</br>다시 활성화하고자 하는 경우 수정 화면에서 변경할 수 있습니다.';
+        var cancelButtonTxt = '<spring:message code="btn.cancel.text"/>';
+        var okButtonTxt = '<spring:message code="btn.ok.text"/>';
+        var callback = function() {
+        	location.href='<c:url value="/manage/member/inactivate?memberid=${member.memberid}"/>';
+        };
+        confirm(heading, question, cancelButtonTxt, okButtonTxt, callback);
     });
 });
 </script>
@@ -72,13 +80,14 @@ $(function() {
                     </tr>
                     <tr>
                         <th>Created</th>
-                        <td>${member.created}</td>
+                        <td><fmt:formatDate value="${member.created}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                     </tr>
                 </table>
             </div>
             <div style="padding: 30px 0; text-align: right; clear: both;">
                 <button type="button" class="btn btn-large btn-warning bottom-button span2 editBtn"><spring:message code="btn.edit.text"/></button>
                 <button type="button" class="btn btn-large btn-danger bottom-button span2 deactivateBtn"><spring:message code="btn.del.text"/></button>
+                <a href="<c:url value="/manage/member"/>" class="btn btn-large bottom-button span2"><spring:message code="comm.header.manageaccount"/></a>
             </div>
         </div>
     </div>

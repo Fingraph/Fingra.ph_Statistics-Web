@@ -101,6 +101,16 @@ $(function(){
             $(element).removeClass('success').addClass('error');
         }
     });
+    $('#saveBtn').click(function(){
+        var heading='수정사항 저장';
+        var question='계정 정보의 변경 사항을 저장하고 계정 리스트 화면으로 돌아갑니다.';
+        var cancelButtonTxt = '<spring:message code="btn.cancel.text"/>';
+        var okButtonTxt = '<spring:message code="btn.ok.text"/>';
+        var callback = function() {
+            $('form').submit();
+        };
+        confirm(heading, question, cancelButtonTxt, okButtonTxt, callback);
+    });
 });
 </script>
 </head>
@@ -157,7 +167,8 @@ $(function(){
                     </table>
                 </div>
                 <div style="padding: 30px 0; text-align: right; clear: both;">
-                    <button type="submit" class="btn btn-large btn-primary bottom-button"><spring:message code="btn.saveSetting.text"/></button>
+                    <button type="button" id="saveBtn" name="saveBtn" class="btn btn-large btn-primary bottom-button"><spring:message code="btn.saveSetting.text"/></button>
+                    &nbsp;<a href="<c:url value="/manage/member"/>" class="btn btn-large bottom-button span2"><spring:message code="comm.header.manageaccount"/></a>
                 </div>
             </form>
         </div>

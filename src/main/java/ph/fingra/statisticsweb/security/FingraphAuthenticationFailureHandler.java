@@ -39,7 +39,16 @@ public class FingraphAuthenticationFailureHandler
             getRedirectStrategy().sendRedirect(request, response,
                     "/login/unverified?email="+exception.getAuthentication().getName()
                     +"&status="+((FingraphUser)exception.getExtraInformation()).getStatus());
-        } else {
+        } else if (exception.getClass().isAssignableFrom(PasswordMissmatchUserException.class)) {
+            System.out.println(exception.getExtraInformation());
+            getRedirectStrategy().sendRedirect(request, response,
+                    "/login/form?error=100");
+        } else if (exception.getClass().isAssignableFrom(UnapprovalUserException.class)) {
+            System.out.println(exception.getExtraInformation());
+            getRedirectStrategy().sendRedirect(request, response,
+                    "/login/form?error=200");
+        }
+        else {
             super.onAuthenticationFailure(request, response, exception);
         }
     }

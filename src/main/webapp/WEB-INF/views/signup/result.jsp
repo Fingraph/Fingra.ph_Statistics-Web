@@ -27,8 +27,8 @@
         <div class="signup-cont">
             <div class="signup-finish">
                 <p class="finish-title2"><spring:message code="signup.result.text.welcome"/>,${member.name}</p>
-                <p class="finish-sub">${member.email} <br/><br/>핑그래프 오픈소스 통계사이트에 가입이 완료되었습니다. <br />
-                관리자 승인이 완료되면 가입하신 아이디로 사이트 이용이 가능합니다.<br/>
+                <p class="finish-sub">${member.email} <br/><br/>Fingra.ph Opensource 등록 요청이 완료되었습니다.<br />
+                관리자의 수락 후 Fingra.ph Opensource를 사용하실 수 있습니다.<br/>
                 </p>
                 <p class="finish-sub"><a class="btn btn-large btn-primary" style="margin-top: 15px;width: 140px;" href="<c:url value="/"/>"><spring:message code="findpwd.result.link.text"/></a></p>
             </div>
