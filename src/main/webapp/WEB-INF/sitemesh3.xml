@@ -21,9 +21,13 @@
     <mapping path="/" exclue="true" />
     <mapping path="/test" exclue="true" />
     <mapping path="/login*" decorator="/WEB-INF/decorator/signinup_layout.jsp" />
+    <mapping path="/signup*" decorator="/WEB-INF/decorator/signinup_layout.jsp" />
     <mapping path="/app/*" decorator="/WEB-INF/decorator/decorator.jsp" />
     <mapping path="/manage/*" decorator="/WEB-INF/decorator/decorator.jsp" />
     <mapping path="/dashboard*" decorator="/WEB-INF/decorator/dashboard_layout.jsp" />
+    <mapping path="/manage/member/detail*" decorator="/WEB-INF/decorator/setting_layout.jsp" />
+    <mapping path="/manage/member/form*" decorator="/WEB-INF/decorator/setting_layout.jsp" />
+    <mapping path="/account/form*" decorator="/WEB-INF/decorator/setting_layout.jsp" />
     <mapping path="/referer*" exclue="true" />
     <mapping path="*Ajax*" exclue="true" />
     <mapping path="*.json" exclue="true" />

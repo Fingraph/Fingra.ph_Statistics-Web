@@ -25,7 +25,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import ph.fingra.statisticsweb.common.MemberJoinstatus;
@@ -70,6 +69,21 @@ public class MemberServiceImpl implements MemberService {
     																						newPrincipal.getAuthorities());
     	newAuth.setDetails(currentAuth.getDetails());
     	SecurityContextHolder.getContext().setAuthentication(newAuth);
+    }
+    
+    public void updateByAdmin(Member member) {
+        if (!StringUtils.isEmpty(member.getPassword())) {
+            member.setPassword(passwordEncoder.encode(member.getPassword()));
+        }
+        memberDao.updateByAdmin(member);
+    }
+    
+    public void updateStatus(Member member) {
+        memberDao.updateStatus(member);
+    }
+    
+    public void updateJoinstatus(Member member) {
+        memberDao.updateJoinstatus(member);
     }
     
     public void updateMemberLastLoginTime(Member member) {

@@ -92,16 +92,20 @@ public class FingraphAnthenticationProvider
         if (!passwordEncoder.isPasswordValid(userDetails.getPassword(), presentedPassword, salt)) {
             logger.debug("Authentication failed: password does not match stored value");
             
-            throw new BadCredentialsException(
-                    messages.getMessage("Invalid user id or password. Please try again.", "Bad credentials"),
-                    userDetails);
+            //throw new BadCredentialsException(
+            //        messages.getMessage("Invalid user id or password. Please try again.", "Bad credentials"),
+            //        userDetails);
+            throw new PasswordMissmatchUserException("Invalid user id or password. Please try again.", userDetails);
         }
         
         FingraphUser member = (FingraphUser) userDetails;
-        if (MemberStatus.valueOf(member.getStatus()) != MemberStatus.ACTIVE
-                || MemberJoinstatus.valueOf(member.getJoinstatus()) != MemberJoinstatus.APPROVAL){
-            logger.debug("Authentication failed: un-verified user");
+        if (MemberStatus.valueOf(member.getStatus()) != MemberStatus.ACTIVE){
+            logger.debug("Authentication failed: un-active user");
             throw new UnverifiedUserException("AbstractUserDetailsAuthenticationProvider.disabled", userDetails);
+        }
+        if (MemberJoinstatus.valueOf(member.getJoinstatus()) != MemberJoinstatus.APPROVAL){
+            logger.debug("Authentication failed: un-approval user");
+            throw new UnapprovalUserException("AbstractUserDetailsAuthenticationProvider.disabled", userDetails);
         }
     }
     

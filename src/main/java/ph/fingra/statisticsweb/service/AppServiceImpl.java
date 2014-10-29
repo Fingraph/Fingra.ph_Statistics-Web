@@ -20,10 +20,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import ph.fingra.statisticsweb.dao.AppDao;
 import ph.fingra.statisticsweb.domain.App;
+import ph.fingra.statisticsweb.domain.AppCategory;
 import ph.fingra.statisticsweb.domain.DashBoardSearchParam;
 
 @Service
@@ -31,6 +31,11 @@ public class AppServiceImpl  implements AppService{
 
 	@Autowired
 	private AppDao appDao;
+	
+    @Override
+	public List<AppCategory> findAllCategories() {
+	    return appDao.findAllCategories();
+	}
 	
 	@Override
 	public App get(String appkey) {
@@ -51,5 +56,9 @@ public class AppServiceImpl  implements AppService{
 	public void update(App app) {
 		appDao.update(app);
 	}
-
+	
+	@Override
+	public void delete(App app) {
+	    appDao.updateAppStatus(app);
+	}
 }

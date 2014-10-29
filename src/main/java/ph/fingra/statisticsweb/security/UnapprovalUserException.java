@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-package ph.fingra.statisticsweb.service;
+package ph.fingra.statisticsweb.security;
 
-import java.util.List;
+import org.springframework.security.authentication.AccountStatusException;
 
-import ph.fingra.statisticsweb.domain.App;
-import ph.fingra.statisticsweb.domain.AppCategory;
-import ph.fingra.statisticsweb.domain.DashBoardSearchParam;
-
-public interface AppService {
+@SuppressWarnings("serial")
+public class UnapprovalUserException extends AccountStatusException {
     
-    List<AppCategory> findAllCategories();
+    public UnapprovalUserException(String msg) {
+        super(msg);
+    }
     
-    App get(String appkey);
-
-    void create(App app);
-
-    List<App> getAppList(DashBoardSearchParam param);
-
-    void update(App app);
+    public UnapprovalUserException(String msg, Throwable t) {
+        super(msg, t);
+    }
     
-    void delete(App app);
+    @Deprecated
+    protected UnapprovalUserException(String msg, Object extraInformation) {
+        super(msg, extraInformation);
+    }
 }

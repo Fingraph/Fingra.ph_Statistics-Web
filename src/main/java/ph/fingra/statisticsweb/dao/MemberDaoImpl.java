@@ -38,6 +38,10 @@ public class MemberDaoImpl implements MemberDao {
         sqlSessionTemplate.update("member.update", member);
     }
     
+    public void updateByAdmin(Member member) {
+        sqlSessionTemplate.update("member.updateByAdmin", member);
+    }
+    
     public void updateStatus(Member member) {
         sqlSessionTemplate.update("member.updateStatus", member);
     }

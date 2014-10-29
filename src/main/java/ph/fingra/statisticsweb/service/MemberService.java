@@ -30,6 +30,12 @@ public interface MemberService {
     
     public void update(Member member);
     
+    public void updateByAdmin(Member member);
+    
+    public void updateStatus(Member member);
+    
+    public void updateJoinstatus(Member member);
+    
     public void updateMemberLastLoginTime(Member member);
     
     public boolean duplicateEmailCheck(String email);
