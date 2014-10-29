@@ -42,7 +42,7 @@ public class DashBoard extends BaseDomain implements Serializable {
     
     private String dayOfWeek;
     private String timeOfDay;
-    private List<Map<String,BigDecimal>> topContries;
+    private List<Map<String,BigDecimal>> topCountries;
     
     private CurrPrevTextValue topResolution;
     private CurrPrevTextValue topAppVersion;
@@ -145,11 +145,11 @@ public class DashBoard extends BaseDomain implements Serializable {
     public void setPageViews(CurrPrevNumericValue pageViews) {
         this.pageViews = pageViews;
     }
-    public List<Map<String, BigDecimal>> getTopContries() {
-        return topContries;
+    public List<Map<String, BigDecimal>> getTopCountries() {
+        return topCountries;
     }
-    public void setTopContries(List<Map<String, BigDecimal>> topContries) {
-        this.topContries = topContries;
+    public void setTopCountries(List<Map<String, BigDecimal>> topCountries) {
+        this.topCountries = topCountries;
     }
     public CurrPrevTextValue getTopResolution() {
         return topResolution;

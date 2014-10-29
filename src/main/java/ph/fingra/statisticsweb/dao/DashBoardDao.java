@@ -56,7 +56,7 @@ public interface DashBoardDao {
     
     public String getTimeOfDay(DashBoardSearchParam param);
     
-    public List<Map<String, BigDecimal>> getTopContries(DashBoardSearchParam param);
+    public List<Map<String, BigDecimal>> getTopCountries(DashBoardSearchParam param);
     
     public CurrPrevTextValue getTopResolution(DashBoardSearchParam param);
     

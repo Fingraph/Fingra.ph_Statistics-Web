@@ -122,7 +122,7 @@ public class DashBoardServiceImpl implements DashBoardService {
 		//DISTRIBUTION SNAPSHOT
 		dashBoard.setDayOfWeek(dashBoardDao.getDayOfWeek(param));
 		dashBoard.setTimeOfDay(dashBoardDao.getTimeOfDay(param));
-		dashBoard.setTopContries(dashBoardDao.getTopContries(param));
+		dashBoard.setTopCountries(dashBoardDao.getTopCountries(param));
 		dashBoard.setTopResolution(dashBoardDao.getTopResolution(param));
 		dashBoard.setTopAppVersion(dashBoardDao.getTopAppVersion(param));
 		dashBoard.setTopOsVersion(dashBoardDao.getTopOsVersion(param));
@@ -167,7 +167,7 @@ public class DashBoardServiceImpl implements DashBoardService {
 		//DISTRIBUTION SNAPSHOT
 		dashBoard.setDayOfWeek(dashBoardDao.getDayOfWeek(param));
 		dashBoard.setTimeOfDay(dashBoardDao.getTimeOfDay(param));
-		dashBoard.setTopContries(dashBoardDao.getTopContries(param));
+		dashBoard.setTopCountries(dashBoardDao.getTopCountries(param));
 		dashBoard.setTopResolution(dashBoardDao.getTopResolution(param));
 		dashBoard.setTopAppVersion(dashBoardDao.getTopAppVersion(param));
 		dashBoard.setTopOsVersion(dashBoardDao.getTopOsVersion(param));

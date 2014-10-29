@@ -51,7 +51,8 @@ public class DashBoardController extends BaseController {
 	private DashBoardService dashBoardService;
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/{appkey}")
-	public String dashboard(Model model, @PathVariable("appkey") String appkey,
+	public String dashboard(Model model, 
+							@PathVariable("appkey") String appkey,
 							@RequestParam(required=false, defaultValue="1w",value="period") String period, 
 							DashBoardSearchParam param, 
 							@ActiveUser FingraphUser activeUser) {

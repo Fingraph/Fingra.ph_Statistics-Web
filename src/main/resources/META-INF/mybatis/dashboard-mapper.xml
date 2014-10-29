@@ -298,7 +298,7 @@
   </select>
 
   <!-- top countries -->
-  <select id="getTopContries" parameterType="DashBoardSearchParam" resultType="hashmap">
+  <select id="getTopCountries" parameterType="DashBoardSearchParam" resultType="hashmap">
     SELECT
       countryName, (cnt/tcnt*100) as percentage
     FROM

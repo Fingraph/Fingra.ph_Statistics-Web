@@ -38,8 +38,8 @@
 <script type="text/javascript" src="<c:url value="/resources/js/bootstrap/bootstrap-alert.js"/>"></script><!-- alert -->
 <script type="text/javascript" src="<c:url value="/resources/js/bootstrap/bootstrap-dropdown.js"/>"></script><!-- dropdown -->
 <script type="text/javascript" src="<c:url value="/resources/js/bootstrap/bootstrap-modal.js"/>"></script><!-- modal -->
-<script type="text/javascript" src="<c:url value="/resources/js/bootstrap/bootstrap-popover.js"/>"></script><!-- popover -->
 <script type="text/javascript" src="<c:url value="/resources/js/bootstrap/bootstrap-tooltip.js"/>"></script><!-- tooltip -->
+<script type="text/javascript" src="<c:url value="/resources/js/bootstrap/bootstrap-popover.js"/>"></script><!-- popover -->
 <script type="text/javascript" src="<c:url value="/resources/js/jquery.dd.js"/>"></script><!-- msdropdown -->
 <script type="text/javascript" src="<c:url value="/resources/js/jquery.metadata.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/resources/js/datepick/jquery.datepick.js"/>"></script><!-- datepick -->

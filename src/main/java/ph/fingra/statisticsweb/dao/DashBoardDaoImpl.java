@@ -95,8 +95,8 @@ public class DashBoardDaoImpl implements DashBoardDao{
     }
     
     @Override
-    public List<Map<String, BigDecimal>> getTopContries(DashBoardSearchParam param) {
-        return sqlSessionTemplate.selectList("dashboard.getTopContries", param);
+    public List<Map<String, BigDecimal>> getTopCountries(DashBoardSearchParam param) {
+        return sqlSessionTemplate.selectList("dashboard.getTopCountries", param);
     }
     
     @Override
