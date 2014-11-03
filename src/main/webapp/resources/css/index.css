@@ -71,9 +71,9 @@ a { text-decoration:none; outline:none;select-dummy:expression(this.hideFocus=tr
 .foot-copy .company-name {float:right;}
 .footer-txt { padding:10px 0 10px 10px; clear:both; width:960px; margin:0 auto 0 auto; border-top:1px solid #32333a;}
 
-/* 7월 26일 버튼관련 css 삭제, bootstrap.css와 ui.css 공통으로 사용 */
 
-/* 7월 26일 프로필 팝업 소스 추가 됨 */
+
+
 
 .pop-account {
 	background:#242529;
@@ -215,19 +215,19 @@ a { text-decoration:none; outline:none;select-dummy:expression(this.hideFocus=tr
 .contact-success .t1 { font-size:36px; line-height:52px; color:#0079c1; padding:20px 0 30px 0;}
 .contact-success .t2 { font-size:24px; line-height:38px; padding-bottom:20px;}
 
-/* 7월 30일 terms of service 추가 */
+
 
 .terms-wrap { padding:20px 0; text-align:left;}
 .terms-wrap li { border-bottom:dotted 1px #ccc; padding:20px 0;}
 .terms-wrap h2 { padding:15px 0; color:#000;}
 
-/* 8월 09일 terms of service 추가 */
+
 .terms-tbl { border-top:2px solid #c4d3e2; border-left:1px solid #c4d3e2; }
 .terms-tbl th{ font-size:16px; font-weight:normal; padding:5px 10px; text-align:left; color:#333; background:#f4f7f8; border-bottom:1px solid #c4d3e2; border-right:1px solid #c4d3e2;}
 .terms-tbl td{ padding:5px 10px; border-bottom:1px solid #c4d3e2; border-right:1px solid #c4d3e2; text-align:left;}
 
 
-/* 14.02.18 레이아웃 수정 FEATURE2, Contact 추가 */
+
 .feature-h1{
 	color: #0079C1;
 	font-family: Sintony,arial,Apple Gothic,Arial,'나눔고딕','맑은 고딕',Nanumgothic,'돋움',dotum,Trebuchet MS,Georgia,sans-serif;
@@ -351,7 +351,7 @@ display: table-cell;
 	line-height: 24px;
 }
 
-/* 14.06.11 Request Form Style 추가*/
+
 #demo{
     margin-top: -90px;
     padding-top: 90px;

@@ -17,47 +17,6 @@ $(function() {
 	});
 });
 
-//-- slideBox open
-//.status-error(빨간배경)
-//.status-success(초록배경)
-//.status-info(파란배경)
-function showSlideMsgBox(type,msg,time){
-	var bgcolor ='status-error';
-	if(type == 'success' ){
-		bgcolor ='status-success';
-	}else if(type == 'info'){
-		bgcolor ='status-info';
-	}
-
-	window.scrollTo(0,0) ;
-	var html='';
-	html += '<div id="status_change" class="'+ bgcolor +'">\n';
-	html +=	'<div class="status-wrap">\n';
-	html +=	msg;
-	html += '	<img src="'+context+'resources/img/status_close.png" class="status-close"/>\n';
-	html += '	</div>\n';
-	html += '</div>';
-
-	$('body').prepend(html);
-	$("#status_change").slideDown("slow");
-
-	if(time=='3sec'){
-		setTimeout("hiddenSlideMsgBox()",3000);
-	}else if(time=='5sec'){
-		setTimeout("hiddenSlideMsgBox()",5000);
-	}
-
-
-}
-
-//-- slideBox closed
-function hiddenSlideMsgBox(){
-	//$("#status_change").html("");
-	$("#status_change").slideUp("slow");
-	//
-}
-
-
 // -- Generic Confirm
 var confirmModal;
 function confirm(heading, question, cancelButtonTxt, okButtonTxt, callback) {
@@ -70,7 +29,6 @@ function confirm(heading, question, cancelButtonTxt, okButtonTxt, callback) {
 	          '<a class="close" data-dismiss="modal" >&times;</a>' +
 	          '<h3>' + heading +'</h3>' +
 	        '</div>' +
-
 	        '<div class="modal-body">' +
 	          '<p>' + question + '</p>' +
 	        '</div>' +
@@ -112,11 +70,6 @@ function confirm(heading, question, cancelButtonTxt, okButtonTxt, callback) {
   });
 
   confirmModal.modal('show');
-
-
-  //confirmModal.find('#msg').text('test')
-
-
 
   return true;
 };
@@ -187,11 +140,11 @@ function makeAdChannelSnapshot(data,returnedUsersTitle){
 	$('.returnedUsersTitle').text(returnedUsersTitle);
 }
 
-//TimeZone 설정-------------------------------------------------------------------------------------
+//set TimeZone
 function makeTodayTimeZone(nowTime, prevTime){
-	var timecheck = -(new Date().getTimezoneOffset()/60); // 표준시
+	var timecheck = -(new Date().getTimezoneOffset()/60); // standard time
 	var koreaTime = 9;
-	var distinctionTime = Math.floor(timecheck - koreaTime); // 한국 표준시 - 클라이언트 표준시
+	var distinctionTime = Math.floor(timecheck - koreaTime); // korea local time
 	var timeZoneText = "";
 	var timeZone = jstz.determine();
 	timecheck = Math.floor(timecheck);
@@ -206,7 +159,7 @@ function makeTodayTimeZone(nowTime, prevTime){
 	$('.this_week_Info').tooltip({html:true});
 
 	if( distinctionTime != 0){
-		if( distinctionTime > 0){ // 양수
+		if( distinctionTime > 0){ // positive
 			nowTime = nowTime + distinctionTime;
 			prevTime = prevTime + distinctionTime;
 			if ( nowTime > 23)	nowTime = nowTime - 24;
@@ -223,4 +176,3 @@ function makeTodayTimeZone(nowTime, prevTime){
 	$(".nowTime").text(nowTime);
 	$(".prevTime").text(prevTime);
 }
-

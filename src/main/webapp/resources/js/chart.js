@@ -1,12 +1,12 @@
 var period;
 var term;
 var segment;
+
 $(function () {
 
 	// chart theme
 	Highcharts.theme = {
-			colors: ['#0079c1', '#a9cc5b', '#e4582b', '#f8c624', '#49bb93', '#b457c2', '#ef4c82', '#a6b9bc', '#a9cc5b', '#3ac6e2', '#6060e8', '#ef6f6f' ]
-		//	colors: ['#4572A7', '#AA4643', '#89A54E', '#80699B', '#3D96AE', '#DB843D', '#92A8CD', '#A47D7C', '#B5CA92']
+		colors: ['#0079c1', '#a9cc5b', '#e4582b', '#f8c624', '#49bb93', '#b457c2', '#ef4c82', '#a6b9bc', '#a9cc5b', '#3ac6e2', '#6060e8', '#ef6f6f' ]
 		//original
 		//colors: ['#20419A', '#E40375', '#F36C21', '#EEE824', '#75C044', '#00B05A', '#44C8F5', '#7F3F98', '#72808A']
 		,chart: {
@@ -16,13 +16,10 @@ $(function () {
 
 	// apply the theme
 	var highchartsOptions = Highcharts.setOptions(Highcharts.theme);
-
-
 });
 
 function makeCombinationChart(chart, renderTo, title, subtitle,cate,seriesname,pieToolTip,pieTitle,serise){
 
-	// 차트를 만들어준다.
 	chart = new Highcharts.Chart({
 		 chart: {
 			 renderTo: renderTo
@@ -64,17 +61,14 @@ function makeCombinationChart(chart, renderTo, title, subtitle,cate,seriesname,p
                  }
              }]
          },
-        // plotOptions: {column: {stacking: 'normal',dataLabels: {enabled: false,color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'}}},
-         credits: { enabled: false },
-         series: serise    });
+         series: serise
+    });
 
 	return chart;
 }
 
-
 function makeDefaultLineChartToday(chart, renderTo, title, subtitle, seriesname, cate, xstep, data) {
 
-	// 차트를 만들어준다.
 	chart = new Highcharts.Chart({
 		chart: {
             renderTo: renderTo,
@@ -125,20 +119,15 @@ function makeDefaultLineChartToday(chart, renderTo, title, subtitle, seriesname,
         },
         series: [{
             name: seriesname,
-
             data: data
-
-        }],
-        credits: { enabled: false }
-
+        }]
     });
 
 	return chart;
 }
 
-
 function makeDefaultLineChart(chart, renderTo, title, subtitle, seriesname, cate, xstep, data, avg) {
-	// 차트를 만들어준다.
+
 	chart = new Highcharts.Chart({
 		chart: {
             renderTo: renderTo,
@@ -203,19 +192,15 @@ function makeDefaultLineChart(chart, renderTo, title, subtitle, seriesname, cate
         },
         series: [{
             name: seriesname,
-
             data: data
-
-        }],
-        credits: { enabled: false }
-
+        }]
     });
 
 	return chart;
 }
 
 function makeMultiLineChart(chart, renderTo, title, subtitle, seriesname, cate, xstep, data_array) {
-	// 차트를 만들어준다.
+
 	chart = new Highcharts.Chart({
         chart: {
             renderTo: renderTo,
@@ -244,13 +229,6 @@ function makeMultiLineChart(chart, renderTo, title, subtitle, seriesname, cate, 
         	shared: true,
         	crosshairs: true,
             pointFormat: '<span style="color:{series.color}">{series.name}</span>:{point.y}<br/>'
-        	/*
-            enabled: true,
-            formatter: function() {
-                return '<b>'+ this.series.name +'</b><br/>'+
-				this.x +': '+ this.y;
-            }
-            */
         },
         plotOptions: {
             line: {
@@ -269,22 +247,14 @@ function makeMultiLineChart(chart, renderTo, title, subtitle, seriesname, cate, 
                 enableMouseTracking: true
             }
         },
-        series: data_array,
-        /*
-        series: [{
-            name: seriesname,
-            data: data_array
-        }],
-        */
-        credits: { enabled: false }
-
+        series: data_array
     });
 
 	return chart;
 }
 
 function makeDefaultPieChart(chart, renderTo, title, subtitle, data) {
-	// 차트를 만들어준다.
+
 	chart = new Highcharts.Chart({
         chart: {
             renderTo: renderTo,
@@ -311,7 +281,6 @@ function makeDefaultPieChart(chart, renderTo, title, subtitle, data) {
                     enabled: true,
                     color: '#000000',
                     formatter: function() {
-                        //return '<b>'+ this.point.name +'</b>: '+ this.y + '('+ $.formatNumber( this.percentage, {format:"#0.0", locale:"us"} ) +' %)';
                     	return $.formatNumber( this.percentage, {format:"#0.0", locale:"us"} ) +' %';
                     }
                 },
@@ -320,18 +289,15 @@ function makeDefaultPieChart(chart, renderTo, title, subtitle, data) {
         },
         series: [{
             type: 'pie',
-        //  name: seriesname,
             data: data
-        }],
-        credits: { enabled: false }
-
+        }]
     });
 
 	return chart;
 }
 
 function makeOverlabelPieChart(chart, renderTo, title, seriesname, data) {
-	// 차트를 만들어준다.
+
 	chart = new Highcharts.Chart({
         chart: {
             renderTo: renderTo,
@@ -343,7 +309,7 @@ function makeOverlabelPieChart(chart, renderTo, title, seriesname, data) {
             text: title
         },
         subtitle: {
-        	text: "Source:<a href='http://fingra.ph'>Fingra.ph</a>"
+        	text: "Source:Fingra.ph Opensource"
         },
         tooltip: {
             formatter: function() {
@@ -367,18 +333,14 @@ function makeOverlabelPieChart(chart, renderTo, title, seriesname, data) {
             type: 'pie',
             name: seriesname,
             data: data
-        }],
-        credits: { enabled: false }
-
+        }]
     });
 
 	return chart;
 }
 
-
-
 function makeDefaultColumnChart(chart, renderTo, title, subtitle, seriesname, cate, data, total) {
-	// x축 cate가 많아지면 겹쳐서표시되는걸 방지
+
 	var xLabelsRotation = 0;
 	var xLabelsalign =	'center';
 	if(cate.length>10){
@@ -386,7 +348,6 @@ function makeDefaultColumnChart(chart, renderTo, title, subtitle, seriesname, ca
 		xLabelsalign =	'right';
 	}
 
-	// 차트를 만들어준다.
 	chart = new Highcharts.Chart({
 		chart: {
             renderTo: renderTo,
@@ -428,7 +389,7 @@ function makeDefaultColumnChart(chart, renderTo, title, subtitle, seriesname, ca
             enabled: true,
             formatter: function() {
             	var text = '<b>'+ this.x +'</b>: '+ $.formatNumber(this.y, {format:"#,##0", locale:"us"});
-            	if(total>0){ //total값이 주어지면 백분율계산 추가
+            	if(total>0){
             		text = text + ' ('+ $.formatNumber(this.y/total*100, {format:"0.#", locale:"us"}) +'%)';
             	}
                 return text;
@@ -440,9 +401,7 @@ function makeDefaultColumnChart(chart, renderTo, title, subtitle, seriesname, ca
         series: [{
             name: seriesname,
             data: data
-        }],
-        credits: { enabled: false }
-
+        }]
     });
 
 	return chart;
@@ -450,7 +409,6 @@ function makeDefaultColumnChart(chart, renderTo, title, subtitle, seriesname, ca
 
 function makeDefaultColumnChartToday(chart, renderTo, title, subtitle, seriesname, cate, data, total) {
 
-	// 차트를 만들어준다.
 	chart = new Highcharts.Chart({
 		chart: {
             renderTo: renderTo,
@@ -464,7 +422,6 @@ function makeDefaultColumnChartToday(chart, renderTo, title, subtitle, seriesnam
         },
         xAxis: {
             categories: cate,
-
         },
         yAxis: {
             title: {
@@ -489,7 +446,7 @@ function makeDefaultColumnChartToday(chart, renderTo, title, subtitle, seriesnam
             enabled: true,
             formatter: function() {
             	var text = '<b>'+ this.x +'</b>: '+ $.formatNumber(this.y, {format:"#,##0", locale:"us"});
-            	if(total>0){ //total값이 주어지면 백분율계산 추가
+            	if(total>0){
             		text = text + ' ('+ $.formatNumber(this.y/total*100, {format:"0.#", locale:"us"}) +'%)';
             	}
                 return text;
@@ -501,19 +458,18 @@ function makeDefaultColumnChartToday(chart, renderTo, title, subtitle, seriesnam
         series: [{
             name: seriesname,
             data: data
-        }],
-        credits: { enabled: false }
-
+        }]
     });
 
 	return chart;
 }
+
 function getPercentage(value,total){
 	return $.formatNumber(value/total*100, {format:"0.#", locale:"us"});
 }
 
 function makeDefaultColumnPercentChart(chart, renderTo, title, subtitle, seriesname, cate, data) {
-	// 차트를 만들어준다.
+
 	chart = new Highcharts.Chart({
 		chart: {
             renderTo: renderTo,
@@ -539,7 +495,6 @@ function makeDefaultColumnPercentChart(chart, renderTo, title, subtitle, seriesn
                 style: {
                     fontWeight: 'bold',
                     color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
-
                 },
                 formatter:function() {
                 	return this.value +'%';
@@ -572,16 +527,14 @@ function makeDefaultColumnPercentChart(chart, renderTo, title, subtitle, seriesn
         series: [{
             name: seriesname,
             data: data
-        }],
-        credits: { enabled: false }
-
+        }]
     });
 
 	return chart;
 }
 
 function makeMultiColumnChart(chart, renderTo, title, subtitle, seriesname, cate, data_array) {
-	// 차트를 만들어준다.
+
 	chart = new Highcharts.Chart({
 		chart: {
             renderTo: renderTo,
@@ -613,8 +566,6 @@ function makeMultiColumnChart(chart, renderTo, title, subtitle, seriesname, cate
                         return this.y +'%';
                     }
                 }
-                //,pointPadding: -0.4,
-                //borderWidth: 0
             }
         },
         tooltip: {
@@ -622,11 +573,8 @@ function makeMultiColumnChart(chart, renderTo, title, subtitle, seriesname, cate
             formatter: function() {
                 return '<b>'+ this.x +'</b>: '+ this.y;
             }
-
         },
-        series: data_array,
-        credits: { enabled: false }
-
+        series: data_array
     });
 
 	return chart;
@@ -634,7 +582,7 @@ function makeMultiColumnChart(chart, renderTo, title, subtitle, seriesname, cate
 
 //countryDetail activeUser
 function makeStackedColumnChart(chart, renderTo, title, subtitle, seriesname, cate,xstep, data_array) {
-	// 차트를 만들어준다.
+
 	chart = new Highcharts.Chart({
         chart: {
             renderTo: renderTo,
@@ -662,7 +610,6 @@ function makeStackedColumnChart(chart, renderTo, title, subtitle, seriesname, ca
                 style: {
                     fontWeight: 'bold',
                     color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
-
                 },
                 formatter:function() {
                 	return $.formatNumber( this.total, {format:"#,###"} );
@@ -672,12 +619,6 @@ function makeStackedColumnChart(chart, renderTo, title, subtitle, seriesname, ca
         tooltip: {
         	shared: true,
             pointFormat: '<span style="color:{series.color}">{series.name}</span>:{point.y} <br/>'
-            /*
-            formatter: function() {
-                return '<b>'+ this.series.name + '</b>' + ': '+ $.formatNumber( this.y, {format:"#,###"} ) +
-                	'('+ $.formatNumber( ((this.y * 100) /this.point.stackTotal), {format:"#0.0", locale:"us"} ) +' %)';
-            }
-            */
         },
         plotOptions: {
             column: {
@@ -691,8 +632,7 @@ function makeStackedColumnChart(chart, renderTo, title, subtitle, seriesname, ca
                 }
             }
         },
-        series: data_array,
-        credits: { enabled: false }
+        series: data_array
     });
 
 	return chart;
@@ -716,7 +656,6 @@ function makeScatterChart(chart, renderTo, title, subtitle, xtitle, ytitle, cate
     	new_s3data[i] = [cate[i], parseInt(s3data[i])];
     }
 
-	// 차트를 만들어준다.
 	chart = new Highcharts.Chart({
         chart: {
             renderTo: renderTo,
@@ -733,8 +672,6 @@ function makeScatterChart(chart, renderTo, title, subtitle, xtitle, ytitle, cate
         	categories: cate,
             labels: {
                 step: xstep
-                //rotation: -25,
-                //align: 'right'
             },
             title: {
                 text: xtitle
@@ -784,17 +721,14 @@ function makeScatterChart(chart, renderTo, title, subtitle, xtitle, ytitle, cate
             name: s3title,
             color: 'rgba(169, 112, 131, .6)',
             data: new_s3data
-        }],
-        credits: { enabled: false }
+        }]
     });
 
 	return chart;
 }
 
-
 function makeDefaultAreaChart(chart, renderTo, title, subtitle, seriesname, cate, xstep, data_array) {
 
-	// 차트를 만들어준다.
 	chart = new Highcharts.Chart({
          chart: {
         	 renderTo: renderTo,
@@ -808,7 +742,6 @@ function makeDefaultAreaChart(chart, renderTo, title, subtitle, seriesname, cate
          },
          xAxis: {
         	 categories: cate,
-        	 //tickmarkPlacement: 'on',
              title: {
                  enabled: false
              },
@@ -837,7 +770,6 @@ function makeDefaultAreaChart(chart, renderTo, title, subtitle, seriesname, cate
          },
          plotOptions: {
              area: {
-                 //pointStart: 1940,
             	 stacking: 'normal',
                  lineColor: '#ffffff',
                  lineWidth: 2,
@@ -847,16 +779,14 @@ function makeDefaultAreaChart(chart, renderTo, title, subtitle, seriesname, cate
                  }
               }
          },
-         series: data_array,
-         credits: { enabled: false }
-
+         series: data_array
 	});
 
 	return chart;
 }
 
 function makeLineAndColumnChart(chart, renderTo, title, subtitle, primarySeriesName,secondarySeriesName, cate, columnData_array,lineData_array) {
-	// 차트를 만들어준다.
+
 	chart = new Highcharts.Chart({
 		chart: {
 			renderTo: renderTo,
@@ -885,7 +815,6 @@ function makeLineAndColumnChart(chart, renderTo, title, subtitle, primarySeriesN
 	                color: '#89A54E'
 	            }
 	        }
-
         }, {// Secondary yAxis
         	min: 0,
         	labels: {
@@ -899,8 +828,6 @@ function makeLineAndColumnChart(chart, renderTo, title, subtitle, primarySeriesN
                 style: {
                     color: '#4572A7'
                 }
-
-
 	        },
             opposite: true
         }],
@@ -913,19 +840,16 @@ function makeLineAndColumnChart(chart, renderTo, title, subtitle, primarySeriesN
             type: 'column',
             yAxis: 1,
             data: columnData_array
-
         }, {
             name: primarySeriesName,
             color: '#89A54E',
             type: 'spline',
             data: lineData_array
-        }],
-        credits: { enabled: false }
-
+        }]
 	});
 }
 
-// ie7에서 array 의 indexOf 문제
+// ie7's array indexOf problem
 if (!Array.prototype.indexOf)
 {
   Array.prototype.indexOf = function(elt /*, from*/)
@@ -950,6 +874,7 @@ if (!Array.prototype.indexOf)
 }
 
 function makeLostStepColumnChart(chart, renderTo, title, subtitle, seriesname, cate, data){
+
 	chart = new Highcharts.Chart({
 			chart: {type: 'column', renderTo: renderTo},
 			title: {text: title},
@@ -989,25 +914,24 @@ function makeLostStepColumnChart(chart, renderTo, title, subtitle, seriesname, c
 	                        return this.point.name+'<br/>' + '<font color="#0079c1">'+this.series.name +' : '+ $.formatNumber(this.y, {format:"#,##0", locale:"us"})+'</font>';
 	                    }
 	                }
-
 	            }
 	        },
 		    series: [{
 		    	name: seriesname,
 		        data: data
-		    }],
-			credits: { enabled: false }
+		    }]
 	});
 
 }
 
-
 function makeCompareColumnChart(chart,renderTo,title,subtitle,seriesname,cate,data,type){            
+
 	var ch = {
 			renderTo:renderTo,
 			type: typeof(type) === 'undefined' ? 'column' : 'bar'
 		};
 	if (chart !== null){ ch.height = chart.height; }
+
 	chart = new Highcharts.Chart({
 		chart: ch,
 		title: {
@@ -1076,13 +1000,13 @@ function makeCompareColumnChart(chart,renderTo,title,subtitle,seriesname,cate,da
 			 },
 			 shared:true
 		},
-		series:data,
-		credits:{enabled:false}
+		series:data
 	});
 }
 
 function makeMultiStackedBarChart(chart,renderTo,title,subtitle,seriesname,cate,data){
-    chart = new Highcharts.Chart({
+
+	chart = new Highcharts.Chart({
         chart: {
             type: 'bar',
             renderTo:renderTo,
@@ -1119,92 +1043,45 @@ function makeMultiStackedBarChart(chart,renderTo,title,subtitle,seriesname,cate,
                 }
                 return tooltip;
             }
-
         },
-        series:data,
-        credits:{enabled:false}
+        series:data
     });
 
     return chart;
 }
 
+function getContextPath(){
+    var offset=location.href.indexOf(location.host)+location.host.length;
+    var ctxPath=location.href.substring(offset,location.href.indexOf('/',offset+1));
+    return ctxPath;
+}
 
-//최대,최소 (알때)아이콘 표시
+//max,min icon(known)
 function makeKnowMaxMinDataSymbol(data,max,min){
-
-	 data[data.indexOf(max)]={y:max, marker: {symbol: 'url(http://www.fingra.ph/resources/img/dot_max.png)'}};
-	 data[data.indexOf(min)]={y:min, marker: {symbol: 'url(http://www.fingra.ph/resources/img/dot_min.png)'}};
+	var rootPath = window.location.protocol + "//" + window.location.host + getContextPath();
+	var resourcePath = rootPath + "/resources/img";
+	
+	data[data.indexOf(max)]={y:max, marker: {symbol: 'url('+resourcePath+'/dot_max.png)'}};
+	data[data.indexOf(min)]={y:min, marker: {symbol: 'url('+resourcePath+'/dot_min.png)'}};
 	return data;
 }
-//최대,최소 (모를때)아이콘 표시
+
+//max,min icon(unknown)
 function makeMaxMinDataSymbol(data){
+	var rootPath = window.location.protocol + "//" + window.location.host + getContextPath();
+	var resourcePath = rootPath + "/resources/img";
+	
 	var max=0;
 	var min=99999999;
 
-	 for(var i=0;i<data.length;i++){
-		 if(max<data[i]) max=data[i];
-		 if(min>data[i]) min=data[i];
-	 }
-	 data[data.indexOf(max)]={y:max, marker: {symbol: 'url(http://www.fingra.ph/resources/img/dot_max.png)'}};
-	 data[data.indexOf(min)]={y:min, marker: {symbol: 'url(http://www.fingra.ph/resources/img/dot_min.png)'}};
+	for(var i=0;i<data.length;i++){
+		if(max<data[i]) max=data[i];
+		if(min>data[i]) min=data[i];
+	}
+	data[data.indexOf(max)]={y:max, marker: {symbol: 'url('+resourcePath+'/dot_max.png)'}};
+	data[data.indexOf(min)]={y:min, marker: {symbol: 'url('+resourcePath+'/dot_min.png)'}};
 	return data;
 }
-
-/*
- fingraph-statConfig.js로 이동
-
-function addPeriods(periodVal){
-	var type = periodVal.split('-');
-	var to = moment().subtract('d', 1);
-	var from = "";
-	if(type[1]=='d'){
-		from = moment().subtract('d', eval(type[0])).format('YYYY-MM-DD');
-	}else if(type[1]=='m'){
-		from = moment().subtract('d', 1).subtract('M',eval(type[0])).format('YYYY-MM-DD');
-	}else if(type[1]=='y'){
-		from = moment().subtract('d', 1).year() + '-01-01';
-	}else{
-		$('.calImg').css('display','');
-		return;
-	}
-
-	$('#fromTo').val(from +' ~ '+to.format('YYYY-MM-DD'));
-	$('#from').val(from);
-	$('#to').val(to.format('YYYY-MM-DD'));
-	setPeriodCookie($('#fromTo').val(),$('#period').val());
-
-
-}
-*/
-
-
-/*
-function trimCategoryList(cate_list, max_length) {
-	var total_length = 0;
-	trim_list = new Array(cate_list.length);
-
-	for(var j=1;j<cate_list.length; j++) {
-		total_length = 0;
-
-		for(var i=0; i<cate_list.length; i++) {
-			if(i%j==0) {
-				var cate = cate_list[i];
-				total_length = total_length + cate.length;
-				trim_list[i] = cate;
-			} else {
-				trim_list[i] = "";
-			}
-
-		}
-
-		if(total_length<max_length) {
-			break;
-		}
-	}
-
-	return trim_list;
-}
-*/
 
 function timeFormat(sec) {
 	var min = 0;
@@ -1224,10 +1101,8 @@ function timeFormat(sec) {
 			if(hour >= 24) {
 				day = (hour - (hour % 24)) / 24;
 				hour = hour % 24;
-
 			}
 		}
-
 	}
 
 	format_string = sec + 's';
@@ -1246,743 +1121,6 @@ function timeFormat(sec) {
 
 	return format_string;
 }
-
-/*
-var isoLangs = {
-	    "ab":{
-	        "name":"Abkhaz",
-	        "nativeName":"аҧсуа"
-	    },
-	    "aa":{
-	        "name":"Afar",
-	        "nativeName":"Afaraf"
-	    },
-	    "af":{
-	        "name":"Afrikaans",
-	        "nativeName":"Afrikaans"
-	    },
-	    "ak":{
-	        "name":"Akan",
-	        "nativeName":"Akan"
-	    },
-	    "sq":{
-	        "name":"Albanian",
-	        "nativeName":"Shqip"
-	    },
-	    "am":{
-	        "name":"Amharic",
-	        "nativeName":"አማርኛ"
-	    },
-	    "ar":{
-	        "name":"Arabic",
-	        "nativeName":"العربية"
-	    },
-	    "an":{
-	        "name":"Aragonese",
-	        "nativeName":"Aragonés"
-	    },
-	    "hy":{
-	        "name":"Armenian",
-	        "nativeName":"Հայերեն"
-	    },
-	    "as":{
-	        "name":"Assamese",
-	        "nativeName":"অসমীয়া"
-	    },
-	    "av":{
-	        "name":"Avaric",
-	        "nativeName":"авар мацӀ, магӀарул мацӀ"
-	    },
-	    "ae":{
-	        "name":"Avestan",
-	        "nativeName":"avesta"
-	    },
-	    "ay":{
-	        "name":"Aymara",
-	        "nativeName":"aymar aru"
-	    },
-	    "az":{
-	        "name":"Azerbaijani",
-	        "nativeName":"azərbaycan dili"
-	    },
-	    "bm":{
-	        "name":"Bambara",
-	        "nativeName":"bamanankan"
-	    },
-	    "ba":{
-	        "name":"Bashkir",
-	        "nativeName":"башҡорт теле"
-	    },
-	    "eu":{
-	        "name":"Basque",
-	        "nativeName":"euskara, euskera"
-	    },
-	    "be":{
-	        "name":"Belarusian",
-	        "nativeName":"Беларуская"
-	    },
-	    "bn":{
-	        "name":"Bengali",
-	        "nativeName":"বাংলা"
-	    },
-	    "bh":{
-	        "name":"Bihari",
-	        "nativeName":"भोजपुरी"
-	    },
-	    "bi":{
-	        "name":"Bislama",
-	        "nativeName":"Bislama"
-	    },
-	    "bs":{
-	        "name":"Bosnian",
-	        "nativeName":"bosanski jezik"
-	    },
-	    "br":{
-	        "name":"Breton",
-	        "nativeName":"brezhoneg"
-	    },
-	    "bg":{
-	        "name":"Bulgarian",
-	        "nativeName":"български език"
-	    },
-	    "my":{
-	        "name":"Burmese",
-	        "nativeName":"ဗမာစာ"
-	    },
-	    "ca":{
-	        "name":"Catalan; Valencian",
-	        "nativeName":"Català"
-	    },
-	    "ch":{
-	        "name":"Chamorro",
-	        "nativeName":"Chamoru"
-	    },
-	    "ce":{
-	        "name":"Chechen",
-	        "nativeName":"нохчийн мотт"
-	    },
-	    "ny":{
-	        "name":"Chichewa; Chewa; Nyanja",
-	        "nativeName":"chiCheŵa, chinyanja"
-	    },
-	    "zh":{
-	        "name":"Chinese",
-	        "nativeName":"中文 (Zhōngwén), 汉语, 漢語"
-	    },
-	    "cv":{
-	        "name":"Chuvash",
-	        "nativeName":"чӑваш чӗлхи"
-	    },
-	    "kw":{
-	        "name":"Cornish",
-	        "nativeName":"Kernewek"
-	    },
-	    "co":{
-	        "name":"Corsican",
-	        "nativeName":"corsu, lingua corsa"
-	    },
-	    "cr":{
-	        "name":"Cree",
-	        "nativeName":"ᓀᐦᐃᔭᐍᐏᐣ"
-	    },
-	    "hr":{
-	        "name":"Croatian",
-	        "nativeName":"hrvatski"
-	    },
-	    "cs":{
-	        "name":"Czech",
-	        "nativeName":"česky, čeština"
-	    },
-	    "da":{
-	        "name":"Danish",
-	        "nativeName":"dansk"
-	    },
-	    "dv":{
-	        "name":"Divehi; Dhivehi; Maldivian;",
-	        "nativeName":"ދިވެހި"
-	    },
-	    "nl":{
-	        "name":"Dutch",
-	        "nativeName":"Nederlands, Vlaams"
-	    },
-	    "en":{
-	        "name":"English",
-	        "nativeName":"English"
-	    },
-	    "eo":{
-	        "name":"Esperanto",
-	        "nativeName":"Esperanto"
-	    },
-	    "et":{
-	        "name":"Estonian",
-	        "nativeName":"eesti, eesti keel"
-	    },
-	    "ee":{
-	        "name":"Ewe",
-	        "nativeName":"Eʋegbe"
-	    },
-	    "fo":{
-	        "name":"Faroese",
-	        "nativeName":"føroyskt"
-	    },
-	    "fj":{
-	        "name":"Fijian",
-	        "nativeName":"vosa Vakaviti"
-	    },
-	    "fi":{
-	        "name":"Finnish",
-	        "nativeName":"suomi, suomen kieli"
-	    },
-	    "fr":{
-	        "name":"French",
-	        "nativeName":"français, langue française"
-	    },
-	    "ff":{
-	        "name":"Fula; Fulah; Pulaar; Pular",
-	        "nativeName":"Fulfulde, Pulaar, Pular"
-	    },
-	    "gl":{
-	        "name":"Galician",
-	        "nativeName":"Galego"
-	    },
-	    "ka":{
-	        "name":"Georgian",
-	        "nativeName":"ქართული"
-	    },
-	    "de":{
-	        "name":"German",
-	        "nativeName":"Deutsch"
-	    },
-	    "el":{
-	        "name":"Greek, Modern",
-	        "nativeName":"Ελληνικά"
-	    },
-	    "gn":{
-	        "name":"Guaraní",
-	        "nativeName":"Avañeẽ"
-	    },
-	    "gu":{
-	        "name":"Gujarati",
-	        "nativeName":"ગુજરાતી"
-	    },
-	    "ht":{
-	        "name":"Haitian; Haitian Creole",
-	        "nativeName":"Kreyòl ayisyen"
-	    },
-	    "ha":{
-	        "name":"Hausa",
-	        "nativeName":"Hausa, هَوُسَ"
-	    },
-	    "he":{
-	        "name":"Hebrew (modern)",
-	        "nativeName":"עברית"
-	    },
-	    "hz":{
-	        "name":"Herero",
-	        "nativeName":"Otjiherero"
-	    },
-	    "hi":{
-	        "name":"Hindi",
-	        "nativeName":"हिन्दी, हिंदी"
-	    },
-	    "ho":{
-	        "name":"Hiri Motu",
-	        "nativeName":"Hiri Motu"
-	    },
-	    "hu":{
-	        "name":"Hungarian",
-	        "nativeName":"Magyar"
-	    },
-	    "ia":{
-	        "name":"Interlingua",
-	        "nativeName":"Interlingua"
-	    },
-	    "id":{
-	        "name":"Indonesian",
-	        "nativeName":"Bahasa Indonesia"
-	    },
-	    "ie":{
-	        "name":"Interlingue",
-	        "nativeName":"Originally called Occidental; then Interlingue after WWII"
-	    },
-	    "ga":{
-	        "name":"Irish",
-	        "nativeName":"Gaeilge"
-	    },
-	    "ig":{
-	        "name":"Igbo",
-	        "nativeName":"Asụsụ Igbo"
-	    },
-	    "ik":{
-	        "name":"Inupiaq",
-	        "nativeName":"Iñupiaq, Iñupiatun"
-	    },
-	    "in":{
-	    	"name":"Indonesian",
-	    	"nativeName":"Bahasa Indonesia"
-	    },
-	    "io":{
-	        "name":"Ido",
-	        "nativeName":"Ido"
-	    },
-	    "is":{
-	        "name":"Icelandic",
-	        "nativeName":"Íslenska"
-	    },
-	    "it":{
-	        "name":"Italian",
-	        "nativeName":"Italiano"
-	    },
-	    "iu":{
-	        "name":"Inuktitut",
-	        "nativeName":"ᐃᓄᒃᑎᑐᑦ"
-	    },
-	    "ja":{
-	        "name":"Japanese",
-	        "nativeName":"日本語 (にほんご／にっぽんご)"
-	    },
-	    "jv":{
-	        "name":"Javanese",
-	        "nativeName":"basa Jawa"
-	    },
-	    "kl":{
-	        "name":"Kalaallisut, Greenlandic",
-	        "nativeName":"kalaallisut, kalaallit oqaasii"
-	    },
-	    "kn":{
-	        "name":"Kannada",
-	        "nativeName":"ಕನ್ನಡ"
-	    },
-	    "kr":{
-	        "name":"Kanuri",
-	        "nativeName":"Kanuri"
-	    },
-	    "ks":{
-	        "name":"Kashmiri",
-	        "nativeName":"कश्मीरी, كشميري‎"
-	    },
-	    "kk":{
-	        "name":"Kazakh",
-	        "nativeName":"Қазақ тілі"
-	    },
-	    "km":{
-	        "name":"Khmer",
-	        "nativeName":"ភាសាខ្មែរ"
-	    },
-	    "ki":{
-	        "name":"Kikuyu, Gikuyu",
-	        "nativeName":"Gĩkũyũ"
-	    },
-	    "rw":{
-	        "name":"Kinyarwanda",
-	        "nativeName":"Ikinyarwanda"
-	    },
-	    "ky":{
-	        "name":"Kirghiz, Kyrgyz",
-	        "nativeName":"кыргыз тили"
-	    },
-	    "kv":{
-	        "name":"Komi",
-	        "nativeName":"коми кыв"
-	    },
-	    "kg":{
-	        "name":"Kongo",
-	        "nativeName":"KiKongo"
-	    },
-	    "ko":{
-	        "name":"Korean",
-	        "nativeName":"한국어 (韓國語), 조선말 (朝鮮語)"
-	    },
-	    "ku":{
-	        "name":"Kurdish",
-	        "nativeName":"Kurdî, كوردی‎"
-	    },
-	    "kj":{
-	        "name":"Kwanyama, Kuanyama",
-	        "nativeName":"Kuanyama"
-	    },
-	    "la":{
-	        "name":"Latin",
-	        "nativeName":"latine, lingua latina"
-	    },
-	    "lb":{
-	        "name":"Luxembourgish, Letzeburgesch",
-	        "nativeName":"Lëtzebuergesch"
-	    },
-	    "lg":{
-	        "name":"Luganda",
-	        "nativeName":"Luganda"
-	    },
-	    "li":{
-	        "name":"Limburgish, Limburgan, Limburger",
-	        "nativeName":"Limburgs"
-	    },
-	    "ln":{
-	        "name":"Lingala",
-	        "nativeName":"Lingála"
-	    },
-	    "lo":{
-	        "name":"Lao",
-	        "nativeName":"ພາສາລາວ"
-	    },
-	    "lt":{
-	        "name":"Lithuanian",
-	        "nativeName":"lietuvių kalba"
-	    },
-	    "lu":{
-	        "name":"Luba-Katanga",
-	        "nativeName":""
-	    },
-	    "lv":{
-	        "name":"Latvian",
-	        "nativeName":"latviešu valoda"
-	    },
-	    "gv":{
-	        "name":"Manx",
-	        "nativeName":"Gaelg, Gailck"
-	    },
-	    "mk":{
-	        "name":"Macedonian",
-	        "nativeName":"македонски јазик"
-	    },
-	    "mg":{
-	        "name":"Malagasy",
-	        "nativeName":"Malagasy fiteny"
-	    },
-	    "ms":{
-	        "name":"Malay",
-	        "nativeName":"bahasa Melayu, بهاس ملايو‎"
-	    },
-	    "ml":{
-	        "name":"Malayalam",
-	        "nativeName":"മലയാളം"
-	    },
-	    "mt":{
-	        "name":"Maltese",
-	        "nativeName":"Malti"
-	    },
-	    "mi":{
-	        "name":"Māori",
-	        "nativeName":"te reo Māori"
-	    },
-	    "mr":{
-	        "name":"Marathi (Marāṭhī)",
-	        "nativeName":"मराठी"
-	    },
-	    "mh":{
-	        "name":"Marshallese",
-	        "nativeName":"Kajin M̧ajeļ"
-	    },
-	    "mn":{
-	        "name":"Mongolian",
-	        "nativeName":"монгол"
-	    },
-	    "na":{
-	        "name":"Nauru",
-	        "nativeName":"Ekakairũ Naoero"
-	    },
-	    "nv":{
-	        "name":"Navajo, Navaho",
-	        "nativeName":"Diné bizaad, Dinékʼehǰí"
-	    },
-	    "nb":{
-	        "name":"Norwegian Bokmål",
-	        "nativeName":"Norsk bokmål"
-	    },
-	    "nd":{
-	        "name":"North Ndebele",
-	        "nativeName":"isiNdebele"
-	    },
-	    "ne":{
-	        "name":"Nepali",
-	        "nativeName":"नेपाली"
-	    },
-	    "ng":{
-	        "name":"Ndonga",
-	        "nativeName":"Owambo"
-	    },
-	    "nn":{
-	        "name":"Norwegian Nynorsk",
-	        "nativeName":"Norsk nynorsk"
-	    },
-	    "no":{
-	        "name":"Norwegian",
-	        "nativeName":"Norsk"
-	    },
-	    "ii":{
-	        "name":"Nuosu",
-	        "nativeName":"ꆈꌠ꒿ Nuosuhxop"
-	    },
-	    "nr":{
-	        "name":"South Ndebele",
-	        "nativeName":"isiNdebele"
-	    },
-	    "oc":{
-	        "name":"Occitan",
-	        "nativeName":"Occitan"
-	    },
-	    "oj":{
-	        "name":"Ojibwe, Ojibwa",
-	        "nativeName":"ᐊᓂᔑᓈᐯᒧᐎᓐ"
-	    },
-	    "cu":{
-	        "name":"Old Church Slavonic, Church Slavic, Church Slavonic, Old Bulgarian, Old Slavonic",
-	        "nativeName":"ѩзыкъ словѣньскъ"
-	    },
-	    "om":{
-	        "name":"Oromo",
-	        "nativeName":"Afaan Oromoo"
-	    },
-	    "or":{
-	        "name":"Oriya",
-	        "nativeName":"ଓଡ଼ିଆ"
-	    },
-	    "os":{
-	        "name":"Ossetian, Ossetic",
-	        "nativeName":"ирон æвзаг"
-	    },
-	    "pa":{
-	        "name":"Panjabi, Punjabi",
-	        "nativeName":"ਪੰਜਾਬੀ, پنجابی‎"
-	    },
-	    "pi":{
-	        "name":"Pāli",
-	        "nativeName":"पाऴि"
-	    },
-	    "fa":{
-	        "name":"Persian",
-	        "nativeName":"فارسی"
-	    },
-	    "pl":{
-	        "name":"Polish",
-	        "nativeName":"polski"
-	    },
-	    "ps":{
-	        "name":"Pashto, Pushto",
-	        "nativeName":"پښتو"
-	    },
-	    "pt":{
-	        "name":"Portuguese",
-	        "nativeName":"Português"
-	    },
-	    "qu":{
-	        "name":"Quechua",
-	        "nativeName":"Runa Simi, Kichwa"
-	    },
-	    "rm":{
-	        "name":"Romansh",
-	        "nativeName":"rumantsch grischun"
-	    },
-	    "rn":{
-	        "name":"Kirundi",
-	        "nativeName":"kiRundi"
-	    },
-	    "ro":{
-	        "name":"Romanian, Moldavian, Moldovan",
-	        "nativeName":"română"
-	    },
-	    "ru":{
-	        "name":"Russian",
-	        "nativeName":"русский язык"
-	    },
-	    "sa":{
-	        "name":"Sanskrit (Saṁskṛta)",
-	        "nativeName":"संस्कृतम्"
-	    },
-	    "sc":{
-	        "name":"Sardinian",
-	        "nativeName":"sardu"
-	    },
-	    "sd":{
-	        "name":"Sindhi",
-	        "nativeName":"सिन्धी, سنڌي، سندھی‎"
-	    },
-	    "se":{
-	        "name":"Northern Sami",
-	        "nativeName":"Davvisámegiella"
-	    },
-	    "sm":{
-	        "name":"Samoan",
-	        "nativeName":"gagana faa Samoa"
-	    },
-	    "sg":{
-	        "name":"Sango",
-	        "nativeName":"yângâ tî sängö"
-	    },
-	    "sr":{
-	        "name":"Serbian",
-	        "nativeName":"српски језик"
-	    },
-	    "gd":{
-	        "name":"Scottish Gaelic; Gaelic",
-	        "nativeName":"Gàidhlig"
-	    },
-	    "sn":{
-	        "name":"Shona",
-	        "nativeName":"chiShona"
-	    },
-	    "si":{
-	        "name":"Sinhala, Sinhalese",
-	        "nativeName":"සිංහල"
-	    },
-	    "sk":{
-	        "name":"Slovak",
-	        "nativeName":"slovenčina"
-	    },
-	    "sl":{
-	        "name":"Slovene",
-	        "nativeName":"slovenščina"
-	    },
-	    "so":{
-	        "name":"Somali",
-	        "nativeName":"Soomaaliga, af Soomaali"
-	    },
-	    "st":{
-	        "name":"Southern Sotho",
-	        "nativeName":"Sesotho"
-	    },
-	    "es":{
-	        "name":"Spanish; Castilian",
-	        "nativeName":"español, castellano"
-	    },
-	    "su":{
-	        "name":"Sundanese",
-	        "nativeName":"Basa Sunda"
-	    },
-	    "sw":{
-	        "name":"Swahili",
-	        "nativeName":"Kiswahili"
-	    },
-	    "ss":{
-	        "name":"Swati",
-	        "nativeName":"SiSwati"
-	    },
-	    "sv":{
-	        "name":"Swedish",
-	        "nativeName":"svenska"
-	    },
-	    "ta":{
-	        "name":"Tamil",
-	        "nativeName":"தமிழ்"
-	    },
-	    "te":{
-	        "name":"Telugu",
-	        "nativeName":"తెలుగు"
-	    },
-	    "tg":{
-	        "name":"Tajik",
-	        "nativeName":"тоҷикӣ, toğikī, تاجیکی‎"
-	    },
-	    "th":{
-	        "name":"Thai",
-	        "nativeName":"ไทย"
-	    },
-	    "ti":{
-	        "name":"Tigrinya",
-	        "nativeName":"ትግርኛ"
-	    },
-	    "bo":{
-	        "name":"Tibetan Standard, Tibetan, Central",
-	        "nativeName":"བོད་ཡིག"
-	    },
-	    "tk":{
-	        "name":"Turkmen",
-	        "nativeName":"Türkmen, Түркмен"
-	    },
-	    "tl":{
-	        "name":"Tagalog",
-	        "nativeName":"Wikang Tagalog, ᜏᜒᜃᜅ᜔ ᜆᜄᜎᜓᜄ᜔"
-	    },
-	    "tn":{
-	        "name":"Tswana",
-	        "nativeName":"Setswana"
-	    },
-	    "to":{
-	        "name":"Tonga (Tonga Islands)",
-	        "nativeName":"faka Tonga"
-	    },
-	    "tr":{
-	        "name":"Turkish",
-	        "nativeName":"Türkçe"
-	    },
-	    "ts":{
-	        "name":"Tsonga",
-	        "nativeName":"Xitsonga"
-	    },
-	    "tt":{
-	        "name":"Tatar",
-	        "nativeName":"татарча, tatarça, تاتارچا‎"
-	    },
-	    "tw":{
-	        "name":"Twi",
-	        "nativeName":"Twi"
-	    },
-	    "ty":{
-	        "name":"Tahitian",
-	        "nativeName":"Reo Tahiti"
-	    },
-	    "ug":{
-	        "name":"Uighur, Uyghur",
-	        "nativeName":"Uyƣurqə, ئۇيغۇرچە‎"
-	    },
-	    "uk":{
-	        "name":"Ukrainian",
-	        "nativeName":"українська"
-	    },
-	    "ur":{
-	        "name":"Urdu",
-	        "nativeName":"اردو"
-	    },
-	    "uz":{
-	        "name":"Uzbek",
-	        "nativeName":"zbek, Ўзбек, أۇزبېك‎"
-	    },
-	    "ve":{
-	        "name":"Venda",
-	        "nativeName":"Tshivenḓa"
-	    },
-	    "vi":{
-	        "name":"Vietnamese",
-	        "nativeName":"Tiếng Việt"
-	    },
-	    "vo":{
-	        "name":"Volapük",
-	        "nativeName":"Volapük"
-	    },
-	    "wa":{
-	        "name":"Walloon",
-	        "nativeName":"Walon"
-	    },
-	    "cy":{
-	        "name":"Welsh",
-	        "nativeName":"Cymraeg"
-	    },
-	    "wo":{
-	        "name":"Wolof",
-	        "nativeName":"Wollof"
-	    },
-	    "fy":{
-	        "name":"Western Frisian",
-	        "nativeName":"Frysk"
-	    },
-	    "xh":{
-	        "name":"Xhosa",
-	        "nativeName":"isiXhosa"
-	    },
-	    "yi":{
-	        "name":"Yiddish",
-	        "nativeName":"ייִדיש"
-	    },
-	    "yo":{
-	        "name":"Yoruba",
-	        "nativeName":"Yorùbá"
-	    },
-	    "za":{
-	        "name":"Zhuang, Chuang",
-	        "nativeName":"Saɯ cueŋƅ, Saw cuengh"
-	    }
-};
-*/
 
 var isoLangs = {
 		"aa": "Afar",

@@ -52,7 +52,7 @@
 <script type="text/javascript" src="<c:url value="/resources/js/highcharts/highcharts.js"/>"></script><!-- highchart -->
 <script type="text/javascript" src="<c:url value="/resources/js/highcharts/highcharts-more.js"/>"></script><!-- highchart -->
 <script type="text/javascript" src="<c:url value="/resources/js/highcharts/modules/exporting.js"/>"></script><!-- highchart -->
-<script type="text/javascript" src="<c:url value="/resources/js/highcharts/themes/gray.js"/>"></script><!-- highchart -->
+<!-- <script type="text/javascript" src="<c:url value="/resources/js/highcharts/themes/gray.js"/>"></script> --><!-- highchart -->
 <script type="text/javascript">var context = '<c:url value="/"/>';</script>
 <script type="text/javascript" src="<c:url value="/resources/js/fingraph-settings.js"/>"></script>
 <script type="text/javascript">

@@ -27,7 +27,7 @@ ${demo.css}
     <script type="text/javascript" src="<c:url value="/resources/js/jquery-1.8.2.js"/>"></script>
     <script type="text/javascript" src="<c:url value="/resources/js/highcharts/highcharts.js"/>"></script>
     <script type="text/javascript" src="<c:url value="/resources/js/highcharts/modules/exporting.js"/>"></script>
-    <script src="<c:url value="/resources/js/highcharts/themes/gray.js"/>"></script>
+    <script src="<c:url value="/resources/js/highcharts/themes/dark-unica.js"/>"></script>
     <script type="text/javascript">
 $(function() {
     $('#container').highcharts({
