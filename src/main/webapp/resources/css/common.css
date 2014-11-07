@@ -1017,6 +1017,9 @@ html,body {
 	height:100px;
 	font-weight:bold;
 }
+.app-pannel .tx-padding {
+	height:25px;
+}
 
 .fontSize18 {font-size:18px; line-height:15px;}
 
