@@ -444,10 +444,6 @@ function showNameCheckModal(type1,type2){
         </div>
          -->
         <h1 class="title"><spring:message code="comp.add.title"/></h1>
-        <div class="sdk_info20">
-       		<span class="sdk_info_text"><spring:message code="comm.add.guide.text"/></span>
-       		<span><spring:message code="comm.add.guide.down.text"/> <a class="btn btn-danger btn-small btn_sdk_info" href="${pageContext.request.contextPath}<spring:message code="file.sdk.guide.ios"/>" target="_blank">IOS</a>&nbsp;<a class="btn btn-info btn-small btn_sdk_info" href="${pageContext.request.contextPath}<spring:message code="file.sdk.guide.android"/>" target="_blank">Android</a></span>
-       	</div>
         <div id="accordion2" class="list-body">
         	<c:forEach items="${list}" var="list" varStatus="i">
 	        	<div  class="comp-group-wrap group {groupkey:'${list.groupkey}'}">
