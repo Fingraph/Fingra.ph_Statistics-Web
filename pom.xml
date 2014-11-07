@@ -279,5 +279,6 @@
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>statisticsweb</finalName>
     </build>
 </project>
