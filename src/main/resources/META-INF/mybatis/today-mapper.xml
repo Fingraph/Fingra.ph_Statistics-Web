@@ -71,6 +71,7 @@
 					</choose>
 		        ) n
 		    on t.hour = n.hour
+		    ORDER BY date
 	</select>
 
 	<!-- ================================= Active Users =========================================================================== -->
@@ -124,6 +125,7 @@
 					</choose>
 		        ) n
 		    on t.hour = n.hour
+		    ORDER BY date
 	</select>
 
 
@@ -178,6 +180,7 @@
 					</choose>
 		        ) n
 		    on t.hour = n.hour
+		    ORDER BY date
 	</select>
 
 	<!-- Today : time series session graph -->
@@ -328,6 +331,7 @@
 					</choose>
 		        ) n
 		    on t.hour = n.hour
+		    ORDER BY date
 	</select>
 
 
@@ -354,6 +358,7 @@
 					</choose>
 		        ) s
 		    on t.hour=s.hour
+		    ORDER BY date
 	</select>
 
 
@@ -429,6 +434,7 @@
 					</choose>
 		        ) n
 		    on t.hour = n.hour
+		    ORDER BY date
 	</select>
 	
 </mapper>
