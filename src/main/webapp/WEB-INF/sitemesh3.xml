@@ -39,4 +39,5 @@
     <mapping path="*.ajax" exclue="true" />
     <mapping path="*include*" exclue="true" />
     <mapping path="*popup*" exclue="true" />
+    <mapping path="*excelexport*" exclude="true" />
 </sitemesh>

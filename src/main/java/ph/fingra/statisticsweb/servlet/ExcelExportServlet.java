@@ -32,7 +32,6 @@ import jxl.Workbook;
 import jxl.format.VerticalAlignment;
 import jxl.write.Label;
 import jxl.write.NumberFormat;
-import jxl.write.NumberFormats;
 import jxl.write.WritableCellFormat;
 import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
@@ -48,7 +47,8 @@ import ph.fingra.statisticsweb.common.util.DateTimeUtil;
 public class ExcelExportServlet extends HttpServlet{
 
 	private static final long serialVersionUID = -1364893065606590175L;
-	public static String defaultUploadPath = "/upload/fileroot/";
+	
+	// Below path should be created on the root directory of the server.
 	public static String uploadTempPath = "/Temp/";
 
 	// constructor
@@ -104,125 +104,89 @@ public class ExcelExportServlet extends HttpServlet{
 			workbook = Workbook.createWorkbook(new File(uploadTempPath + filename));
 
 			for(int k=0; k<htmldata.length;k++){
-			// create first excel's sheet.
-			WritableSheet sheet = workbook.createSheet(sheetName[k], k);
-			sheet = workbook.getSheet(k);
-			// 엑셀 스타일 설정
-			WritableFont TitleFont = new WritableFont(WritableFont.ARIAL,11,WritableFont.BOLD, false);
-			// 행과 열에 사용할 스타일 객체를 생성
-			jxl.write.WritableCellFormat ColFormat        = new WritableCellFormat(TitleFont); // Column Style
-			jxl.write.WritableCellFormat ColFormatTop     = new WritableCellFormat(TitleFont); // Column Style 2
-			jxl.write.WritableCellFormat RowFormat        = new WritableCellFormat();  // Row Style
-			jxl.write.WritableCellFormat RowFormatCenter  = new WritableCellFormat();  // Row Style Center
-			//정수형 ( 1000단위 마다 , 찍기 X )
-			//jxl.write.WritableCellFormat format_integer1 = new WritableCellFormat(NumberFormats.INTEGER);
-			//정수형 ( 1000단위 마다 , 찍기 O )
-			jxl.write.NumberFormat moneytype1 = new NumberFormat("###,##0");
-			jxl.write.NumberFormat moneytype2 = new NumberFormat("###,##0.00");
-			jxl.write.WritableCellFormat format_integer1 = new WritableCellFormat(moneytype1);
-			jxl.write.WritableCellFormat format_integer2 = new WritableCellFormat(moneytype2);
+			
+				// create first excel's sheet.
+				WritableSheet sheet = workbook.createSheet(sheetName[k], k);
+				sheet = workbook.getSheet(k);
+				
+				// Set style of the excel.
+				WritableFont TitleFont = new WritableFont(WritableFont.ARIAL,11,WritableFont.BOLD, false);
 
+				// Create style object to use on the rows and columns.
+				jxl.write.WritableCellFormat ColFormat        = new WritableCellFormat(TitleFont); // Column Style
+				jxl.write.WritableCellFormat ColFormatTop     = new WritableCellFormat(TitleFont); // Column Style 2
+				jxl.write.WritableCellFormat RowFormat        = new WritableCellFormat();  // Row Style
+				jxl.write.WritableCellFormat RowFormatCenter  = new WritableCellFormat();  // Row Style Center
 
-			// 행과 열의 스타일 상세 설정 (Border,Align,Background...)
-			ColFormat.setBorder(jxl.format.Border.ALL, jxl.format.BorderLineStyle.THIN);
-			ColFormat.setAlignment(jxl.format.Alignment.CENTRE);
-			ColFormat.setVerticalAlignment(VerticalAlignment.CENTRE);
-			ColFormat.setBackground(jxl.format.Colour.ICE_BLUE);
+				// insert comma at every unit of thousand.
+				jxl.write.NumberFormat moneytype1 = new NumberFormat("###,##0");
+				jxl.write.NumberFormat moneytype2 = new NumberFormat("###,##0.00");
+				jxl.write.WritableCellFormat format_integer1 = new WritableCellFormat(moneytype1);
+				jxl.write.WritableCellFormat format_integer2 = new WritableCellFormat(moneytype2);
 
-			ColFormatTop.setBorder(jxl.format.Border.ALL, jxl.format.BorderLineStyle.THIN);
-			ColFormatTop.setAlignment(jxl.format.Alignment.CENTRE);
-			ColFormatTop.setVerticalAlignment(VerticalAlignment.CENTRE);
-			ColFormatTop.setBackground(jxl.format.Colour.ORANGE);
+				// Set detail of rows and columns (Border,Align,Background...)
+				ColFormat.setBorder(jxl.format.Border.ALL, jxl.format.BorderLineStyle.THIN);
+				ColFormat.setAlignment(jxl.format.Alignment.CENTRE);
+				ColFormat.setVerticalAlignment(VerticalAlignment.CENTRE);
+				ColFormat.setBackground(jxl.format.Colour.ICE_BLUE);
 
-			RowFormat.setBorder(jxl.format.Border.ALL, jxl.format.BorderLineStyle.THIN);
-			RowFormat.setAlignment(jxl.format.Alignment.LEFT);
-			RowFormat.isNumber();
+				ColFormatTop.setBorder(jxl.format.Border.ALL, jxl.format.BorderLineStyle.THIN);
+				ColFormatTop.setAlignment(jxl.format.Alignment.CENTRE);
+				ColFormatTop.setVerticalAlignment(VerticalAlignment.CENTRE);
+				ColFormatTop.setBackground(jxl.format.Colour.ORANGE);
 
-			format_integer1.setBorder(jxl.format.Border.ALL, jxl.format.BorderLineStyle.THIN);
-			format_integer1.setAlignment(jxl.format.Alignment.RIGHT);
-			format_integer2.setBorder(jxl.format.Border.ALL, jxl.format.BorderLineStyle.THIN);
-			format_integer2.setAlignment(jxl.format.Alignment.RIGHT);
+				RowFormat.setBorder(jxl.format.Border.ALL, jxl.format.BorderLineStyle.THIN);
+				RowFormat.setAlignment(jxl.format.Alignment.LEFT);
+				RowFormat.isNumber();
 
-			RowFormatCenter.setBorder(jxl.format.Border.ALL, jxl.format.BorderLineStyle.THIN);
-			RowFormatCenter.setAlignment(jxl.format.Alignment.CENTRE);
+				format_integer1.setBorder(jxl.format.Border.ALL, jxl.format.BorderLineStyle.THIN);
+				format_integer1.setAlignment(jxl.format.Alignment.RIGHT);
+				format_integer2.setBorder(jxl.format.Border.ALL, jxl.format.BorderLineStyle.THIN);
+				format_integer2.setAlignment(jxl.format.Alignment.RIGHT);
 
-			NumberFormat nf = new NumberFormat("#,###.00");
-			WritableCellFormat numberFormat = new WritableCellFormat(nf);
+				RowFormatCenter.setBorder(jxl.format.Border.ALL, jxl.format.BorderLineStyle.THIN);
+				RowFormatCenter.setAlignment(jxl.format.Alignment.CENTRE);
 
+				Document doc = Jsoup.parse(URLDecoder.decode(htmldata[k], "UTF-8"));
+				Elements trs = doc.getElementsByTag("tr");
+				jxl.write.Number num = null;
+				int first = 1;
+				int i = 0;
+				int j = 0;
 
-/*
-			jxl.write.Label label = new jxl.write.Label(0, 2, "Column 1",ColFormat);
-			sheet.addCell(label);
-			label = new jxl.write.Label(1, 2, "Column 2",ColFormat);
-			sheet.addCell(label);
-			label = new jxl.write.Label(2, 2, "Column 3",ColFormat);
-			sheet.addCell(label);
-			label = new jxl.write.Label(3, 2, "Column 4",ColFormat);
-			sheet.addCell(label);
-			label = new jxl.write.Label(4, 2, "Column 5",ColFormat);
-			sheet.addCell(label);
-			label = new jxl.write.Label(5, 2, "Column 6",ColFormat);
-			sheet.addCell(label);
-			label = new jxl.write.Label(6, 2, "Column 7",ColFormat);
-			sheet.addCell(label);
-
-			// 셀 넓이 적용 (행, 열)
-			sheet.setColumnView(0, 40);
-			sheet.setColumnView(1, 15);
-			sheet.setColumnView(2, 40);
-			sheet.setColumnView(3, 30);
-			sheet.setColumnView(4, 30);
-			sheet.setColumnView(5, 40);
-			sheet.setColumnView(6, 15);
-
-			sheet.setRowView(2, 500);
-
-*/
-
-			// get the data from html string.
-			//System.out.println(URLDecoder.decode(htmldata[k], "UTF-8"));
-			Document doc = Jsoup.parse(URLDecoder.decode(htmldata[k], "UTF-8"));
-			Elements trs = doc.getElementsByTag("tr");
-			jxl.write.Number num = null;
-			int first = 1;
-			int i = 0;
-			int j = 0;
-
-			for (Element tr : trs) {
-				Elements tds = null;
-				if (first == 1) {
-					first = 0;
-					tds = tr.getElementsByTag("th");
-					if (tds != null) {
-						for (Element td : tds) {
-							sheet.addCell(new Label(j, i, td.text(),ColFormat));
-							sheet.setColumnView(j, Integer.parseInt(td.attr("width"))/2);
-							j++;
-						}
-					}
-				} else {
-					tds = tr.getElementsByTag("td");
-					if (tds != null) {
-						for (Element td : tds) {
-							if("numFormat".equals(td.attr("class"))){
-								num = new jxl.write.Number(j, i, Double.parseDouble(td.text()),format_integer1);
-								sheet.addCell(num);
-							}else if("doubleFormat".equals(td.attr("class"))){
-								num = new jxl.write.Number(j, i, Double.parseDouble(td.text()),format_integer2);
-								sheet.addCell(num);
-							}else{
-								sheet.addCell(new Label(j, i, td.text(),RowFormat));
+				for (Element tr : trs) {
+					Elements tds = null;
+					if (first == 1) {
+						first = 0;
+						tds = tr.getElementsByTag("th");
+						if (tds != null) {
+							for (Element td : tds) {
+								sheet.addCell(new Label(j, i, td.text(),ColFormat));
+								sheet.setColumnView(j, Integer.parseInt(td.attr("width"))/2);
+								j++;
 							}
-
-							j++;
 						}
-					}
+					} else {
+						tds = tr.getElementsByTag("td");
+						if (tds != null) {
+							for (Element td : tds) {
+								if("numFormat".equals(td.attr("class"))){
+									num = new jxl.write.Number(j, i, Double.parseDouble(td.text()),format_integer1);
+									sheet.addCell(num);
+								}else if("doubleFormat".equals(td.attr("class"))){
+									num = new jxl.write.Number(j, i, Double.parseDouble(td.text()),format_integer2);
+									sheet.addCell(num);
+								}else{
+									sheet.addCell(new Label(j, i, td.text(),RowFormat));
+								}
+	
+								j++;
+							}
+						}
+					}	
+					i++;
+					j=0;
 				}
-
-
-				i++;
-				j=0;
-			}
 			}
 			// write to excel file.
 			workbook.write();
