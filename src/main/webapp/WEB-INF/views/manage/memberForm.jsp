@@ -72,7 +72,7 @@ $(function(){
                 minlength: jQuery.format('<spring:message code="msg.check.leastChar"/>')
             },
             department: {
-                required: '부서명을 입력하여 주십시오',
+                required: '<spring:message code="msg.check.department"/>',
                 minlength: jQuery.format('<spring:message code="msg.check.leastChar"/>')
             },
             password: {
@@ -83,11 +83,11 @@ $(function(){
                 equalTo: '<spring:message code="msg.check.equalPwd"/>'
             },
             phone:{
-                required: '전화번호를 입력하여 주십시오',
-                number:'숫자만 입력하세요.'
+                required: '<spring:message code="msg.check.phone"/>',
+                number: '<spring:message code="msg.check.numOnly"/>'
             },
-            status: { valueNotEquals: 'Status를 선택하세요' },
-            joinstatus: { valueNotEquals: 'Join-Status를 선택하세요' }
+            status: { valueNotEquals: '<spring:message code="msg.check.memberstatus"/>' },
+            joinstatus: { valueNotEquals: '<spring:message code="msg.check.joinstatus"/>' }
         },
         errorClass: "help-inline",
         errorElement: "div",
@@ -102,8 +102,8 @@ $(function(){
         }
     });
     $('#saveBtn').click(function(){
-        var heading='수정사항 저장';
-        var question='계정 정보의 변경 사항을 저장하고 계정 리스트 화면으로 돌아갑니다.';
+        var heading='<spring:message code="btn.saveSetting.text"/>';
+        var question='<spring:message code="msg.confirm.member.modify.msg"/>';
         var cancelButtonTxt = '<spring:message code="btn.cancel.text"/>';
         var okButtonTxt = '<spring:message code="btn.ok.text"/>';
         var callback = function() {
@@ -140,7 +140,7 @@ $(function(){
                             <td><input type="text" class="span3" id="name" name="name" value="${member.name}"/></td>
                         </tr>
                         <tr>
-                            <th>Department</th>
+                            <th><spring:message code="input.department"/></th>
                             <td><input type="text" class="span3" id="department" name="department" value="${member.department}"/></td>
                         </tr>
                         <tr>
@@ -148,20 +148,20 @@ $(function(){
                             <td><input type="text" class="span3" maxlength="20" id="phone" name="phone" value="${member.phone}"/></td>
                         </tr>
                         <tr>
-                            <th>Status</th>
+                            <th><spring:message code="input.status"/></th>
                             <td><select name="status" id="status" class="selectpicker">
                                 <option value=""></option>
-                                <option value="1"<c:if test="${member.status eq 1}"> selected="selected"</c:if>>Active</option>
-                                <option value="9"<c:if test="${member.status eq 9}"> selected="selected"</c:if>>Inactive</option>
+                                <option value="1"<c:if test="${member.status eq 1}"> selected="selected"</c:if>><spring:message code="member.status.active"/></option>
+                                <option value="9"<c:if test="${member.status eq 9}"> selected="selected"</c:if>><spring:message code="member.status.delete"/></option>
                             </select></td>
                         </tr>
                         <tr>
-                            <th>Join-Status</th>
+                            <th><spring:message code="input.joinstatus"/></th>
                             <td><select name="joinstatus" id="joinstatus" class="selectpicker">
                                 <option value=""></option>
-                                <option value="0"<c:if test="${member.joinstatus eq 0}"> selected="selected"</c:if>>Wait</option>
-                                <option value="1"<c:if test="${member.joinstatus eq 1}"> selected="selected"</c:if>>Approval</option>
-                                <option value="9"<c:if test="${member.joinstatus eq 9}"> selected="selected"</c:if>>Refuse</option>
+                                <option value="0"<c:if test="${member.joinstatus eq 0}"> selected="selected"</c:if>><spring:message code="member.joinstatus.wait"/></option>
+                                <option value="1"<c:if test="${member.joinstatus eq 1}"> selected="selected"</c:if>><spring:message code="member.joinstatus.approval"/></option>
+                                <option value="9"<c:if test="${member.joinstatus eq 9}"> selected="selected"</c:if>><spring:message code="member.joinstatus.refuse"/></option>
                             </select></td>
                         </tr>
                     </table>

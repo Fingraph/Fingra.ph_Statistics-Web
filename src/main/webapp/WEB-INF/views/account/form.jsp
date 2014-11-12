@@ -70,7 +70,7 @@ $(function(){
                 minlength: jQuery.format('<spring:message code="msg.check.leastChar"/>')
             },
             department: {
-                required: '부서명을 입력하여 주십시오',
+                required: '<spring:message code="msg.check.department"/>',
                 minlength: jQuery.format('<spring:message code="msg.check.leastChar"/>')
             },
             password: {

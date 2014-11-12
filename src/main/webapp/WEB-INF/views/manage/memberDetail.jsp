@@ -20,7 +20,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <html>
 <head>
-<title>Fingra.ph Opensource - MEMBER DETAIL</title>
+<title>Fingra.ph Opensource - <spring:message code="comm.header.memberdetail"/></title>
 <script type="text/javascript">
 $(function() {
     $('.dropdown-toggle').dropdown();
@@ -28,8 +28,8 @@ $(function() {
         location.href='<c:url value="/manage/member/form?memberid=${member.memberid}"/>';
     });
     $('.deactivateBtn').click(function(){
-        var heading='계정 비활성화';
-        var question='계정을 비활성화하고 계정 리스트 화면으로 돌아갑니다.</br>다시 활성화하고자 하는 경우 수정 화면에서 변경할 수 있습니다.';
+        var heading='<spring:message code="msg.confirm.account.inactive.head"/>';
+        var question='<spring:message code="msg.confirm.account.inactive.msg"/>';
         var cancelButtonTxt = '<spring:message code="btn.cancel.text"/>';
         var okButtonTxt = '<spring:message code="btn.ok.text"/>';
         var callback = function() {
@@ -56,7 +56,7 @@ $(function() {
                         <td>${member.name}</td>
                     </tr>
                     <tr>
-                        <th>Department</th>
+                        <th><spring:message code="input.department"/></th>
                         <td>${member.department}</td>
                     </tr>
                     <tr>
@@ -64,22 +64,22 @@ $(function() {
                         <td>${member.phone}</td>
                     </tr>
                     <tr>
-                        <th>Status</th>
+                        <th><spring:message code="input.status"/></th>
                         <td><c:choose>
-                        <c:when test="${member.status eq 1 }">Active</c:when>
-                        <c:when test="${member.status eq 9 }">Delete</c:when>
+                        <c:when test="${member.status eq 1 }"><spring:message code="member.status.active"/></c:when>
+                        <c:when test="${member.status eq 9 }"><spring:message code="member.status.delete"/></c:when>
                         </c:choose></td>
                     </tr>
                     <tr>
-                        <th>Join-Status</th>
+                        <th><spring:message code="input.joinstatus"/></th>
                         <td><c:choose>
-                        <c:when test="${member.joinstatus eq 0 }">Wait</c:when>
-                        <c:when test="${member.joinstatus eq 1 }">Approval</c:when>
-                        <c:when test="${member.joinstatus eq 9 }">Refuse</c:when>
+                        <c:when test="${member.joinstatus eq 0 }"><spring:message code="member.joinstatus.wait"/></c:when>
+                        <c:when test="${member.joinstatus eq 1 }"><spring:message code="member.joinstatus.approval"/></c:when>
+                        <c:when test="${member.joinstatus eq 9 }"><spring:message code="member.joinstatus.refuse"/></c:when>
                         </c:choose></td>
                     </tr>
                     <tr>
-                        <th>Created</th>
+                        <th><spring:message code="input.created"/></th>
                         <td><fmt:formatDate value="${member.created}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                     </tr>
                 </table>

@@ -53,13 +53,13 @@ $(function() {
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Username</th>
-                                <th>Accountname</th>
-                                <th>Department</th>
-                                <th>Contact</th>
-                                <th>Registered</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th><spring:message code="input.name"/></th> <!-- Username -->
+                                <th><spring:message code="input.email"/></th> <!-- Accountname -->
+                                <th><spring:message code="input.department"/></th> <!-- Department -->
+                                <th><spring:message code="signup.nxt.text.phoneNumber"/></th> <!-- Contact -->
+                                <th><spring:message code="input.created"/></th> <!-- Registered -->
+                                <th><spring:message code="input.status"/></th> <!-- Status -->
+                                <th><spring:message code="input.actions"/></th> <!-- Actions -->
                             </tr>
                         </thead>
                         <tbody>
@@ -71,14 +71,14 @@ $(function() {
                                 <td valign="middle">${list.phone}</td>
                                 <td valign="middle"><fmt:formatDate value="${list.created}" pattern="yyyy-MM-dd"/></td>
                                 <td valign="middle"><c:choose>
-                                <c:when test="${list.status eq 1 }">Active</c:when>
-                                <c:when test="${list.status eq 9 }">Delete</c:when>
+                                <c:when test="${list.status eq 1 }"><spring:message code="member.status.active"/></c:when>
+                                <c:when test="${list.status eq 9 }"><spring:message code="member.status.delete"/></c:when>
                                 </c:choose></td>
                                 <td>
                                     <span class="btn btn-small btn-primary editBtn" id="edit_${list.memberid}"><spring:message code="btn.edit.text"/></span>
                                     <c:if test="${list.joinstatus eq 0 }">
-                                        <span class="btn btn-small btn-warning approvalBtn" id="approval_${list.memberid}">승인</span>
-                                        <span class="btn btn-small btn-danger refuseBtn" id="refuse_${list.memberid}">거부</span>
+                                        <span class="btn btn-small btn-warning approvalBtn" id="approval_${list.memberid}"><spring:message code="member.joinstatus.approval"/></span>
+                                        <span class="btn btn-small btn-danger refuseBtn" id="refuse_${list.memberid}"><spring:message code="member.joinstatus.refuse"/></span>
                                     </c:if>
                                 </td>
                             </tr>
