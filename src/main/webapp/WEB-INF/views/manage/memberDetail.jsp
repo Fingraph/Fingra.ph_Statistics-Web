@@ -29,7 +29,7 @@ $(function() {
     });
     $('.deactivateBtn').click(function(){
         var heading='<spring:message code="msg.confirm.account.inactive.head"/>';
-        var question='<spring:message code="msg.confirm.account.inactive.msg"/>';
+        var question='<spring:message code="msg.confirm.account.inactive"/>';
         var cancelButtonTxt = '<spring:message code="btn.cancel.text"/>';
         var okButtonTxt = '<spring:message code="btn.ok.text"/>';
         var callback = function() {

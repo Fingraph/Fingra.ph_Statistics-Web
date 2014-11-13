@@ -103,7 +103,7 @@ $(function(){
     });
     $('#saveBtn').click(function(){
         var heading='<spring:message code="btn.saveSetting.text"/>';
-        var question='<spring:message code="msg.confirm.member.modify.msg"/>';
+        var question='<spring:message code="msg.confirm.member.modify"/>';
         var cancelButtonTxt = '<spring:message code="btn.cancel.text"/>';
         var okButtonTxt = '<spring:message code="btn.ok.text"/>';
         var callback = function() {

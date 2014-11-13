@@ -33,8 +33,8 @@ $(function(){
 		}
 	});
 	$('.findPassword').click(function(){
-        var heading='비밀번호 찾기';
-        var question='Fingra.ph Opensource 버전에서는 비밀번호 찾기를 지원하지 않습니다. 관리자에게 문의하세요.';
+        var heading='<spring:message code="login.text.pwd.find"/>';
+        var question='<spring:message code="login.text.pwd.find.msg"/>';
         var cancelButtonTxt = '';
         var okButtonTxt = '<spring:message code="btn.ok.text"/>';
         var callback = function() {};
@@ -50,8 +50,8 @@ $(function(){
             <c:if test="${param.error != null}">
                 <div class="alert alert-error">
                 <c:choose>
-                    <c:when test="${param.error eq '100'}">아이디나 비밀번호가 일치하지 않습니다.<br/>문제가 반복되면 관리자에게 문의하시길 바랍니다.</c:when>
-                    <c:when test="${param.error eq '200'}">계정 등록 요청이 아직 승인되지 않았습니다.<br/>승인 요청은 관리자에게 문의하시길 바랍니다.</c:when>
+                    <c:when test="${param.error eq '100'}"><spring:message code="login.msg.error.incorrect"/></c:when>
+                    <c:when test="${param.error eq '200'}"><spring:message code="login.msg.error.wait"/></c:when>
                     <c:when test="${param.error eq ''}"><spring:message code="login.msg.error"/></c:when>
                 </c:choose>
                 </div>
