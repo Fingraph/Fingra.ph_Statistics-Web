@@ -47,7 +47,8 @@ public class FingraphAuthenticationSuccessHandler
         
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
         if (roles.contains("ROLE_ADMIN")) {
-            getRedirectStrategy().sendRedirect(request, response, adminTargetUrl);
+            //getRedirectStrategy().sendRedirect(request, response, adminTargetUrl);
+        	setDefaultTargetUrl(adminTargetUrl);
         } else if (roles.contains("ROLE_USER")) {
             // getRedirectStrategy().sendRedirect(request, response, userTargetUrl);
             setDefaultTargetUrl(userTargetUrl);
