@@ -36,6 +36,7 @@
           AND date BETWEEN #{from} AND #{to}
       ) b
       ON d.date=b.date
+      ORDER BY date ASC
   </select>
 
   <!-- Daily : figure -->
@@ -76,6 +77,7 @@
         WHERE appkey=#{appkey}
       ) b
       ON a.week_year=b.year AND a.week_of_year=b.week
+      ORDER BY fromDate ASC
   </select>
 
   <!-- Weekly : figure -->
@@ -118,6 +120,7 @@
         WHERE appkey=#{appkey}
       ) b
       ON a.year=b.year AND a.month_of_year=b.month
+      ORDER BY year ASC, month ASC
   </select>
 
   <!-- Monthly : figure -->
@@ -158,6 +161,7 @@
           AND date BETWEEN #{from} AND #{to}
       ) b
       ON d.date=b.date
+      ORDER BY date ASC
   </select>
 
   <!-- Daily : figure -->
@@ -199,6 +203,7 @@
         WHERE appkey=#{appkey}
       ) b
       ON a.week_year=b.year AND a.week_of_year=b.week
+      ORDER BY fromDate ASC
   </select>
 
   <!-- Weekly : figure -->
@@ -242,6 +247,7 @@
         WHERE appkey=#{appkey}
       ) b
       ON a.year=b.year AND a.month_of_year=b.month
+      ORDER BY year ASC, month ASC
   </select>
 
   <!-- Monthly : figure -->
@@ -306,6 +312,7 @@
           AND date BETWEEN #{from} AND #{to}
       ) a
       ON d.date=a.date
+      ORDER BY date ASC
   </select>
 
   <!-- Daily : session frequences ranges graph -->
@@ -347,6 +354,7 @@
         WHERE appkey=#{appkey}
       ) b
       ON a.week_year=b.year AND a.week_of_year=b.week
+      ORDER BY fromDate ASC
   </select>
 
   <!-- Weekly : session frequences ranges graph -->
@@ -398,6 +406,7 @@
         WHERE appkey=#{appkey}
       ) b
       ON a.year=b.year AND a.month_of_year=b.month
+      ORDER BY year ASC, month ASC
   </select>
 
   <!-- Monthly : session frequences ranges graph -->
@@ -441,6 +450,7 @@
           AND date BETWEEN #{from} AND #{to}
       ) b
       ON d.date=b.date
+      ORDER BY date ASC
   </select>
 
   <!-- Weekly : total sessions graph -->
@@ -463,6 +473,7 @@
         WHERE appkey=#{appkey}
       ) b
       ON a.week_year=b.year AND a.week_of_year=b.week
+      ORDER BY fromDate ASC
   </select>
 
   <!-- Monthly : total sessions graph -->
@@ -483,6 +494,7 @@
         WHERE appkey=#{appkey}
       ) b
       ON a.year=b.year AND a.month_of_year=b.month
+      ORDER BY year ASC, month ASC
   </select>
 
   <!-- =============== Session Length (1) Total =============== -->
@@ -518,6 +530,7 @@
           AND date BETWEEN #{from} AND #{to}
       ) b
       ON d.date=b.date
+      ORDER BY date ASC
   </select>
 
   <!-- Daily : figure -->
@@ -609,6 +622,7 @@
         WHERE appkey=#{appkey}
       ) a
       ON d.week_year=a.year AND d.week_of_year=a.week
+      ORDER BY fromDate ASC
   </select>
 
   <!-- Weekly : figure -->
@@ -714,6 +728,7 @@
         WHERE appkey=#{appkey}
       ) a
       ON d.year=a.year AND d.month_of_year=a.month
+      ORDER BY year ASC, month ASC
   </select>
 
   <!-- Monthly : figure -->
@@ -790,6 +805,7 @@
           AND date BETWEEN #{from} AND #{to}
       ) b
       ON d.date=b.date
+      ORDER BY date ASC
   </select>
 
   <!-- Weekly : session length (median) graph -->
@@ -813,6 +829,7 @@
         WHERE appkey=#{appkey}
       ) b
       ON a.week_year=b.year AND a.week_of_year=b.week
+      ORDER BY fromDate ASC
   </select>
 
   <!-- Monthly : session length (median) graph -->
@@ -834,6 +851,7 @@
         WHERE appkey=#{appkey}
       ) b
       ON a.year=b.year AND a.month_of_year=b.month
+      ORDER BY year ASC, month ASC
   </select>
 
   <!-- =============== Page Views =============== -->
@@ -852,6 +870,7 @@
           AND date BETWEEN #{from} AND #{to}
       ) b
       ON d.date=b.date
+      ORDER BY date ASC
   </select>
 
   <!-- Daily : figure -->
@@ -893,6 +912,7 @@
         WHERE appkey=#{appkey}
       ) b
       ON a.week_year=b.year AND a.week_of_year=b.week
+      ORDER BY fromDate ASC
   </select>
 
   <!-- Weekly : figure -->
@@ -936,6 +956,7 @@
         WHERE appkey=#{appkey}
       ) b
       ON a.year=b.year AND a.month_of_year=b.month
+      ORDER BY year ASC, month ASC
   </select>
 
   <!-- Monthly : figure -->

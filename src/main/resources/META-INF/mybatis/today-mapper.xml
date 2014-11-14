@@ -211,6 +211,7 @@
 					</choose>
 			) a
 			ON d.hour=a.hour
+			ORDER BY date ASC
 	</select>
 
 
