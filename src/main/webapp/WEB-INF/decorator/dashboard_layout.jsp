@@ -29,11 +29,12 @@
 <link rel="stylesheet" href="<c:url value="/resources/css/ui.css"/>" />
 <link rel="stylesheet" href="<c:url value="/resources/css/common.css"/>" />
 <link href='http://fonts.googleapis.com/css?family=Sintony:400,700' rel='stylesheet' type='text/css'>
-<link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/msdropdown/dd.css"/>">
-<link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/datepick/ui-flick.datepick.css"/>">
+<!-- Date Picker Related -->
 <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/datepick/south-street/flick.jquery-ui.css"/>">
-
-<script type="text/javascript" src="<c:url value="/resources/js/jquery-1.8.2.js"/>"></script>
+<link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/datepick/ui-flick.datepick.css"/>">
+<link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/msdropdown/dd.css"/>">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<!-- Date Picker Related -->
 <script type="text/javascript" src="<c:url value="/resources/js/bootstrap.min.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/resources/js/bootstrap/bootstrap-alert.js"/>"></script><!-- alert -->
 <script type="text/javascript" src="<c:url value="/resources/js/bootstrap/bootstrap-dropdown.js"/>"></script><!-- dropdown -->
