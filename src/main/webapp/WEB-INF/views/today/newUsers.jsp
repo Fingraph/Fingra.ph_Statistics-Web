@@ -52,7 +52,7 @@ $(function(){
     getFingraphData();
 });
 
-// newUser 기본 요약정보
+// newUser Figures
 function displayNewUsersFigures(figure){
 	$('.termStr').text($("#term option:selected").text().toUpperCase());
 	$('#total').text(figure.strTotal);

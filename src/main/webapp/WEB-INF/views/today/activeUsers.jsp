@@ -47,7 +47,7 @@
         getFingraphData();
     });
 
-// newUser 기본 요약정보
+// activeUsers Figures
 function displayActiveUsersFigures(figure){
 	$('.termStr').text($("#term option:selected").text().toUpperCase());
 	$('#total').text(figure.strTotal);
@@ -269,7 +269,7 @@ function displayActiveUsersExcelTable(result){
     <table id="report_table_0" style="display: none;">
        <tr>
          <th width="50">Time</th>
-         <th width="50">NewUsers</th>
+         <th width="50">ActiveUsers</th>
        </tr>
      </table>
 

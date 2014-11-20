@@ -276,7 +276,7 @@ function displayPageViewsExcelTable(result){
     <table id="report_table_0" style="display: none;">
        <tr>
          <th width="50">Time</th>
-         <th width="50">NewUsers</th>
+         <th width="50">PageViews</th>
        </tr>
      </table>
 
