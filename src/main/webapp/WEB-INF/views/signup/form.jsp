@@ -132,7 +132,7 @@ $(function(){
                 <div class="comp">
                     <h3><spring:message code="signup.text.email"/><span class="imp">*</span></h3>
                     <div><input type="email" id="email" name="email" placeholder="<spring:message code="input.email"/>" class="span5" /></div>
-                    <p>가입이 완료되더라도 Admin 사용자가 승인을 하기 전까지 이용이 불가능합니다.</br>관리자에게 승인을 요청하세요.</p>
+                    <p><spring:message code="signup.subscript.verify"/></p>
                 </div>
                 <div class="comp">
                     <h3><spring:message code="signup.text.pwd"/><span class="imp">*</span></h3>
