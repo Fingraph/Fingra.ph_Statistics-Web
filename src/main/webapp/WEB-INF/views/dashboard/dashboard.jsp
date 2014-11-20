@@ -25,6 +25,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="menuId" content="dashboard" />
 <title>Fingra.ph Open Source Project - DASHBOARD</title>
 <script type="text/javascript">
 $(function() {
@@ -334,37 +335,29 @@ $(function() {
 	<!-- distribution snapshot end -->
 	   
     <!-- components snapshot start -->
-    <%-- <div class="snapshot">
+    <div class="snapshot">
        <div class="rtag"><spring:message code="dash.card.thisweeek"/><i class="icon-info-sign this_week_Info" title="${app.dashBoard.thisWeek}"></i></div>
        <div class="componentGroup">
 		   <select class="span3" id="componentGrpList" name="componentGrpList">
 	             <option value="-2"><spring:message code="comp.list.topComponents"/></option>
 	             <option value="-1"><spring:message code="comp.list.interGroup"/></option>
 	             <c:forEach var="list" items="${app.dashBoard.componentGrpList}">
-	             	<option value="${list.groupkey}">${list.shortName}</option>
+	             	<option value="${list.groupkey}">${list.shortname}</option>
 	             </c:forEach>
 	        </select>
 	   </div>
 	   <h1 class="title">
 		   <spring:message code="dash.title.components"/>
-		   <c:if test="${app.apptype eq 1}"><sec:authorize ifNotGranted="ROLE_RESELLER"><a href="<c:url value="/components/manage/"/>${app.appkey}" class="btn btn-small" style="margin: 0 5px;"><i class="icon-cog icon-white"></i><spring:message code="dash.component.alt.text"/></a></sec:authorize></c:if>
+		   <sec:authorize ifAnyGranted="ROLE_ADMIN"><a href="<c:url value="/components/manage/"/>${app.appkey}" class="btn btn-small" style="margin: 0 5px;"><i class="icon-cog icon-white"></i><spring:message code="dash.component.alt.text"/></a></sec:authorize>
         </h1>
 
 	   <div class="pannel pannel_position" id="components">
 	   <c:choose>
-			<c:when test="${app.apptype eq 0}">
-				<sec:authorize ifAnyGranted="ROLE_RESELLER">
-					<a href='#'><div class="<spring:message code="css.img.dash.comp.get"/>"> </div></a>
+			<c:when test="${app.hasComponents eq false}">
+				<sec:authorize ifNotGranted="ROLE_ADMIN">
+					<div class="<spring:message code="css.img.dash.comp.add"/>"></div>
 				</sec:authorize>
-				<sec:authorize ifNotGranted="ROLE_RESELLER">
-					<a href='<c:url value="/app/getFullFeatures"/>'><div class="<spring:message code="css.img.dash.comp.get"/>"> </div></a>
-				</sec:authorize>
-			</c:when>
-			<c:when test="${app.apptype eq 1 and app.hasComponents eq false}">
-				<sec:authorize ifAnyGranted="ROLE_RESELLER">
-					<a href='#'><div class="<spring:message code="css.img.dash.comp.add"/>"> </div></a>
-				</sec:authorize>
-				<sec:authorize ifNotGranted="ROLE_RESELLER">
+				<sec:authorize ifAnyGranted="ROLE_ADMIN">
 					<a href='<c:url value="/components/manage/${app.appkey}"/>'><div class="<spring:message code="css.img.dash.comp.add"/>"> </div></a>
 				</sec:authorize>
 			</c:when>
@@ -439,7 +432,7 @@ $(function() {
 
        </div>
 	   </div>
-	</div> --%>
+	</div>
 	<!-- components snapshot end -->
 </div>
 </body>
