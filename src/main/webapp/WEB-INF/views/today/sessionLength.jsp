@@ -107,7 +107,7 @@ function displaySessionLengthLineGrap( result){
     if (moment($('#fingraphSearchParam #today').val()).diff(moment(),'days') !=0){
         subTitle = '(' + $('#fingraphSearchParam #today').val() + ')';
     }
-	makeDefaultLineChart(chart, 'container1', title, subTitle, '<spring:message code="chart.perf.sessionlen.line.y.text"/>', cate, xstep, data, parseInt(avg));
+	makeDefaultLineChart(chart, 'container1', title, subTitle, '<spring:message code="chart.perf.sessionlen.line.y.text"/>' + '(' + '<spring:message code="dash.card.indicator.sec"/>' + ')' , cate, xstep, data, parseInt(avg));
 }
 
 //시간대별 실행시간구간별 실행횟수 graph

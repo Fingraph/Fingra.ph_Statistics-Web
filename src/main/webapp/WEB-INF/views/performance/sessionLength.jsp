@@ -255,7 +255,7 @@ function displaySessionLengthMedian(result){
 	var space = term=='daily'?0.2:(term=='weekly'?0.4:0.15);
 	var xstep = parseInt(result.length * space);
 	var subTitle = makeSubTitle(term, fromTo);
-	makeDefaultLineChart(chart, 'container1', $("#term option:selected").text() +' <spring:message code="chart.perf.sessionlen.line.title"/>', subTitle, '<spring:message code="chart.perf.sessionlen.line.y.text"/>', cate, xstep, data, parseInt(avg));
+	makeDefaultLineChart(chart, 'container1', $("#term option:selected").text() +' <spring:message code="chart.perf.sessionlen.line.title"/>', subTitle, '<spring:message code="chart.perf.sessionlen.line.y.text"/>'  + '(' + '<spring:message code="dash.card.indicator.sec"/>' + ')', cate, xstep, data, parseInt(avg));
 }
 
 </script>
