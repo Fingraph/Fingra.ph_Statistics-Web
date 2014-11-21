@@ -123,7 +123,7 @@ function displayActiveUsers(tlist, tslist){
 		barTitle='<spring:message code="chart.comp.activeUser.bar.title.interg"/>';
 		lineTitle=termText +' <spring:message code="chart.comp.activeUser.line.title.interg"/>';
 	}else if(groupVal>=0){
-		barTitle='<spring:message code="chart.comp.activeUser.bar.title.group"/>';
+		barTitle=groupText +': '+'<spring:message code="chart.comp.activeUser.bar.title.group"/>';
 		lineTitle=groupText +': '+termText +'<spring:message code="chart.comp.activeUser.line.title.group"/>';
 	}
 	var subTitle = makeSubTitle(term, fromTo);

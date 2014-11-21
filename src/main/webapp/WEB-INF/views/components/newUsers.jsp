@@ -126,7 +126,7 @@ function displayNewUsers(tlist, tslist){
 		barTitle='<spring:message code="chart.comp.newUser.bar.title.interg"/>';
 		lineTitle=termText +' <spring:message code="chart.comp.newUser.line.title.interg"/>';
 	}else if(groupVal>=0){
-		barTitle='<spring:message code="chart.comp.newUser.bar.title.group"/>';
+		barTitle=groupText +': '+'<spring:message code="chart.comp.newUser.bar.title.group"/>';
 		lineTitle=groupText +': '+termText +'<spring:message code="chart.comp.newUser.line.title.group"/>';
 	}
 
