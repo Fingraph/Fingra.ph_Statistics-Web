@@ -28,7 +28,7 @@
              <option value="-2"><spring:message code="comp.list.topComponents"/></option>
 	         <option value="-1"><spring:message code="comp.list.interGroup"/></option>
              <c:forEach var="list" items="${app.dashBoard.componentGrpList}">
-             	<option value="${list.groupkey}">${list.shortname}</option>
+             	<option value="${list.groupkey}"><c:choose><c:when test="${(list.groupname).length() > 14}">${(list.groupname).substring(0,13)}...</c:when><c:otherwise>${list.groupname}</c:otherwise></c:choose></option>
              </c:forEach>
         </select>
    </div>
