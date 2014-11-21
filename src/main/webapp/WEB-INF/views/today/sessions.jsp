@@ -260,7 +260,7 @@ function displayTimeSeriessSessionsGrap(result, figures){
     if (moment($('#fingraphSearchParam #today').val()).diff(moment(),'days') !=0){
         subTitle = '(' + $('#fingraphSearchParam #today').val() + ')';
     }
-	makeDefaultColumnChartToday(chart, 'container2', title, subTitle, '<spring:message code="chart.perf.session.area.y.text"/>', cate , data, total);
+	makeDefaultColumnChartToday(chart, 'container2', title, subTitle, '<spring:message code="chart.perf.session.line.y.text"/>', cate , data, total);
 }
 
 // 싨행구간별 분포 graph
