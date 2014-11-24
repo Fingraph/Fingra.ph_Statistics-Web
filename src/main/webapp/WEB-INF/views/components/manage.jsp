@@ -131,11 +131,12 @@ $(function() {
 		var eventCnt = $('#collapse_'+groupkey+ ' input[name=eventkey]').length;
 
 		var heading = '<spring:message code="modal.heading.delete"/>';
-		var question;
+		var groupName=$(this).closest('.group').find('span.groupname').text();
+		var question = groupName + ': ' + '<spring:message code="modal.heading.delete"/>' + '</br>';
 	    if(eventCnt>0){
-	    	question = '<spring:message code="modal.comp.question.group.delete.Attention"/>';
+	    	question += '<spring:message code="modal.comp.question.group.delete.Attention"/>';
 	    }else{
-	    	question = '<spring:message code="modal.comp.question.group.delete"/>';
+	    	question += '<spring:message code="modal.comp.question.group.delete"/>';
 	    }
 	    var cancelButtonTxt = '<spring:message code="btn.cancel.text"/>';
 	    var okButtonTxt = '<spring:message code="btn.del.text"/>';
@@ -253,9 +254,10 @@ $(function() {
 	// Remove an event.
 	$('#accordion2').on('click','.removeEvent',function(e){
 		e.preventDefault();
-		var eventkey =$(this).closest('tr').attr('id');
+		var eventkey = $(this).closest('tr').attr('id');
 		var heading = '<spring:message code="modal.heading.delete"/>';
-	    var	question = '<spring:message code="modal.comp.question.component.delete"/>';
+		var question = $(this).closest('tr').find('span.eventName').text() + ': '+ '<spring:message code="modal.heading.delete"/>';
+	    question += '<spring:message code="modal.comp.question.component.delete"/>';
 	    var cancelButtonTxt = '<spring:message code="btn.cancel.text"/>';
 	    var okButtonTxt = '<spring:message code="btn.del.text"/>';
 	    var iMap = [eventkey];
