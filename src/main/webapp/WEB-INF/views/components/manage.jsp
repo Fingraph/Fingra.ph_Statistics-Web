@@ -72,7 +72,15 @@ $(function() {
 	             });
 				$(".collapse").collapse();
 				buttonDisable();
-			}
+			},
+			error: function(request, status, error) {
+		        if (request.status === 406) {
+		        	var heading = '<spring:message code="msg.confirm.header.error"/>';
+		    		var question = '<spring:message code="msg.check.duplicate.componentgroup.name"/>';
+		    	    var okButtonTxt = '<spring:message code="btn.ok.text"/>';
+		        	confirm(heading, question, '', okButtonTxt, null);
+		        }
+		    }
 		});
 	});
 
@@ -120,7 +128,15 @@ $(function() {
 		                if(this.id == "componentsGroup") this.reset();
 		             });
 				}
-			}
+			},
+			error: function(request, status, error) {
+		        if (request.status === 406) {
+		        	var heading = '<spring:message code="msg.confirm.header.error"/>';
+		    		var question = '<spring:message code="msg.check.duplicate.componentgroup.name"/>';
+		    	    var okButtonTxt = '<spring:message code="btn.ok.text"/>';
+		        	confirm(heading, question, '', okButtonTxt, null);
+		        }
+		    }
 		});
 
 	});
@@ -196,8 +212,15 @@ $(function() {
 	                if(this.id == "event") this.reset();
 	             });
 				initCopyButton();
-
-			}
+			},
+			error: function(request, status, error) {
+		        if (request.status === 406) {
+		        	var heading = '<spring:message code="msg.confirm.header.error"/>';
+		    		var question = '<spring:message code="msg.check.duplicate.component.name"/>';
+		    	    var okButtonTxt = '<spring:message code="btn.ok.text"/>';
+		        	confirm(heading, question, '', okButtonTxt, null);
+		        }
+		    }
 		});
 	});
 
@@ -247,7 +270,15 @@ $(function() {
 		                if(this.id == "event") this.reset();
 		             });
 				}
-			}
+			},
+			error: function(request, status, error) {
+		        if (request.status === 406) {
+		        	var heading = '<spring:message code="msg.confirm.header.error"/>';
+		    		var question = '<spring:message code="msg.check.duplicate.component.name"/>';
+		    	    var okButtonTxt = '<spring:message code="btn.ok.text"/>';
+		        	confirm(heading, question, '', okButtonTxt, null);
+		        }
+		    }
 		});
 	});
 
@@ -256,7 +287,7 @@ $(function() {
 		e.preventDefault();
 		var eventkey = $(this).closest('tr').attr('id');
 		var heading = '<spring:message code="modal.heading.delete"/>';
-		var question = $(this).closest('tr').find('span.eventName').text() + ': '+ '<spring:message code="modal.heading.delete"/>';
+		var question = $(this).closest('tr').find('span.eventName').text() + ': '+ '<spring:message code="modal.heading.delete"/>' + '</br>';
 	    question += '<spring:message code="modal.comp.question.component.delete"/>';
 	    var cancelButtonTxt = '<spring:message code="btn.cancel.text"/>';
 	    var okButtonTxt = '<spring:message code="btn.del.text"/>';

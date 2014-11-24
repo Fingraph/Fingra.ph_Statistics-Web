@@ -40,6 +40,8 @@ public interface ComponentsDao {
     
     public List<ComponentsGroup> getComponentsGroupList(String appkey);
     
+    public int getComponentCountByName(Component component);
+    
     public void addComponent(Component component);
     
     public void addComponentWithGroup(Component component);
@@ -47,6 +49,8 @@ public interface ComponentsDao {
     public void editComponent(Component component);
     
     public void removeComponent(Component component);
+    
+    public int getComponentsGroupCountByName(ComponentsGroup componentsGroup);
     
     public void addComponentsGroup(ComponentsGroup componentsGroup);
     

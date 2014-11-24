@@ -22,14 +22,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import ph.fingra.statisticsweb.domain.ActualData;
 import ph.fingra.statisticsweb.domain.App;
@@ -428,10 +431,16 @@ public class ComponentsController {
 		return "components/manage";
 	}
 
-	@RequestMapping(value = "/addHtmlAjax", method = RequestMethod.POST,produces="text/plain;charset=UTF-8")
+	@RequestMapping(value = "/addHtmlAjax", method = RequestMethod.POST, produces="text/plain;charset=UTF-8")
     public String addHtmlAjax(Model model,
     						@ModelAttribute("event") Component event,
-    						@ActiveUser FingraphUser activeUser) {
+    						@ActiveUser FingraphUser activeUser) 
+    						throws Exception{
+		
+		int duplicateCnt = componentsService.getComponentCountByName(event);
+		if (duplicateCnt > 0) {
+			throw new Exception("A name of component can not be duplicated!");
+		}
 		
 		Component newEvent = componentsService.addComponentWithGroup(event);
 
@@ -449,10 +458,17 @@ public class ComponentsController {
 	 */
 	@RequestMapping(value = "/editAjax", method = RequestMethod.POST,produces="text/plain;charset=UTF-8")
     public @ResponseBody String editAjax(@ModelAttribute("Event") Component event,
-    									@ActiveUser FingraphUser activeUser) {
+    									@ActiveUser FingraphUser activeUser) 
+										throws Exception{
 		
 		String eventkey ="";
+		
 		if(!"".equals(event.getComponentname())){
+			int duplicateCnt = componentsService.getComponentCountByName(event);
+			if (duplicateCnt > 0) {
+				throw new Exception("A name of component can not be duplicated!");
+			}
+			
 			componentsService.editComponent(event);
 			eventkey = event.getComponentkey();
 		}
@@ -479,7 +495,7 @@ public class ComponentsController {
 	}
 
 	//removeMapAjax
-	@RequestMapping(value = "/removeMapAjax", method = RequestMethod.POST,produces="text/plain;charset=UTF-8")
+	@RequestMapping(value = "/removeMapAjax", method = RequestMethod.POST, produces="text/plain;charset=UTF-8")
     public @ResponseBody String removeMapAjax(@RequestParam("ieventkey[]") String [] ieventkey,
     										@RequestParam("appkey") String appkey,
     										@ActiveUser FingraphUser activeUser) {
@@ -548,7 +564,13 @@ public class ComponentsController {
 	@RequestMapping(value = "/addGroupHtmlAjax", method = RequestMethod.POST,produces="text/plain;charset=UTF-8")
     public String addGroupHtmlAjax(Model model,
     							@ModelAttribute("ComponentsGroup") ComponentsGroup componentsGroup,
-    							@ActiveUser FingraphUser activeUser) {
+    							@ActiveUser FingraphUser activeUser)
+								throws Exception {
+		
+		int duplicateCnt = componentsService.getComponentsGroupCountByName(componentsGroup);
+		if (duplicateCnt > 0) {
+			throw new Exception("A name of component group can not be duplicated!");
+		}
 		
 		ComponentsGroup group = componentsService.addComponentsGroup(componentsGroup);
 		model.addAttribute("type", "addGroupResult");
@@ -567,7 +589,13 @@ public class ComponentsController {
 	@RequestMapping(value = "/editGroupAjax", method = RequestMethod.POST,produces="text/plain;charset=UTF-8")
     public @ResponseBody String editGroupAjax(Model model,
     										@ModelAttribute("ComponentsGroup") ComponentsGroup componentsGroup,
-    										@ActiveUser FingraphUser activeUser) {
+    										@ActiveUser FingraphUser activeUser)
+    										throws Exception{
+		
+		int duplicateCnt = componentsService.getComponentsGroupCountByName(componentsGroup);
+		if (duplicateCnt > 0) {
+			throw new Exception("A name of component group can not be duplicated!");
+		}
 		
 		componentsService.editComponentsGroup(componentsGroup);
 		return (new Gson()).toJson(true);
@@ -608,6 +636,14 @@ public class ComponentsController {
 		return "include/componentsSection";
 
 	}
-
+	
+	@ExceptionHandler (Exception.class)
+	@ResponseStatus (value=HttpStatus.NOT_ACCEPTABLE, reason="Invalid Component/Component Group Name")
+	public @ResponseBody String handleAllExceptions(Exception ex) {
+		Map<String, String> model = new HashMap<String, String>();
+        model.put("error", ex.getMessage());
+		return (new Gson()).toJson(model);
+	}
+	
 }
 

@@ -63,6 +63,10 @@
       AND isdel=0
   </select>
 
+  <select id="getComponentCountByName" resultType="int" parameterType="Component">
+    SELECT count(*) FROM component WHERE appkey=#{appkey} and componentname=#{componentname} and componentkey!=#{componentkey} and isdel=0 
+  </select>
+  
   <insert id="addComponent" parameterType="Component">
     <selectKey order="BEFORE" keyProperty="componentkey" resultType="string">SELECT newComponentkey()</selectKey>
     INSERT INTO component
@@ -91,6 +95,10 @@
     WHERE appkey=#{appkey} AND componentkey=#{componentkey}
   </update>
 
+  <select id="getComponentsGroupCountByName" resultType="int" parameterType="ComponentsGroup">
+    SELECT count(*) FROM component_group WHERE appkey=#{appkey} and groupname=#{groupname} and groupkey!=#{groupkey} and isdel=0 
+  </select>
+  
   <insert id="addComponentsGroup" parameterType="ComponentsGroup">
     INSERT INTO component_group
       (appkey,groupkey,groupname,description,regdate)

@@ -343,7 +343,12 @@ public class ComponentsServiceImpl implements ComponentsService {
 		}
 		return list;
 	}
-
+	
+	@Override
+	public int getComponentsGroupCountByName(ComponentsGroup group){
+		return componentsDao.getComponentsGroupCountByName(group);
+	}
+	
 	@Override
 	public ComponentsGroup addComponentsGroup(ComponentsGroup group) {
 		int groupkey = componentsDao.makeComponentsGroupKey(group);
@@ -366,6 +371,11 @@ public class ComponentsServiceImpl implements ComponentsService {
 		componentsDao.updateComponentsGroupIsdel(componentsGroup);
 		//updateEvent
 		componentsDao.updateComponentsIsdel(componentsGroup);
+	}
+	
+	@Override
+	public int getComponentCountByName(Component event) {
+		return componentsDao.getComponentCountByName(event);
 	}
 
 	@Override

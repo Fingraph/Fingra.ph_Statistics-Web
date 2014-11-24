@@ -51,6 +51,8 @@ public interface ComponentsService {
 
 	List<Component> getComponentsList(DashBoardSearchParam param);
 
+	int getComponentCountByName(Component event);
+	
 	String addComponent(Component event);
 
 	void editComponent(Component event);
@@ -83,6 +85,8 @@ public interface ComponentsService {
 
 	List<ComponentsManage> getComponentsManageList(DashBoardSearchParam param);
 
+	int getComponentsGroupCountByName(ComponentsGroup group);
+	
 	ComponentsGroup addComponentsGroup(ComponentsGroup group);
 
 	void editComponentsGroup(ComponentsGroup componentsGroup);
