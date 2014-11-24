@@ -39,7 +39,8 @@ $(function() {
     $('.deleteBtn').click(function(){
         var id = $(this).attr('id').replace('delete_','');
         var heading='Delete App';
-        var question='Are you sure to delete this app?';
+        var question = $(this).closest('.pannel-inner').find('span.app_name').text() + ': ' + 'Delete App' + '</br>'; 
+        question += 'Are you sure to delete this app?';
         var cancelButtonTxt = '<spring:message code="btn.cancel.text"/>';
         var okButtonTxt = '<spring:message code="btn.ok.text"/>';
         var callback = function() {
