@@ -88,6 +88,7 @@ public class ComponentsController {
 		
 		param.setPeriod(period);
 		App app = componentsSectionInfo(param);
+		app.setGroupkey(param.getGroupkey());
 		model.addAttribute("app",app);
 		
 		return "components/newUsers";
@@ -167,6 +168,7 @@ public class ComponentsController {
 		
 		param.setPeriod(period);
 		App app = componentsSectionInfo(param);
+		app.setGroupkey(param.getGroupkey());
 		model.addAttribute("app",app);
 
 		return "components/activeUsers";
@@ -243,6 +245,7 @@ public class ComponentsController {
 		
 		param.setPeriod(period);
 		App app = componentsSectionInfo(param);
+		app.setGroupkey(param.getGroupkey());
 		model.addAttribute("app",app);
 
 		return "components/pageViews";
@@ -320,6 +323,7 @@ public class ComponentsController {
 		
 		param.setPeriod(period);
 		App app = componentsSectionInfo(param);
+		app.setGroupkey(param.getGroupkey());
 		model.addAttribute("app",app);
 
 		return "components/timeOfDay";
@@ -381,6 +385,7 @@ public class ComponentsController {
 	
 		param.setPeriod(period);
 		App app = componentsSectionInfo(param);
+		app.setGroupkey(param.getGroupkey());
 		model.addAttribute("app",app);
 		
 		return "components/topCountries";
@@ -427,6 +432,7 @@ public class ComponentsController {
 		
 		//sectionInfo
 		App app = componentsSectionInfo(param);
+		app.setGroupkey(param.getGroupkey());
 		model.addAttribute("app",app);
 		return "components/manage";
 	}
