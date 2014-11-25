@@ -357,7 +357,7 @@ function displayAppVersionsExcelTable(result){
 					    <option value="weekly"><spring:message code="chart.select2.option2"/></option>
 					    <option value="monthly"><spring:message code="chart.select2.option3"/></option>
 					 </select>
-					 <select name="segment" id="segment" class="input-medium" disabled="disabled">
+					 <select name="segment" id="segment" class="input-medium" disabled="disabled" style="display: none;">
 					    <option value=""><spring:message code="chart.select3.default.option0"/></option>
 					 </select>
 	          </div>
