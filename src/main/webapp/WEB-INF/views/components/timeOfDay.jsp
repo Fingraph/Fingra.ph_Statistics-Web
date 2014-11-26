@@ -39,7 +39,11 @@ $(function() {
 	//term setting
 	term = $("#term").msDropdown({
 			roundedCorner:true,
-			on:{change: function(data, ui){getFingraphData();}}
+			on:{change: function(data, ui){
+					addPeriods($("#period").val());
+					getFingraphData();
+					}
+				}
 			}).data("dd");
 	//segment setting
 	segment = $("#segment").msDropdown().data("dd").set("disabled", true);

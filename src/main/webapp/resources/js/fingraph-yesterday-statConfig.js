@@ -2,24 +2,25 @@
 $(function() {
 	$('#from, #to').datepick({
 		renderer: $.datepick.themeRollerRenderer,
+		onDate: validationCheckByTerm,
 	    showTrigger: '#calImg',
-    	firstDay:1,	//달력 월요일부터 시작
+    	firstDay:1,	//Start week from Monday.
 		dateFormat:'yyyy-mm-dd',
-		minDate: '2012-03-01',//fingraph 시작일
-		maxDate: -1,//어제
-		showOnFocus: false,//text클릭 안되게
+		minDate: '2014-01-01',//This date have to set with start date of the service.
+		maxDate: -1,//Yesterday is last day to select.
+		showOnFocus: false,//Text can not be clicked.
 		onSelect: customRange,
 		onClose: function() {
 			   setPeriodCookie($('#from').val(),$('#to').val(),$('#period').val());
 			 }
 	  });
-	//날짜이 prev버튼 hand class가 있을때만 이동
+	//Previous button will be work when document have 'hand' class.
 	$('#periodPrev').click(function(){
 		if($(this).hasClass('hand')){
 			movePriedRange('prev');
 		}
 	});
-	//날짜이 next버튼 hand class가 있을때만 이동
+	//Next button will be work when document have 'hand' class.
 	$('#periodNext').click(function(){
 		if($(this).hasClass('hand')){
 			movePriedRange('next');
@@ -27,9 +28,9 @@ $(function() {
 	});
 
 });
-//날짜 이동 함수
+//Move period function
 function movePriedRange(target){
-	//사용자정의세팅
+	//custom setting
 	period.setIndexByValue('c-u');
 	var from = moment($('#from').val());
 	var to = moment($('#to').val());
@@ -48,7 +49,7 @@ function movePriedRange(target){
 	$('#from').val(moveFrom);
 	$('#to').val(moveTo);
 
-	//달력의 from to 기간체크세팅
+	//from-to period setting by datepicker.
 	$('#to').datepick('option', 'minDate', moveFrom || null);
 	$('#from').datepick('option', 'maxDate', moveTo || null);
 
@@ -56,7 +57,7 @@ function movePriedRange(target){
 
 }
 
-//달력과 연동되는 from to 기간체크세팅
+//from-to date setting by datepicker.
 function customRange(dates) {
     if (this.id == 'from') {
         $('#to').datepick('option', 'minDate', dates[0] || null);
@@ -78,12 +79,12 @@ function setPeriodCookie(from,to,period){
 	    document.cookie = cookies;
 	}else{
 		  var expireDate = new Date();
-		  //어제 날짜를 쿠키 소멸 날짜로 설정한다.
+		  //set a expiration date to yesterday.
 		  expireDate.setDate( expireDate.getDate() - 1 );
 		  document.cookie = "fingraphPeriod= " + "; expires=" + expireDate.toGMTString() + "; path=/";
 
 	}
-	//이전, 이후 버튼 세팅 추가 2013-09-27
+	//Set values on the previous and next button.
     setPrevNextBtn($('#from').val(),$('#to').val());
 	getFingraphData();
 }
@@ -105,9 +106,9 @@ function getPeriodCookie(cName) {
      		$('#from').val(fromTo[0]);
      		$('#to').val(fromTo[1]);
      		period.setIndexByValue(splitVal[1]);
-     	//달력의 from to 기간체크세팅
+     	//Set from-to date. 
      	$('#to').datepick('option', 'minDate', fromTo[0] || null);
- 		//이전, 이후 버튼 세팅 추가 2013-09-27
+ 		//Set values on the previous and next button.
  	    setPrevNextBtn($('#from').val(),$('#to').val());
         getFingraphData();
     }else{
@@ -117,23 +118,23 @@ function getPeriodCookie(cName) {
     }
 
 }
-//달력의 prev, next버튼 세팅
+//Function to set values on the previous and next button.
 function setPrevNextBtn(from,to){
-	var minDate = moment('2012-03-01');//fingraph 시작일
-	var maxDate = moment().subtract('d', 1);//어제()
-	//moment변환
+	var minDate = moment('2014-01-01');//This date have to set with start date of the service.
+	var maxDate = moment().subtract('d', 1);//yesterday()
+	//Get 'from' and 'to' date from moment
 	var mfrom = moment(from);
 	var mto = moment(to);
-	//from to 의 차
+	//difference between 'from' and 'to' date
 	var periodDiffDays =  mto.diff(mfrom,'days');
 
-	//prev버튼 체크
+	//Check previous button.
 	if(mfrom.diff(minDate,'days') > periodDiffDays){
 		$('#periodPrev').attr('src',$('#periodPrev').attr('src').replace('_inactive','_active')).addClass('hand').attr('title','Previous period');
 	}else{
 		$('#periodPrev').attr('src',$('#periodPrev').attr('src').replace('_active','_inactive')).removeClass('hand').attr('title','');
 	}
-	//next버튼 체크
+	//Check next button.
 	if(maxDate.diff(to,'days') > periodDiffDays){
 		$('#periodNext').attr('src',$('#periodNext').attr('src').replace('_inactive','_active')).addClass('hand').attr('title','Next period');
 	}else{
@@ -141,61 +142,52 @@ function setPrevNextBtn(from,to){
 	}
 }
 
-//기간별 날짜세팅 (하루전기준)
+//Set a date by value of period and term. (basis on yesterday)
 function addPeriods(periodVal){
+	var term = $('#term').val();
+	var to = moment().subtract('day', 1);
+	if(term=='weekly'){
+		to = moment().subtract('week', 1);
+		to = moment(to).endOf('week');
+		to = moment(to).add('day', 1);
+	}else if(term=='monthly'){
+		to = moment().subtract('month', 1);
+		to = moment(to).endOf('month');
+	}
+	
 	var type = periodVal.split('-');
-	var to = moment().subtract('d', 1);
 	var from = "";
+	
 	if(type[1]=='d'){
-		from = moment().subtract('d', eval(type[0])).format('YYYY-MM-DD');
+		from = moment(to).subtract('day', eval(type[0])-1);
 	}else if(type[1]=='m'){
-		from = moment().subtract('d', 1).subtract('M',eval(type[0])).format('YYYY-MM-DD');
+		from = moment(to).subtract('month', eval(type[0])-1);
 	}else if(type[1]=='y'){
-		from = moment().subtract('d', 1).year() + '-01-01';
+		from = moment(to).startOf('year');
 	}else{
 		$('.calImg').css('display','');
 		return;
 	}
-
-	$('#fromTo').val(from +' ~ '+to.format('YYYY-MM-DD'));
-	$('#from').val(from);
-	$('#to').val(to.format('YYYY-MM-DD'));
-
-	//달력의 from to 기간체크세팅
-	$('#to').datepick('option', 'minDate', from || null);
-
-	setPeriodCookie($('#fromTo').val(),$('#period').val());
-
-}
-
-/*
-//기간별 날짜세팅 (오늘-실시간)
-function addPeriods(periodVal){
-	var type = periodVal.split('-');
-	var to = moment();
-	var from = "";
-	if(type[1]=='d'){
-		from = moment().subtract('d', eval(type[0]-1)).format('YYYY-MM-DD');
-	}else if(type[1]=='m'){
-		from = moment().subtract('M',eval(type[0])).format('YYYY-MM-DD');
-	}else if(type[1]=='y'){
-		from = moment().year() + '-01-01';
-	}else{
-		$('.calImg').css('display','');
-		return;
+	
+	if(term=='weekly'){
+		from = moment(from).startOf('week');
+		from = from.add('day', 1);
+		if(type[1]=='y' && from.year() != to.year()) from = moment(from).add('day', 7);
+	} else if(term=='monthly'){
+		from = moment(from).startOf('month');
 	}
 
-	$('#fromTo').val(from +' ~ '+to.format('YYYY-MM-DD'));
-	$('#from').val(from);
+	$('#fromTo').val(from.format('YYYY-MM-DD') +' ~ '+to.format('YYYY-MM-DD'));
+	$('#from').val(from.format('YYYY-MM-DD'));
 	$('#to').val(to.format('YYYY-MM-DD'));
 
-	//달력의 from to 기간체크세팅
+	//Set from-to date of date-picker. 
 	$('#to').datepick('option', 'minDate', from || null);
 
 	setPeriodCookie($('#fromTo').val(),$('#period').val());
 }
-*/
-//chart 표시되는 기간계산
+
+//Make subtitle to show range of date.
 function makeSubTitle(term, fromTo){
 	var period = fromTo.split(' ~ ');
 	var subTitle = '';
@@ -217,5 +209,36 @@ function makeSubTitle(term, fromTo){
 	return subTitle ;
 }
 
+//Strict day of week or day of month when user use term option "week" or "month"
+function validationCheckByTerm(date) {
+	//return {selectable: true, dateClass: 'highlight', title: 'tooltip'};
+	var term = $('#term').val();
+	var isFromPicker = (this.id == 'from');
+	
+	if (term == 'daily') {
+		return {selectable: true};
+	} else if (term == 'weekly') {
+		if (isFromPicker) {
+			if (date.getDay() == 1) return {selectable: true};
+		} else {
+			if (date.getDay() == 0) return {selectable: true};
+		}
+		return {selectable: false};
+	} else if (term == 'monthly') {
+		if (isFromPicker) {
+			if (date.getDate() == 1) return {selectable: true};
+		} else {
+			if (isLastDayOfMonth(date)) return {selectable: true};
+		}
+		return {selectable: false};
+	}
+}
 
-
+function isLastDayOfMonth(date){
+	var y = date.getFullYear();
+	var m = date.getMonth();
+    var lastDayOfMonth = new Date(y, m + 1, 0);
+	
+    if (date.getDate() == lastDayOfMonth.getDate()) return true;
+    else return false;
+}
