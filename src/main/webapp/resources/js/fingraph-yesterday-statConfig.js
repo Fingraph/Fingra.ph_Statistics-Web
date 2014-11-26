@@ -142,6 +142,53 @@ function setPrevNextBtn(from,to){
 	}
 }
 
+//Adjust from-to date by term selection.
+function adjustDatesByTerm() {
+	//Check period value is custom or not.
+	var periodVal = $("#period").val();
+	var type = periodVal.split('-');
+	if(type[1]=='d' || type[1]=='m' || type[1]=='y'){
+		addPeriods(periodVal);
+		return;
+	}
+	
+	var term = $('#term').val();
+	var to = $('#to').val();
+	var from = $('#from').val();
+	
+	if(term=='daily'){
+		return;
+	}else if(term=='weekly'){
+		to = moment(to).endOf('week');
+		to = moment(to).add('day', 1);
+		if (moment().isBefore(to)) {
+			to = moment(to).subtract('week', 1);
+			from = moment(from).subtract('week', 1);
+		}
+		from = moment(from).startOf('week');
+		from = from.add('day', 1);
+	}else if(term=='monthly'){
+		to = moment(to).endOf('month');
+		if (moment().isBefore(to)) {
+			to = moment(to).subtract('month', 1);
+			to = moment(to).endOf('month');
+			from = moment(from).subtract('month', 1);
+		}
+		from = moment(from).startOf('month');
+	}
+
+	$('#fromTo').val(from.format('YYYY-MM-DD') +' ~ '+to.format('YYYY-MM-DD'));
+	$('#from').val(from.format('YYYY-MM-DD'));
+	$('#to').val(to.format('YYYY-MM-DD'));
+
+	//Set from-to date of date-picker. 
+	$('#to').datepick('option', 'minDate', from || null);
+
+	setPeriodCookie($('#fromTo').val(),$('#period').val());
+}
+
+
+
 //Set a date by value of period and term. (basis on yesterday)
 function addPeriods(periodVal){
 	var term = $('#term').val();

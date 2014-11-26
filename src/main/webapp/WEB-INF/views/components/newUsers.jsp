@@ -38,8 +38,8 @@ $(function() {
 	term = $("#term").msDropdown({
 			roundedCorner:true,
 			on:{change: function(data, ui){
-					addPeriods($("#period").val());
-					getFingraphData();
+						adjustDatesByTerm();
+						getFingraphData();
 					}
 				}
 			}).data("dd");
