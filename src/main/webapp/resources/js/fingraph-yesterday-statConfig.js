@@ -66,6 +66,9 @@ function customRange(dates) {
         $('#from').datepick('option', 'maxDate', dates[0] || null);
     }
     period.setIndexByValue('c-u');
+    
+    //Set value of "#fromTo" with values of "from" and "to" date.
+    $('#fromTo').val($('#from').val() +' ~ '+$('#to').val());
 }
 
 
