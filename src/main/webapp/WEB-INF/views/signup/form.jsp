@@ -81,7 +81,7 @@ $(function(){
                 minlength: jQuery.format('<spring:message code="msg.check.leastChar"/>')
             },
             department: {
-                required: '부서명을 입력하여 주십시오',
+                required: '<spring:message code="msg.check.department"/>',
                 minlength: jQuery.format('<spring:message code="msg.check.leastChar"/>')
             },
             password: {
@@ -100,8 +100,8 @@ $(function(){
                 remote: jQuery.format('<spring:message code="msg.check.inuse"/>')
             },
             phone:{
-            	required: '전화번호를 입력하여 주십시오',
-                number:'숫자만 입력하세요.'
+            	required: '<spring:message code="msg.check.phone"/>',
+                number: '<spring:message code="msg.check.numOnly"/>'
             }
         },
         // set this class to error-labels to indicate valid fields
@@ -150,15 +150,15 @@ $(function(){
                     <div><input id="name" name="name" type="text" placeholder="<spring:message code="input.name"/>" class="span5" /></div>
                 </div>
                 <div class="comp nxt">
-                    <h3>부서 이름<span class="imp">*</span></h3>
-                    <div><input id="department" name="department" type="text" placeholder="부서명" class="span5" /></div>
+                    <h3><spring:message code="input.department"/><span class="imp">*</span></h3>
+                    <div><input id="department" name="department" type="text" placeholder="<spring:message code="input.department"/>" class="span5" /></div>
                 </div>
                  <div class="comp nxt">
                     <h3><spring:message code="signup.nxt.text.phoneNumber"/><span class="imp">*</span></h3>
-                    <div><input id="phone" name="phone" maxlength="20" type="text"  class="span5" /></div>
+                    <div><input id="phone" name="phone" maxlength="20" type="text" placeholder="<spring:message code="signup.nxt.text.phoneNumber"/>"  class="span5" /></div>
                 </div>
                 <div class="comp nxt">
-                    <p>입력한 정보로 가입합니다. <span class="imp">*</span> <input name="agree" id="agree" type="checkbox" value="true" ></p>
+                    <p><spring:message code="msg.confirm.to.signup"/><span class="imp">*</span> <input name="agree" id="agree" type="checkbox" value="true" ></p>
                 </div>
                 <div class="comp nxt">
                     <button type="submit" class="btn btn-large btn-primary span2"><spring:message code="btn.submit.text"/></button>

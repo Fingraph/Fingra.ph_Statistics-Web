@@ -81,8 +81,8 @@ $(function(){
                 equalTo: '<spring:message code="msg.check.equalPwd"/>'
             },
             phone:{
-                required: '전화번호를 입력하여 주십시오',
-                number:'숫자만 입력하세요.'
+            	required: '<spring:message code="msg.check.phone"/>',
+                number: '<spring:message code="msg.check.numOnly"/>'
             }
         },
         errorClass: "help-inline",
@@ -98,8 +98,8 @@ $(function(){
         }
     });
     $('#saveBtn').click(function(){
-        var heading='수정사항 저장';
-        var question='계정 정보의 변경 사항을 저장하고 앱 리스트 화면으로 돌아갑니다.';
+        var heading='<spring:message code="msg.confirm.member.modify.header"/>';
+        var question='<spring:message code="msg.confirm.member.modify"/>';
         var cancelButtonTxt = '<spring:message code="btn.cancel.text"/>';
         var okButtonTxt = '<spring:message code="btn.ok.text"/>';
         var callback = function() {
@@ -136,7 +136,7 @@ $(function(){
                             <td><input type="text" class="span3" id="name" name="name" value="${member.name}"/></td>
                         </tr>
                         <tr>
-                            <th>Department</th>
+                            <th><spring:message code="input.department"/></th>
                             <td><input type="text" class="span3" id="department" name="department" value="${member.department}"/></td>
                         </tr>
                         <tr>
